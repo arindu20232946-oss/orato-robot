@@ -102,11 +102,7 @@ export const updateProfile = async (req, res) => {
   try {
     const { fullName, targetLanguage, bio } = req.body;
 
-    const user = await User.findById(req.user.userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const user = req.user; // already loaded by protect middleware
 
     if (fullName) user.fullName = fullName;
     if (targetLanguage) user.targetLanguage = targetLanguage;
@@ -114,9 +110,18 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
-    res.json({ message: "Profile updated successfully" });
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Failed to update profile" });
+    console.error("Update profile error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update profile"
+    });
   }
 };
 

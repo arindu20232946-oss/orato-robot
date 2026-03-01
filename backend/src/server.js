@@ -1,3 +1,5 @@
+console.log("Cloudinary Key:", process.env.CLOUDINARY_API_KEY);
+
 import dotenv from "dotenv";
 dotenv.config();
 
