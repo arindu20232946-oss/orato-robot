@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node -r dotenv/config src/server.js",
-    "dev": "nodemon -r dotenv/config src/server.js",
+    "dev": "nodemon src/server.js",
     "seed": "node -r dotenv/config src/utils/seedQuestions.js"
   },
   "keywords": [],

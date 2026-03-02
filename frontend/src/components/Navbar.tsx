@@ -36,9 +36,9 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                 className="flex items-center gap-3 no-underline"
                 onClick={closeMobileMenu}
               >
-                <img 
-                  src={logo} 
-                  alt="Orato Logo" 
+                <img
+                  src={logo}
+                  alt="Orato Logo"
                   className="w-14 h-14 rounded-xl shadow-md object-cover"
                 />
                 <span className="text-3xl font-bold text-green-600">Orato</span>
@@ -84,17 +84,31 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
             <div className="flex items-center gap-4">
 
               {isLoggedIn ? (
-                <Link
+                <NavLink
                   to="/account"
-                  className="flex items-center gap-2 text-gray-700 hover:bg-green-100 py-2 px-4 rounded-lg transition-colors no-underline"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 no-underline
+       hover:bg-green-100 hover:scale-105 hover:shadow-md
+       ${isActive
+                      ? "text-green-600 font-semibold bg-green-50"
+                      : "text-gray-700"
+                    }`
+                  }
                   onClick={closeMobileMenu}
                 >
-                  <svg width="20" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="20"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                   <span className="font-medium hidden md:inline">Account</span>
-                </Link>
+                </NavLink>
               ) : (
                 <Link
                   to="/signin"
