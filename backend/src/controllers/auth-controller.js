@@ -379,3 +379,71 @@ export const resetPasswordOtp = async (req, res) => {
     });
   }
 };
+
+/**
+ * ===== GOOGLE OAUTH SUCCESS =====
+ * Only for existing users
+ */
+export const googleAuthSuccess = async (req, res) => {
+  try {
+    console.log('\n========================================');
+    console.log('=== GOOGLE AUTH SUCCESS ===');
+    console.log('========================================');
+    
+    const user = req.user;
+
+    if (!user) {
+      console.log('❌ No user found in request');
+      return res.redirect(`${process.env.FRONTEND_URL}/signin?error=authentication_failed`);
+    }
+
+    console.log('✅ User authenticated:', user.email);
+
+    // Generate JWT token (7 days)
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET || "your-default-secret-key-change-this",
+      { expiresIn: "7d" }
+    );
+
+    console.log('🔑 JWT token generated');
+
+    // Prepare user data
+    const userResponse = user.toJSON();
+
+    // ALWAYS redirect to dashboard (existing users only)
+    const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/success?token=${token}&user=${encodeURIComponent(JSON.stringify(userResponse))}`;
+
+    console.log('🔄 Redirecting to dashboard');
+    console.log('========================================\n');
+
+    res.redirect(redirectUrl);
+
+  } catch (error) {
+    console.error('❌ Google auth success error:', error);
+    res.redirect(`${process.env.FRONTEND_URL}/signin?error=server_error`);
+  }
+};
+
+/**
+ * ===== GOOGLE OAUTH FAILURE =====
+ * Handles both errors and new user attempts
+ */
+export const googleAuthFailure = (req, res) => {
+  console.log('\n========================================');
+  console.log('❌ GOOGLE AUTH FAILED');
+  console.log('========================================\n');
+  
+  // Check if it's a new user trying to sign in
+  const message = req.session?.messages?.[0] || 'google_auth_failed';
+  
+  if (message === 'new_user_not_allowed') {
+    console.log('🚫 New user attempted Google Sign-In');
+    return res.redirect(`${process.env.FRONTEND_URL}/signin?error=new_user_use_signup`);
+  }
+  
+  res.redirect(`${process.env.FRONTEND_URL}/signin?error=google_auth_failed`);
+};

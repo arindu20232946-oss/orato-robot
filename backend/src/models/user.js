@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
     required: true,
+    trim: true,
   },
 
   email: {
@@ -26,18 +27,19 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
+    trim: true,
   },
 
   password: {
     type: String,
-    required: true,
-    select: false, // hides password automatically
+    required: false, // Optional for Google users
   },
 
-  // Profile Info
-  bio: {
+  // Google OAuth fields
+  googleId: {
     type: String,
-    default: "",
+    unique: true,
+    sparse: true,
   },
 
   profilePicture: {
@@ -45,15 +47,45 @@ const userSchema = new mongoose.Schema({
     default: "",
   },
 
+  authProvider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local',
+  },
+
+  // Personal Info
+  age: {
+    type: Number,
+  },
+
+  nativeLanguage: {
+    type: String,
+    default: "Sinhala",
+  },
+
   targetLanguage: {
     type: String,
     default: "English",
   },
 
-  // Goals
+  learningGoal: {
+    type: String,
+    enum: ["career", "travel", "education", "personal"],
+    default: "personal",
+  },
+
+  dailyGoalMinutes: {
+    type: Number,
+    default: 15,
+  },
+
+  bio: {
+    type: String,
+    default: "",
+  },
+
   goals: [goalSchema],
 
-  // Assessment
   skillLevel: {
     type: String,
     enum: ["beginner", "intermediate", "advanced"],
@@ -70,23 +102,51 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
 
-  // Password Reset
-  resetPasswordToken: String,
-  resetPasswordExpire: Date,
+  resetPasswordToken: {
+    type: String,
+  },
+
+  resetPasswordExpire: {
+    type: Date,
+  },
 
   createdAt: {
     type: Date,
     default: Date.now,
   },
+
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-// Clean API responses globally
+//  FIXED: Update timestamp before saving (no next() needed)
+userSchema.pre('save', function() {
+  this.updatedAt = Date.now();
+});
+
+// Clean API responses - hide sensitive data
 userSchema.set("toJSON", {
   transform: (doc, ret) => {
     delete ret.password;
     delete ret.__v;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpire;
     return ret;
   },
 });
+
+userSchema.set("toObject", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpire;
+    return ret;
+  },
+});
+
+// Mongoose creates these automatically from unique: true and sparse: true
 
 export default mongoose.models.User || mongoose.model("User", userSchema);

@@ -14,6 +14,7 @@ import Assessment from "./pages/Assessment";
 import AssessmentResults from "./pages/AssessmentResults";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import GoogleCallback from "./pages/GoogleCallback";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
           <Route path="/assessment-results" element={<AssessmentResults />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/google/success" element={<GoogleCallback />} />
+
 
           {/* Protected Routes - After Login */}
           <Route path="/dashboard" element={<Dashboard />} />

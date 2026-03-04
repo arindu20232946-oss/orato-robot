@@ -5,6 +5,10 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
+import passport from 'passport';  //  NEW
+import session from 'express-session';  //  NEW
+import { configurePassport } from './config/passport.js';  //  NEW
+
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth-routes.js";
 import otpRoutes from "./routes/otpRoutes.js";
@@ -18,7 +22,9 @@ import protect from "./middleware/authMiddleware.js";
 // Initialize app
 const app = express();
 
-// Middleware
+// ===== MIDDLEWARE =====
+
+// CORS
 app.use(cors({
   origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true,
@@ -27,35 +33,72 @@ app.use(cors({
 }));
 app.options("*", cors());
 
+// Body parsers
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ===== NEW: SESSION MIDDLEWARE (Required by Passport) =====
+app.use(
+  session({
+    secret: process.env.JWT_SECRET || 'orato-session-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
+
+// ===== NEW: INITIALIZE PASSPORT =====
+app.use(passport.initialize());
+app.use(passport.session());
+
+// ===== NEW: CONFIGURE PASSPORT STRATEGIES =====
+configurePassport();
 
 // Connect DB
 connectDB();
 
-// SendEmail
+// Verify Email Config
 verifyEmailConfig();
 
-// Routes
+// ===== ROUTES =====
 app.use("/api/auth", authRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/assessment", assessmentRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/progress", progressRoutes);
+
+// Protected route test
 app.get("/api/protected", protect, (req, res) => {
   res.json({
     message: "Protected route working!",
     user: req.user,
   });
 });
-app.use("/api/settings", settingsRoutes);
-app.use("/api/progress", progressRoutes);
 
 // Test route
 app.get("/", (req, res) => {
-  res.send("Orato Backend Running");
+  res.send("Orato Backend Running with Google OAuth");
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something went wrong!" });
 });
 
 // Start server
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`\n✅ Server running on http://localhost:${PORT}`);
+  console.log(`✅ Frontend URL: ${process.env.FRONTEND_URL}`);
+  console.log(`✅ Google OAuth configured (Existing users only)`);
 });
