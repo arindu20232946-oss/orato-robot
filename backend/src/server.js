@@ -21,6 +21,8 @@ import progressRoutes from "./routes/progress-routes.js";
 import chatRoutes from "./routes/chat-routes.js";
 import { verifyEmailConfig } from "./services/emailService.js";
 import protect from "./middleware/authMiddleware.js";
+import dashboardRoutes from "./routes/dashboard-routes.js";
+import quizRoutes from "./routes/quiz-routes.js"
 
 console.log("Cloudinary Key:", process.env.CLOUDINARY_API_KEY);
 
@@ -76,6 +78,8 @@ app.use("/api/assessment", assessmentRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/quiz", quizRoutes);
 
 // Protected route test
 app.get("/api/protected", protect, (req, res) => {
