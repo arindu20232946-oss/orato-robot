@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
@@ -6,8 +6,15 @@ interface NavbarProps {
   isLoggedIn?: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
+const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check login status from localStorage
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token || propIsLoggedIn || false);
+  }, [propIsLoggedIn]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -29,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
         <div className="px-8 py-4">
           <div className="flex justify-between items-center">
 
-            {/* Logo - LARGER SIZE */}
+            {/* Logo */}
             <div className="flex items-center">
               <Link
                 to="/"
@@ -45,7 +52,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
               </Link>
             </div>
 
-            {/* Navigation Links */}
+            {/* Navigation Links - ALL VISIBLE TO EVERYONE */}
             <ul
               className={`
                 hidden md:flex md:items-center md:gap-6
@@ -53,26 +60,35 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                 ${isMobileMenuOpen ? 'flex flex-col bg-white w-full left-0 top-[80px] p-6 shadow-md rounded-b-2xl' : ''}
               `}
             >
+              {/* Home - Always visible */}
               <li>
                 <NavLink to="/" className={navLinkClass} onClick={closeMobileMenu}>
                   Home
                 </NavLink>
               </li>
+
+              {/* Dashboard - Visible to everyone */}
               <li>
                 <NavLink to="/dashboard" className={navLinkClass} onClick={closeMobileMenu}>
                   Dashboard
                 </NavLink>
               </li>
+
+              {/* Progress - Visible to everyone */}
               <li>
                 <NavLink to="/progress" className={navLinkClass} onClick={closeMobileMenu}>
                   Progress
                 </NavLink>
               </li>
+
+              {/* Settings - Visible to everyone */}
               <li>
                 <NavLink to="/setting" className={navLinkClass} onClick={closeMobileMenu}>
                   Settings
                 </NavLink>
               </li>
+
+              {/* About Us - Always visible */}
               <li>
                 <NavLink to="/about" className={navLinkClass} onClick={closeMobileMenu}>
                   About Us
@@ -88,11 +104,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                   to="/account"
                   className={({ isActive }) =>
                     `flex items-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 no-underline
-       hover:bg-green-100 hover:scale-105 hover:shadow-md
-       ${isActive
-                      ? "text-green-600 font-semibold bg-green-50"
-                      : "text-gray-700"
-                    }`
+                     hover:bg-green-100 hover:scale-105 hover:shadow-md
+                     ${isActive ? "text-green-600 font-semibold bg-green-50" : "text-gray-700"}`
                   }
                   onClick={closeMobileMenu}
                 >
@@ -112,7 +125,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
               ) : (
                 <Link
                   to="/signin"
-                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-bold text-base transition shadow-md hover:shadow-lg"
+                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-bold text-base transition shadow-md hover:shadow-lg no-underline"
+                  onClick={closeMobileMenu}
                 >
                   Login
                 </Link>

@@ -1,25 +1,35 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import welcomeBg from "../assets/welcome-bg.jpg";
 import ctaImage from "../assets/cta-image.jpg";
 
 const Home = () => {
+  const isLandingPageMode = false; // Set to true for marketing landing page mode
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <div className="min-h-screen">
       
-      {/* Use existing Navbar component */}
-      <Navbar isLoggedIn={false} />
+      {/* CONDITIONAL: Only show Navbar in website mode */}
+      {!isLandingPageMode && <Navbar isLoggedIn={isLoggedIn} />}
 
       {/* Welcome Section with Background Image */}
       <div 
         className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center"
         style={{ backgroundImage: `url(${welcomeBg})` }}
       >
-        {/* Gradient Overlay - Stronger on right, transparent on left */}
+        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/50 to-black/70"></div>
         
-        {/* Content Container - Positioned on RIGHT side */}
+        {/* Content Container */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8">
           <div className="ml-auto max-w-2xl">
             
@@ -46,13 +56,13 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-400">
                 <Link
                   to="/signup"
-                  className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-base hover:from-green-600 hover:to-emerald-700 transition-all shadow-2xl hover:shadow-green-500/50 hover:scale-105 text-center"
+                  className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-base hover:from-green-600 hover:to-emerald-700 transition-all shadow-2xl hover:shadow-green-500/50 hover:scale-105 text-center no-underline"
                 >
                   Get Started Free
                 </Link>
                 <Link
                   to="/signin"
-                  className="px-8 py-3 bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 rounded-xl font-bold text-base hover:bg-white/30 transition-all shadow-2xl hover:scale-105 text-center"
+                  className="px-8 py-3 bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 rounded-xl font-bold text-base hover:bg-white/30 transition-all shadow-2xl hover:scale-105 text-center no-underline"
                 >
                   Sign In
                 </Link>
@@ -651,7 +661,7 @@ const Home = () => {
               {/* CTA Button */}
               <Link
                 to="/signup"
-                className="inline-flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-2xl hover:shadow-green-500/50 hover:scale-105"
+                className="inline-flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-2xl hover:shadow-green-500/50 hover:scale-105 no-underline"
               >
                 <span>Begin Your Journey</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -687,8 +697,8 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Use existing Footer component */}
-      <Footer />
+      {/* CONDITIONAL: Only show Footer in website mode */}
+      {!isLandingPageMode && <Footer />}
 
     </div>
   );
