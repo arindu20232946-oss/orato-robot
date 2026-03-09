@@ -1,49 +1,10 @@
-// Generate feedback for the user's sentence
-const getCoachReply = (userText) => {
-  const text = (userText || "").trim();
+import OpenAI from "openai";
 
-  // If user didn't say anything
-  if (!text) {
-    return "Say something in English and I will help you practice.";
-  }
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-  const tips = [];
-
-  // Check common mistake: "I am go"
-  if (/\\bi am go\\b/i.test(text)) {
-    tips.push('Try: "I am going"');
-  }
-
-  // Check "he go"
-  if (/\\bhe go\\b/i.test(text)) {
-    tips.push('Try: "He goes"');
-  }
-
-  // Check "she go"
-  if (/\\bshe go\\b/i.test(text)) {
-    tips.push('Try: "She goes"');
-  }
-
-  // Check past tense with yesterday
-  if (/\\byesterday\\b/i.test(text) && /\\bgo\\b/i.test(text)) {
-    tips.push('Because you used "yesterday", use past tense: "went"');
-  }
-
-  const praise = "Nice! Your sentence is understandable.";
-  const question = "Tell me more about that. Why do you think so?";
-
-  // If we found mistakes, return corrections
-  if (tips.length > 0) {
-    return `${praise}\n\nSmall correction(s):\n- ${tips.join("\n- ")}\n\n${question}`;
-  }
-
-  // Otherwise just continue conversation
-  return `${praise}\n\n${question}`;
-};
-
-
-// API controller for speaking coach
-const chatWithSpeakingCoach = async (req, res) => {
+export const chatWithSpeakingCoach = async (req, res) => {
   try {
     const { message } = req.body;
 
@@ -55,27 +16,32 @@ const chatWithSpeakingCoach = async (req, res) => {
       });
     }
 
-    // Generate reply
-    const reply = getCoachReply(message);
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a friendly English speaking coach. Correct grammar briefly, explain simply, and ask one short follow-up question. Keep replies short and clear for learners.",
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+    });
 
     // Send response to frontend
     return res.status(200).json({
       success: true,
       userMessage: message,
-      coachReply: reply,
+      coachReply: response.choices[0].message.content,
     });
-
   } catch (error) {
-    console.error("Speaking coach error:", error);
-
+    console.error("Speaking coach AI error:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error while generating coach reply.",
+      message: "Failed to get AI coach reply.",
     });
   }
-};
-
-// Export controller
-module.exports = {
-  chatWithSpeakingCoach,
 };
