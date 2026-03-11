@@ -19,18 +19,20 @@ export const chatWithSpeakingCoach = async (req, res) => {
       });
     }
 
+    const conversationContext = [
+      {
+        role: "system",
+        content: COACH_SYSTEM_PROMPT,
+      },
+      {
+        role: "user",
+        content: message,
+      },
+    ];
+
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: COACH_SYSTEM_PROMPT,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
+      messages: conversationContext,
     });
 
     // Send response to frontend
