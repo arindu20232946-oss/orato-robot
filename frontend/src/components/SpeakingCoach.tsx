@@ -39,6 +39,11 @@ function speak(text: string) {
   window.speechSynthesis.speak(u);
 }
 
+/**
+ * SpeakingCoach Component
+ * Provide an interactive chat interface for users to converse with an AI english speaking coach.
+ * Supports native Web Speech API listening for browsers that support it, with a graceful text fallback.
+ */
 function SpeakingCoach() {
   const recognition = useMemo(() => getRecognition(), []);
   const [supported, setSupported] = useState(true);
