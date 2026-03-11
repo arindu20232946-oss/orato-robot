@@ -11,7 +11,7 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("http://localhost:5002/api/auth/login", {
         email,
         password,
       });
@@ -23,7 +23,7 @@ const Login: React.FC = () => {
 
       // Save user info (IMPORTANT for navbar)
       localStorage.setItem("user", JSON.stringify(data));
-      
+
       window.location.href = "/dashboard";
     } catch (error) {
       console.error("Login failed", error);
