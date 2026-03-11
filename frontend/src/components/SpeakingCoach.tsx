@@ -12,6 +12,10 @@ declare global {
   }
 }
 
+/**
+ * Initializes the browser's native Web Speech API.
+ * Returns null if the browser does not support it (e.g., non-Chrome/Edge browsers).
+ */
 function getRecognition(): any | null {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return null;
