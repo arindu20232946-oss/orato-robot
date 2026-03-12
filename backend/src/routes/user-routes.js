@@ -8,7 +8,8 @@ import {
   updateUser,
   deleteUser,
   getProfile,
-  updateProfile
+  updateProfile,
+  removeProfilePicture
 } from "../controllers/user-controller.js";
 import upload from "../middleware/upload.js";
 import cloudinary from "../config/cloudinary.js";
@@ -85,6 +86,8 @@ router.post(
     }
   }
 );
+
+router.delete("/upload-profile-picture", protect, removeProfilePicture);
 
 /* ================= ADMIN CRUD ================= */
 /* Keep parameter routes ALWAYS at bottom */

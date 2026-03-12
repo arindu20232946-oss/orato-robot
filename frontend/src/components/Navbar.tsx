@@ -9,11 +9,37 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
+  const [userInitials, setUserInitials] = useState("U");
 
-  // Check login status from localStorage
-  useEffect(() => {
-    const token = localStorage.getItem('token');
+  // Sync state from localStorage
+  const syncFromStorage = () => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
     setIsLoggedIn(!!token || propIsLoggedIn || false);
+
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      const fullName = parsedUser.fullName || "";
+      const firstName = fullName.split(".").pop()?.trim().split(" ")[0] || "User";
+      const initials = fullName
+        ? fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+        : "U";
+
+      setUserName(firstName);
+      setUserAvatar((parsedUser.profilePicture && parsedUser.profilePicture.trim() !== "") ? parsedUser.profilePicture : "");
+      setUserInitials(initials);
+    }
+  };
+
+  useEffect(() => {
+    syncFromStorage();
+
+    // Re-sync when another tab/page mutates localStorage
+    window.addEventListener("storage", syncFromStorage);
+    return () => window.removeEventListener("storage", syncFromStorage);
   }, [propIsLoggedIn]);
 
   const toggleMobileMenu = () => {
@@ -26,13 +52,13 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
 
   // Active link styling
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `font-medium transition-all py-2 px-4 block no-underline rounded-lg
-     hover:bg-green-100 hover:scale-105 hover:shadow-md
-     ${isActive ? 'text-green-600 font-semibold bg-green-50' : 'text-gray-700'}`;
+    `font-medium transition-all duration-200 py-2 px-4 block no-underline rounded-lg
+   hover:bg-green-100 hover:scale-105 hover:shadow-md
+   ${isActive ? 'text-green-600 font-semibold bg-green-50' : 'text-gray-700'}`;
 
   return (
     <nav className="sticky top-4 z-50 w-full px-4 sm:px-6 lg:px-8">
-      <div className="bg-white/80 backdrop-blur-md border border-green-100 shadow-lg rounded-2xl transition-all max-w-7xl mx-auto">
+      <div className="bg-white/60 backdrop-blur-md border border-green-100 shadow-lg rounded-2xl transition-all max-w-7xl mx-auto">
         <div className="px-8 py-4">
           <div className="flex justify-between items-center">
 
@@ -109,18 +135,21 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
                   }
                   onClick={closeMobileMenu}
                 >
-                  <svg
-                    width="20"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                  <span className="font-medium hidden md:inline">Account</span>
+                  {userAvatar ? (
+                    <img
+                      src={userAvatar}
+                      alt="profile"
+                      className="w-9 h-9 rounded-full object-cover border-2 border-green-500"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-semibold border-2 border-green-500 shrink-0">
+                      {userInitials}
+                    </div>
+                  )}
+
+                  <span className="font-semibold hidden md:inline">
+                    {userName}
+                  </span>
                 </NavLink>
               ) : (
                 <Link

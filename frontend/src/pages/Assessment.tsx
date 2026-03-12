@@ -154,7 +154,13 @@ const Assessment = () => {
   }
 
   const currentQuestion = questions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+  
+  // ===== FIXED PROGRESS CALCULATION =====
+  // Calculate progress based on ANSWERED questions, not current question index
+  const answeredCount = Object.keys(answers).length;
+  const stepProgress = (answeredCount / questions.length) * 100; // 0-100%
+  const overallProgress = 66 + (stepProgress / 100) * 34; // 66% + (0-34%) = 66-100%
+  
   const selectedAnswer = answers[currentQuestion?.questionId];
 
   return (
@@ -165,12 +171,12 @@ const Assessment = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-600">Progress</span>
-            <span className="text-sm font-medium text-green-600">{Math.round(progress)}%</span>
+            <span className="text-sm font-medium text-green-600">{Math.round(overallProgress)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
             <div
               className="bg-green-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              style={{ width: `${overallProgress}%` }}
             ></div>
           </div>
           <div className="flex justify-between items-center">

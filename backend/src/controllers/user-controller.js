@@ -1,5 +1,6 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "../config/cloudinary.js";
 
 /* =======================================================
    PUBLIC / ADMIN CRUD (Optional - keep if needed)
@@ -157,5 +158,36 @@ export const getGoals = async (req, res) => {
     res.json(user.goals);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch goals" });
+  }
+};
+
+// ✅ Remove profile picture
+export const removeProfilePicture = async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (user.profilePicture) {
+      // Extract Cloudinary public_id and delete the image
+      const urlParts = user.profilePicture.split("/");
+      const filenameWithExt = urlParts[urlParts.length - 1];
+      const filename = filenameWithExt.split(".")[0];
+      const publicId = `profile_pictures/${filename}`;
+
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    user.profilePicture = "";
+    await user.save();
+
+    const { password, ...safeUser } = user.toObject();
+
+    res.json({
+      success: true,
+      message: "Profile picture removed",
+      user: safeUser,
+    });
+  } catch (error) {
+    console.error("Remove profile picture error:", error);
+    res.status(500).json({ success: false, message: "Failed to remove profile picture" });
   }
 };

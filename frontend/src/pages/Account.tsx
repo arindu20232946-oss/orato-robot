@@ -42,11 +42,16 @@ const Account: React.FC = () => {
     }
   }, []);
 
-  // PROFILE PICTURE UPLOAD HANDLER
+  // Write user to localStorage AND notify same-tab listeners (e.g. Navbar)
+  const setUserStorage = (updatedUser: any) => {
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    window.dispatchEvent(new Event("storage"));
+  };
+
   const handleImageUpload = async (file: File) => {
     // 1️⃣ File size validation (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be under 5MB");
+      toast.error("Image must be under 10MB");
       return;
     }
 
@@ -65,7 +70,7 @@ const Account: React.FC = () => {
 
       // Update state + localStorage
       setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUserStorage(updatedUser);
 
       toast.success("Profile picture updated successfully!");
 
@@ -75,9 +80,28 @@ const Account: React.FC = () => {
       if (error?.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {
-        toast.error("Image must be under 5MB");
+        toast.error("Image must be under 10MB");
       }
 
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveProfilePicture = async () => {
+    try {
+      setUploading(true);
+
+      const response = await API.delete("/users/upload-profile-picture");
+      const updatedUser = response.data.user;
+
+      setUser(updatedUser);
+      setUserStorage(updatedUser);
+
+      toast.success("Profile picture removed!");
+    } catch (error: any) {
+      console.error("Remove profile picture error:", error?.response?.data || error);
+      toast.error("Failed to remove profile picture. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -107,17 +131,16 @@ const Account: React.FC = () => {
         <main className="max-w-6xl mx-auto px-4 py-10 space-y-8">
 
           {/* HEADER */}
-          <div className="pb-6 mb-8 border-b border-gray-200">
-
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
-              Account
+          <div className="pb-6 mb-2">
+            <p className="text-xs font-semibold uppercase tracking-widest text-emerald-600 mb-1">My Account</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              Profile & Settings
             </h1>
-
-            <p className="mt-2 text-gray-500 text-lg">
-              Manage your profile and learning preferences
+            <p className="mt-1.5 text-gray-400 text-base">
+              Manage your profile, goals, and learning preferences
             </p>
-
           </div>
+
 
           {/* PROFILE Section */}
           <ProfileSection
@@ -125,6 +148,7 @@ const Account: React.FC = () => {
             uploading={uploading}
             initials={initials}
             onImageUpload={handleImageUpload}
+            onRemoveImage={handleRemoveProfilePicture}
             onEditClick={() => setIsEditOpen(true)}
           />
 
@@ -139,7 +163,6 @@ const Account: React.FC = () => {
             goals={goals}
             onOpenAddGoal={() => setIsAddGoalOpen(true)}
             onEditGoal={(goal) => setEditingGoal(goal)}
-            setGoals={setGoals}
           />
 
           {/* ACHIEVEMENT BADGES */}

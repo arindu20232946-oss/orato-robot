@@ -1,30 +1,36 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
-
-/**
- * Personal Information Page - Step 2 of Registration
- * Collects: Age, Native Language, Target Language, Learning Goal, Daily Goal
- */
 
 const PersonalInfo = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get user data from Step 1 (SignUp page)
   const userData = location.state || {};
 
-  // Form state
   const [age, setAge] = useState("");
   const [nativeLanguage, setNativeLanguage] = useState("");
   const [targetLanguage, setTargetLanguage] = useState("English");
   const [learningGoal, setLearningGoal] = useState("");
   const [dailyGoalMinutes, setDailyGoalMinutes] = useState(15);
 
+  // ===== DYNAMIC PROGRESS CALCULATION =====
+  // Step 2 progress: 33% to 66% (of total 3 steps)
+  const stepProgress = useMemo(() => {
+    let filledFields = 0;
+    if (age.trim().length > 0) filledFields++;
+    if (nativeLanguage.length > 0) filledFields++;
+    if (targetLanguage.length > 0) filledFields++; // Always has default
+    if (learningGoal.length > 0) filledFields++;
+    if (dailyGoalMinutes > 0) filledFields++; // Always has default
+    
+    const stepCompletion = (filledFields / 5) * 100; // 0-100% within this step
+    return 33 + (stepCompletion / 100) * 33; // 33% + (0-33%) = 33-66%
+  }, [age, nativeLanguage, targetLanguage, learningGoal, dailyGoalMinutes]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (!age || parseInt(age) < 5 || parseInt(age) > 100) {
       alert("Please enter a valid age (5-100)");
       return;
@@ -40,7 +46,6 @@ const PersonalInfo = () => {
       return;
     }
 
-    // Combine data from Step 1 and Step 2
     const completeData = {
       ...userData,
       age: parseInt(age),
@@ -51,8 +56,6 @@ const PersonalInfo = () => {
     };
 
     console.log("Personal info collected:", completeData);
-
-    // Navigate to Step 3: Assessment
     navigate("/assessment", { state: completeData });
   };
 
@@ -69,14 +72,17 @@ const PersonalInfo = () => {
           <img src={logo} alt="Orato Logo" className="w-20 h-20 rounded-xl shadow-md" />
         </div>
 
-        {/* Progress Bar */}
+        {/* Progress Bar - DYNAMIC */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-600">Progress</span>
-            <span className="text-sm font-medium text-green-600">60%</span>
+            <span className="text-sm font-medium text-green-600">{Math.round(stepProgress)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-green-600 h-2 rounded-full transition-all duration-300" style={{ width: '60%' }}></div>
+            <div 
+              className="bg-green-600 h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${stepProgress}%` }}
+            ></div>
           </div>
           <div className="flex justify-between mt-2">
             <span className="text-xs text-gray-500">Step 2 of 3</span>

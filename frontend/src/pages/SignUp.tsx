@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 
@@ -6,7 +6,6 @@ const SignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // If coming back from personal-info, restore previous data
   const previousData = location.state || {};
   
   const [fullName, setFullName] = useState(previousData.fullName || "");
@@ -14,12 +13,23 @@ const SignUp = () => {
   const [password, setPassword] = useState(previousData.password || "");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Password visibility toggles
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // ===== DYNAMIC PROGRESS CALCULATION =====
+  // Step 1 progress: 0% to 33% (of total 3 steps)
+  const stepProgress = useMemo(() => {
+    let filledFields = 0;
+    if (fullName.trim().length > 0) filledFields++;
+    if (email.trim().length > 0) filledFields++;
+    if (password.length > 0) filledFields++;
+    if (confirmPassword.length > 0) filledFields++;
+    
+    const stepCompletion = (filledFields / 4) * 100; // 0-100% within this step
+    return (stepCompletion / 100) * 33; // Convert to 0-33% of total
+  }, [fullName, email, password, confirmPassword]);
+
   // ===== PASSWORD STRENGTH VALIDATION =====
-  // Function to check password strength
   const validatePassword = (pwd: string) => {
     const checks = {
       length: pwd.length >= 6,
@@ -32,15 +42,13 @@ const SignUp = () => {
     
     return {
       checks,
-      strength, // 0-4
+      strength,
       isValid: checks.length && checks.uppercase && checks.lowercase && checks.special
     };
   };
 
-  // Get current password validation status
   const passwordValidation = validatePassword(password);
 
-  // Get strength label and color
   const getStrengthInfo = () => {
     if (password.length === 0) return { label: "", color: "" };
     
@@ -58,19 +66,16 @@ const SignUp = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    //  PASSWORD STRENGTH VALIDATION
     if (!passwordValidation.isValid) {
       alert("Password must include:\n- At least 6 characters\n- One uppercase letter\n- One lowercase letter\n- One special character");
       return;
     }
 
-    // Validation: Check if passwords match
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
-    // Collect Step 1 data
     const userData = {
       fullName,
       email,
@@ -78,8 +83,6 @@ const SignUp = () => {
     };
 
     console.log("Step 1 data collected:", userData);
-
-    // Navigate to Step 2: Personal Information
     navigate("/personal-info", { state: userData });
   };
 
@@ -87,14 +90,17 @@ const SignUp = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         
-        {/* Progress Bar */}
+        {/* Progress Bar - DYNAMIC */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-600">Progress</span>
-            <span className="text-sm font-medium text-green-600">30%</span>
+            <span className="text-sm font-medium text-green-600">{Math.round(stepProgress)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-green-600 h-2 rounded-full transition-all duration-300" style={{ width: '30%' }}></div>
+            <div 
+              className="bg-green-600 h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${stepProgress}%` }}
+            ></div>
           </div>
           <div className="flex justify-between mt-2">
             <span className="text-xs text-gray-500">Step 1 of 3</span>
@@ -152,7 +158,7 @@ const SignUp = () => {
             />
           </div>
 
-          {/* ===== PASSWORD WITH STRENGTH INDICATOR ===== */}
+          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password <span className="text-red-500">*</span>
@@ -166,7 +172,6 @@ const SignUp = () => {
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 required
               />
-              {/* Eye Icon */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -186,10 +191,8 @@ const SignUp = () => {
               </button>
             </div>
 
-            {/*  PASSWORD STRENGTH INDICATOR */}
             {password.length > 0 && (
               <div className="mt-2">
-                {/* Strength Badge */}
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xs font-medium text-gray-600">Strength:</span>
                   <span className={`text-xs font-bold px-2 py-1 rounded border ${strengthInfo.color}`}>
@@ -197,7 +200,6 @@ const SignUp = () => {
                   </span>
                 </div>
 
-                {/* Requirements Checklist */}
                 <div className="space-y-1 text-xs">
                   <div className={`flex items-center gap-2 ${passwordValidation.checks.length ? 'text-green-600' : 'text-gray-500'}`}>
                     <span>{passwordValidation.checks.length ? '✓' : '○'}</span>
@@ -252,7 +254,6 @@ const SignUp = () => {
                 )}
               </button>
             </div>
-            {/* Password Match Indicator */}
             {confirmPassword.length > 0 && (
               <div className={`mt-1 text-xs ${password === confirmPassword ? 'text-green-600' : 'text-red-600'}`}>
                 {password === confirmPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
