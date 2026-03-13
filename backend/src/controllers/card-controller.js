@@ -1,4 +1,4 @@
-import Card from '../models/card.js';
+import Card from '../models/Card.js';
 
 // @desc    Get 10 random vocabulary cards
 // @route   GET /api/cards/random
