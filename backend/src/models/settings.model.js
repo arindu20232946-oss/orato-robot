@@ -16,13 +16,16 @@ const settingsSchema = new mongoose.Schema(
         },
         audioDisplay: {
             soundEffects: { type: Boolean, default: true },
-            darkMode: { type: Boolean, default: false },
             playbackSpeed: {
                 type: String,
                 enum: ['0.5x (Slow)', '0.75x', '1.0x (Normal)', '1.25x', '1.5x', '2.0x (Fast)'],
                 default: '1.0x (Normal)',
             },
         },
+        // Synchronized with User model
+        nativeLanguage: { type: String, default: 'Sinhala' },
+        skillLevel: { type: String, enum: ['beginner', 'intermediate', 'advanced'], default: 'beginner' },
+        dailyGoalMinutes: { type: Number, default: 15 },
     },
     { timestamps: true }
 );

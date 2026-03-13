@@ -32,7 +32,7 @@ console.log("Cloudinary Key:", process.env.CLOUDINARY_API_KEY);
 // Initialize app
 const app = express();
 
-// ===== MIDDLEWARE =====
+// MIDDLEWARE 
 
 // CORS
 app.use(cors({
@@ -47,7 +47,7 @@ app.options("*", cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ===== NEW: SESSION MIDDLEWARE (Required by Passport) =====
+// NEW: SESSION MIDDLEWARE (Required by Passport)
 app.use(
   session({
     secret: process.env.JWT_SECRET || 'orato-session-secret',
@@ -60,11 +60,11 @@ app.use(
   })
 );
 
-// ===== NEW: INITIALIZE PASSPORT =====
+// NEW: INITIALIZE PASSPORT
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ===== NEW: CONFIGURE PASSPORT STRATEGIES =====
+// NEW: CONFIGURE PASSPORT STRATEGIES
 configurePassport();
 
 // Connect DB
@@ -73,7 +73,11 @@ connectDB();
 // Verify Email Config
 verifyEmailConfig();
 
-// ===== ROUTES =====
+// Initialize Cron Jobs
+import { initCronJobs } from "./services/cronJobs.js";
+initCronJobs();
+
+// ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/users", userRoutes);

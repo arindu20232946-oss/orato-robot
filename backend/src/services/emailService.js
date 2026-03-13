@@ -480,6 +480,218 @@ Contact Support: orato.platform@gmail.com
 };
 
 /**
+ * Send English Proficiency Level Upgrade Notification
+ * @param {string} email - Recipient email address
+ * @param {string} userName - User's full name
+ * @param {string} newLevel - The new skill level
+ */
+export const sendLevelUpEmail = async (email, userName, newLevel) => {
+  try {
+    const mailOptions = {
+      from: "orato.platform@gmail.com",
+      to: email,
+      subject: "Level Up! Congratulations 🏆",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 10px; }
+            .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: white; padding: 30px; border-radius: 0 0 10px 10px; text-align: center; }
+            .level-box { font-size: 24px; font-weight: bold; color: #10b981; padding: 15px; border: 2px dashed #10b981; border-radius: 10px; margin: 20px 0; display: inline-block;}
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎓 Orato</h1>
+              <p>English Proficiency Level Upgrade Notification</p>
+            </div>
+            <div class="content">
+              <h2>Hi ${userName}! 👋</h2>
+              <h3>Congratulations! You are now on the next level.</h3>
+              <p>Your dedication is paying off. Keep up the great work!</p>
+              
+              <div class="level-box">
+                Level: ${newLevel ? newLevel.charAt(0).toUpperCase() + newLevel.slice(1) : 'Advanced'}
+              </div>
+              
+              <p>Ready for more complex challenges? Log in to discover new exercises tailored for your level.</p>
+              <br/>
+              <p><strong>The Orato Team</strong></p>
+            </div>
+            <div class="footer">
+              <p>This is an automated message, please do not reply to this email.</p>
+              <p>&copy; 2026 Orato Platform. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `
+Hi ${userName}! 👋
+
+Congratulations! You are now on the next level. 
+Level: ${newLevel ? newLevel.charAt(0).toUpperCase() + newLevel.slice(1) : 'Advanced'}
+
+Your dedication is paying off. Keep up the great work!
+
+The Orato Team
+      `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Level up email sent to ${email}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("❌ Level up email failed:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Send Daily Reminder Email
+ * @param {string} email - Recipient email address
+ * @param {string} userName - User's full name
+ */
+export const sendDailyReminderEmail = async (email, userName) => {
+  try {
+    const mailOptions = {
+      from: "orato.platform@gmail.com",
+      to: email,
+      subject: "Orato Daily Reminder ⏰",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 10px; }
+            .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: white; padding: 30px; border-radius: 0 0 10px 10px; text-align: center; }
+            .button { display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎓 Orato</h1>
+              <p>Daily Learning Reminder</p>
+            </div>
+            <div class="content">
+              <h2>Hi ${userName || 'Learner'},</h2>
+              <h3>Get ready to English training.</h3>
+              <p>It's time for your daily practice. Just a few minutes a day helps build lasting fluency.</p>
+              
+              <a href="http://localhost:5173/dashboard" class="button">Start Learning</a>
+              
+              <p>We are waiting for you!</p>
+              <br/>
+              <p><strong>The Orato Team</strong></p>
+            </div>
+            <div class="footer">
+              <p>This is an automated message, please do not reply to this email.</p>
+              <p>&copy; 2026 Orato Platform. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `
+Hi ${userName || 'Learner'},
+
+Get ready to English training.
+It's time for your daily practice! Just a few minutes a day helps build lasting fluency.
+
+Start learning now: http://localhost:5173/dashboard
+
+The Orato Team
+      `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Daily reminder email sent to ${email}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("❌ Daily reminder email failed:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Send Weekly Progress Update Email
+ * @param {string} email - Recipient email address
+ * @param {string} userName - User's full name
+ */
+export const sendWeeklyProgressEmail = async (email, userName) => {
+  try {
+    const mailOptions = {
+      from: "orato.platform@gmail.com",
+      to: email,
+      subject: "Your Weekly Progress Report 📊",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 10px; }
+            .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: white; padding: 30px; border-radius: 0 0 10px 10px; text-align: center; }
+            .button { display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎓 Orato</h1>
+              <p>Weekly Progress Updates</p>
+            </div>
+            <div class="content">
+              <h2>Hi ${userName || 'Learner'},</h2>
+              <h3>The weekly summary report is ready.</h3>
+              <p>Check out your stats and progress from the past 7 days. Consistency is key to mastery!</p>
+              
+              <a href="http://localhost:5173/dashboard" class="button">View My Report</a>
+              
+              <br/>
+              <p><strong>The Orato Team</strong></p>
+            </div>
+            <div class="footer">
+              <p>This is an automated message, please do not reply to this email.</p>
+              <p>&copy; 2026 Orato Platform. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `
+Hi ${userName || 'Learner'},
+
+The weekly summary report is ready. 
+Check out your stats and progress from the past 7 days to see how far you've come!
+
+View your report on the dashboard: http://localhost:5173/dashboard
+
+The Orato Team
+      `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Weekly progress email sent to ${email}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("❌ Weekly progress email failed:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
  * Verify email configuration on server startup
  */
 export const verifyEmailConfig = async () => {
