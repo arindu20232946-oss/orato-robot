@@ -2,30 +2,27 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Clock, ChevronRight, PlayCircle, BookOpen, BookMarked } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { dashboardService } from '../services/dashboardService';
 
 interface Lesson {
-  id: number;
+  id: number | string;
   title: string;
   timeLeft: string;
   progress: number;
   icon: string;
   iconBg: string;
+  isGrammar?: boolean;
+  completedLevels?: number;
+  totalLevels?: number;
+  points?: number;
 }
 
-const lessons: Lesson[] = [
-  {
-    id: 1,
-    title: 'English Grammar: Present Tense',
-    timeLeft: '15 min left',
-    progress: 75,
-    icon: '📚',
-    iconBg: 'bg-green-200',
-  },
+const defaultLessons: Lesson[] = [
   {
     id: 2,
     title: 'English Pronunciation Basics',
     timeLeft: '25 min left',
-    progress: 40,
+    progress: 0,
     icon: '🗣️',
     iconBg: 'bg-purple-100',
   },
@@ -33,7 +30,7 @@ const lessons: Lesson[] = [
     id: 3,
     title: 'English Vocabulary: Daily Life',
     timeLeft: '5 min left',
-    progress: 90,
+    progress: 0,
     icon: '📖',
     iconBg: 'bg-blue-100',
   },
@@ -41,14 +38,14 @@ const lessons: Lesson[] = [
     id: 4,
     title: 'Visual Vocabulary Cards',
     timeLeft: '10 min left',
-    progress: 30,
+    progress: 0,
     icon: '🃏',
     iconBg: 'bg-yellow-100',
   },
 ];
 
 interface ContinueLearningProps {
-  onLessonClick?: (lessonId: number, lessonTitle: string) => void;
+  onLessonClick?: (lessonId: number | string, lessonTitle: string) => void;
 }
 
 export default function ContinueLearning({ onLessonClick }: ContinueLearningProps = {}) {
@@ -56,8 +53,31 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
   const quizBtnRef = useRef<HTMLButtonElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<number | string | null>(null);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const displayedLessons = lessons.length > 0 ? lessons : defaultLessons;
+
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+        const res = await dashboardService.getContinueLearning();
+        if (res.data?.lessons) {
+          const filteredLessons = res.data.lessons.filter(
+            (lesson: Lesson) => !lesson.isGrammar && !lesson.title?.toLowerCase().includes('grammar')
+          );
+          setLessons(filteredLessons);
+        }
+      } catch (error) {
+        console.error('Failed to fetch lessons:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLessons();
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -67,21 +87,35 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
         { scale: 1, opacity: 1, duration: 0.6, ease: "expo.out" },
       );
 
-      gsap.fromTo(
-        quizBtnRef.current,
-        { scale: 0, opacity: 0 },
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.5,
-          delay: 0.3,
-          ease: "elastic.out(1, 0.5)",
-        },
-      );
+      if (!loading) {
+        gsap.fromTo(
+          quizBtnRef.current,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            delay: 0.3,
+            ease: "elastic.out(1, 0.5)",
+          },
+        );
+
+        progressRefs.current.forEach((progressBar, index) => {
+          if (progressBar) {
+            const lesson = displayedLessons[index];
+            gsap.to(progressBar, {
+              width: `${lesson.progress}%`,
+              duration: 0.8,
+              delay: 0.1 * index,
+              ease: "power2.out",
+            });
+          }
+        });
+      }
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [loading]);
 
   const handleQuizClick = () => {
     gsap.to(quizBtnRef.current, {
@@ -96,6 +130,22 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
   const handleReadingClick = () => {
     navigate("/reading");
   };
+
+  const handleLessonClick = (lesson: Lesson) => {
+    onLessonClick?.(lesson.id, lesson.title);
+  };
+
+  if (loading) {
+    return (
+      <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
+        <div className="animate-pulse space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-24 bg-gray-100 rounded-xl"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
@@ -112,7 +162,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
 
       {/* Lessons List */}
       <div className="space-y-4">
-        {lessons.map((lesson, index) => {
+        {displayedLessons.map((lesson, index) => {
           const isHovered = hoveredId === lesson.id;
 
           return (
@@ -124,6 +174,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
               }`}
               onMouseEnter={() => setHoveredId(lesson.id)}
               onMouseLeave={() => setHoveredId(null)}
+              onClick={() => handleLessonClick(lesson)}
             >
               <div className="flex items-start gap-4">
                 {/* Icon */}
@@ -171,7 +222,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      onLessonClick?.(lesson.id, lesson.title);
+                      handleLessonClick(lesson);
                     }}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                       isHovered
@@ -180,7 +231,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
                     }`}
                   >
                     <PlayCircle className="w-4 h-4" />
-                    Continue
+                    Start
                   </button>
                 </div>
               </div>

@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
   const mainRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
 
-  const handleLessonClick = (_lessonId: number, lessonTitle: string) => {
+  const handleLessonClick = (_lessonId: string | number, lessonTitle: string) => {
     if (lessonTitle === 'Visual Vocabulary Cards') {
       navigate('/visual-cards');
     }

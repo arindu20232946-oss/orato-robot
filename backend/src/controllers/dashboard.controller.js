@@ -3,6 +3,7 @@ import Lesson from '../models/lesson.js';
 import Challenge from '../models/challenge.js';
 import Skill from '../models/skill.js';
 import Achievement from '../models/achievement.js';
+import GrammarProgress from '../models/grammarProgress.js';
 
 /**
  * Get full dashboard data
@@ -60,15 +61,28 @@ export const getDashboard = async (req, res) => {
  */
 export const getStats = async (req, res) => {
   try {
-    const stats = req.user.stats;
-
-    if (!stats) {
-      return res.status(404).json({ status: 'error', message: 'Stats not found' });
-    }
+    const user = req.user;
+    
+    const stats = user.stats || {
+      dayStreak: 0,
+      streakChange: 0,
+      totalPoints: 0,
+      rankPercentile: 0,
+      badgesEarned: 0,
+      badgesToNextLevel: 5,
+      lessonsDone: 0,
+      lessonsThisWeek: 0,
+      lastStreakUpdate: new Date()
+    };
 
     res.status(200).json({
       status: 'success',
-      data: { stats }
+      data: { 
+        stats: {
+          ...stats,
+          lessonsDone: stats.lessonsDone || 0
+        }
+      }
     });
   } catch (error) {
     console.error('Get stats error:', error);
@@ -83,17 +97,41 @@ export const getStats = async (req, res) => {
 export const getContinueLearning = async (req, res) => {
   try {
     const userId = req.user._id;
+    const skillLevel = req.user.skillLevel || 'beginner';
+    
     const lessons = await Lesson.find({ userId }).sort({ order: 1 });
+    
+    const grammarProgress = await GrammarProgress.findOne({ userId, skillLevel });
+    const completedGrammarLevels = grammarProgress?.completedLevels?.length || 0;
+    const totalGrammarLevels = 10;
+    const grammarProgressPercent = Math.round((completedGrammarLevels / totalGrammarLevels) * 100);
+    const nextGrammarLevel = grammarProgress?.currentLevel || 1;
+    
+    const grammarLesson = {
+      id: 'grammar',
+      title: `Grammar Practice - Level ${nextGrammarLevel}`,
+      category: 'Grammar',
+      timeLeft: '10 min left',
+      totalTime: 10,
+      progress: grammarProgressPercent,
+      icon: '📝',
+      iconBg: 'bg-purple-100',
+      lastAccessed: grammarProgress?.updatedAt || new Date(),
+      isGrammar: true,
+      completedLevels: completedGrammarLevels,
+      totalLevels: totalGrammarLevels,
+      points: grammarProgress?.totalScore || 0
+    };
 
     res.status(200).json({
       status: 'success',
       data: {
-        lessons: lessons.map(l => ({
+        lessons: [...lessons.map(l => ({
           id: l._id, title: l.title, category: l.category,
           timeLeft: l.timeLeft, totalTime: l.totalTime,
           progress: l.progress, icon: l.icon, iconBg: l.iconBg,
           lastAccessed: l.lastAccessed
-        }))
+        })), grammarLesson]
       }
     });
   } catch (error) {
@@ -137,16 +175,52 @@ export const getChallenges = async (req, res) => {
 export const getSkills = async (req, res) => {
   try {
     const userId = req.user._id;
+    const skillLevel = req.user.skillLevel || 'beginner';
+    
     const skills = await Skill.find({ userId });
+    
+    const grammarProgress = await GrammarProgress.findOne({ userId, skillLevel });
+    
+    const completedLevels = grammarProgress?.completedLevels?.length || 0;
+    const totalLevels = 10;
+    const grammarPercentage = Math.round((completedLevels / totalLevels) * 100);
+    const grammarPoints = grammarProgress?.totalScore || 0;
+    
+    const skillsWithGrammar = skills.map(s => ({
+      id: s._id,
+      name: s.name,
+      percentage: s.percentage,
+      color: s.color,
+      details: s.details
+    }));
+    
+    const grammarSkillIndex = skillsWithGrammar.findIndex(s => s.name === 'Grammar');
+    if (grammarSkillIndex >= 0) {
+      skillsWithGrammar[grammarSkillIndex].percentage = grammarPercentage;
+      skillsWithGrammar[grammarSkillIndex].details = {
+        ...skillsWithGrammar[grammarSkillIndex].details,
+        totalLevels,
+        completedLevels,
+        points: grammarPoints
+      };
+    } else {
+      skillsWithGrammar.push({
+        id: 'grammar',
+        name: 'Grammar',
+        percentage: grammarPercentage,
+        color: '#8B5CF6',
+        details: {
+          totalLevels,
+          completedLevels,
+          points: grammarPoints
+        }
+      });
+    }
 
     res.status(200).json({
       status: 'success',
       data: {
-        skills: skills.map(s => ({
-          id: s._id, name: s.name,
-          percentage: s.percentage, color: s.color,
-          details: s.details
-        }))
+        skills: skillsWithGrammar
       }
     });
   } catch (error) {

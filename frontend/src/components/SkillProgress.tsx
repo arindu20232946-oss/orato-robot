@@ -1,19 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { TrendingUp } from 'lucide-react';
+import { dashboardService } from '../services/dashboardService';
 
 interface Skill {
   name: string;
   percentage: number;
   color: string;
+  details?: {
+    totalLevels?: number;
+    completedLevels?: number;
+    points?: number;
+  };
 }
 
-const skills: Skill[] = [
-  { name: 'Vocabulary', percentage: 78, color: '#3B82F6' },
-  { name: 'Grammar', percentage: 62, color: '#8B5CF6' },
-  { name: 'Speaking', percentage: 45, color: '#1DB954' },
-  { name: 'Listening', percentage: 70, color: '#F97316' },
-  { name: 'Writing', percentage: 55, color: '#EC4899' },
+interface FetchedSkill {
+  name: string;
+  percentage?: number;
+  color?: string;
+  details?: Record<string, unknown>;
+}
+
+const defaultSkills: Skill[] = [
+  { name: 'Vocabulary', percentage: 0, color: '#3B82F6' },
+  { name: 'Grammar', percentage: 0, color: '#8B5CF6' },
+  { name: 'Listening', percentage: 0, color: '#F97316' },
 ];
 
 function AnimatedPercentage({ value }: { value: number }) {
@@ -49,29 +60,85 @@ export default function SkillProgress() {
   const containerRef = useRef<HTMLDivElement>(null);
   const barsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const [skills, setSkills] = useState<Skill[]>(defaultSkills);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Bars grow from left
-      barsRef.current.forEach((bar, index) => {
-        if (bar) {
-          const skill = skills[index];
-          gsap.fromTo(
-            bar,
-            { width: '0%' },
-            { 
-              width: `${skill.percentage}%`, 
-              duration: 1, 
-              delay: 0.2 + index * 0.1,
-              ease: 'expo.out',
-            }
-          );
-        }
-      });
-    });
+    const fetchSkills = async () => {
+      const token = localStorage.getItem('token');
+      const authHeaders = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
 
-    return () => ctx.revert();
+      try {
+        const [dashboardRes, grammarRes] = await Promise.all([
+          dashboardService.getSkills(),
+          fetch('http://localhost:5002/api/grammar/progress', { headers: authHeaders })
+        ]);
+
+        let grammarPercentage = 0;
+        if (grammarRes.ok) {
+          const grammarData = await grammarRes.json();
+          const completedLevels = grammarData.data?.completedLevels || [];
+          grammarPercentage = Math.round((completedLevels.length / 10) * 100);
+        }
+
+        if (dashboardRes.data?.skills?.length > 0) {
+          const fetchedSkills = dashboardRes.data.skills.map((s: FetchedSkill) => ({
+            name: s.name,
+            percentage: s.percentage || 0,
+            color: s.color || '#3B82F6',
+            details: s.details
+          }));
+          
+          const mergedSkills = defaultSkills.map(defaultSkill => {
+            if (defaultSkill.name === 'Grammar') {
+              return { ...defaultSkill, percentage: grammarPercentage };
+            }
+            const found = fetchedSkills.find((s: FetchedSkill) => s.name === defaultSkill.name);
+            return found || defaultSkill;
+          });
+          
+          setSkills(mergedSkills);
+        } else {
+          setSkills(defaultSkills.map(s => 
+            s.name === 'Grammar' ? { ...s, percentage: grammarPercentage } : s
+          ));
+        }
+      } catch (error) {
+        console.error('Failed to fetch skills:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const ctx = gsap.context(() => {
+        barsRef.current.forEach((bar, index) => {
+          if (bar) {
+            const skill = skills[index];
+            gsap.fromTo(
+              bar,
+              { width: '0%' },
+              { 
+                width: `${skill.percentage}%`, 
+                duration: 1, 
+                delay: 0.2 + index * 0.1,
+                ease: 'expo.out',
+              }
+            );
+          }
+        });
+      });
+
+      return () => ctx.revert();
+    }
+  }, [loading, skills]);
 
   return (
     <div 
