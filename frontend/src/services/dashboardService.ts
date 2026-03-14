@@ -1,6 +1,4 @@
-// frontend/src/services/dashboardService.ts
-
-const BASE_URL = 'http://localhost:5002/api/dashboard';
+const BASE_URL = `${window.config.backendUrl}/dashboard`;
 
 const getToken = (): string | null => {
   // Try to get token from localStorage

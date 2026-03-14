@@ -1,7 +1,3 @@
-/**
- * Google Sign-In Button Component
- * Reusable button for Google OAuth authentication
- */
 
 interface GoogleSignInButtonProps {
   text?: string;
@@ -13,11 +9,8 @@ export default function GoogleSignInButton({
   disabled = false 
 }: GoogleSignInButtonProps) {
   
-  // Handle Google Sign-In
   const handleGoogleSignIn = () => {
-    // Redirect to backend OAuth endpoint
-    // Backend will handle Google OAuth flow and redirect back
-    window.location.href = 'http://localhost:5002/api/auth/google';
+    window.location.href = `${window.config.backendUrl}/auth/google`;
   };
 
   return (

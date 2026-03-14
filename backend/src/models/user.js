@@ -135,7 +135,7 @@ const userSchema = new mongoose.Schema({
 
 
 //  FIXED: Update timestamp before saving (no next() needed)
-userSchema.pre('save', function() {
+userSchema.pre('save', function () {
   this.updatedAt = Date.now();
 });
 

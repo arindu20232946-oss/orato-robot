@@ -31,5 +31,5 @@
   "include": [
     "src",
     "tailwind.config.js"
-  ]
+, "vite.config.js"  ]
 }

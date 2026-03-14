@@ -25,8 +25,7 @@ export interface NotificationSettings {
 
 // Interface for audio and display settings.
 export interface AudioDisplaySettings {
-    soundEffects: boolean;
-    darkMode: boolean;
+    volume: number;
     playbackSpeed: PlaybackSpeed;
 }
 
@@ -34,9 +33,12 @@ export interface AudioDisplaySettings {
 // Full user settings interface(Language, Notifications, Audio & Display Settings).
 export interface UserSettings {
     userId: string;
-    language: Language;
+    language: Language; // Interface language
     notifications: NotificationSettings;
     audioDisplay: AudioDisplaySettings;
+    nativeLanguage?: string;
+    skillLevel?: string;
+    dailyGoalMinutes?: number;
 }
 
 

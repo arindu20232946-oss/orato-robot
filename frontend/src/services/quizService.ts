@@ -1,6 +1,4 @@
-// frontend/src/services/quizService.ts
-
-const BASE_URL = 'http://localhost:5002/api/quiz';
+const BASE_URL = `${window.config.backendUrl}/quiz`;
 
 const getToken = (): string | null => {
   const token = localStorage.getItem('token');

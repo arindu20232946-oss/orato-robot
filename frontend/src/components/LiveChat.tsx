@@ -48,7 +48,7 @@ const LiveChat: React.FC<LiveChatProps> = ({ isOpen, onClose }) => {
                 content: m.content,
             }));
 
-            const res = await axios.post("http://localhost:5002/api/chat", {
+            const res = await axios.post(`${window.config.backendUrl}/chat`, {
                 message: input.trim(),
                 history,
             });

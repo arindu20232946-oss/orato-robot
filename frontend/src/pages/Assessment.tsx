@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/logo.png";
 
-const API = "http://localhost:5002/api/assessment";
+const API = `${window.config.backendUrl}/assessment`;
 
 interface Option {
   id: string;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { Clock, ChevronRight, PlayCircle, BookOpen } from 'lucide-react';
+import { Clock, ChevronRight, PlayCircle, BookOpen, BookMarked } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Lesson {
@@ -61,14 +61,12 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Container entrance
       gsap.fromTo(
         containerRef.current,
         { scale: 0.9, opacity: 0 },
         { scale: 1, opacity: 1, duration: 0.6, ease: "expo.out" },
       );
 
-      // Quiz button bounce in
       gsap.fromTo(
         quizBtnRef.current,
         { scale: 0, opacity: 0 },
@@ -95,6 +93,10 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
     });
   };
 
+  const handleReadingClick = () => {
+    navigate("/reading");
+  };
+
   return (
     <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
       {/* Header */}
@@ -112,7 +114,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
       <div className="space-y-4">
         {lessons.map((lesson, index) => {
           const isHovered = hoveredId === lesson.id;
-          
+
           return (
             <div
               key={lesson.id}
@@ -134,7 +136,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
                   <h4 className="font-semibold text-gray-900 text-sm mb-1 truncate">
                     {lesson.title}
                   </h4>
-                  
+
                   <div className="flex items-center gap-2 text-gray-500 text-xs mb-3">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{lesson.timeLeft}</span>
@@ -148,8 +150,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
                         className="h-full bg-green-300 rounded-full relative overflow-hidden"
                         style={{ width: '0%' }}
                       >
-                        {/* Animated stripe pattern */}
-                        <div 
+                        <div
                           className="absolute inset-0 opacity-30"
                           style={{
                             backgroundImage: 'linear-gradient(45deg, rgba(255,255,255,.3) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.3) 75%, transparent 75%, transparent)',
@@ -194,11 +195,31 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
           100% { background-position: 1rem 0; }
         }
       `}</style>
+
+      {/* Reading Tasks Button */}
+      <button
+        onClick={handleReadingClick}
+        className="w-full flex items-center justify-between p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-300 group border border-green-100 mt-4"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-green-400 flex items-center justify-center">
+            <BookMarked className="w-5 h-5 text-white" />
+          </div>
+          <div className="text-left">
+            <p className="font-semibold text-gray-900 text-sm">Reading Tasks</p>
+            <p className="text-xs text-gray-500">
+              Read passages & poems, answer questions
+            </p>
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-purple-500 transition-transform duration-300 group-hover:translate-x-1" />
+      </button>
+
       {/* Quiz Button */}
       <button
         ref={quizBtnRef}
         onClick={handleQuizClick}
-        className="w-full flex items-center justify-between p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-300 group border border-green-100"
+        className="w-full flex items-center justify-between p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-300 group border border-green-100 mt-3"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center">

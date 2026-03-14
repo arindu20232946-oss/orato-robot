@@ -1,6 +1,4 @@
-// frontend/src/services/listeningService.ts
-
-const BASE_URL = 'http://localhost:5002/api/listening';
+const BASE_URL = `${window.config.backendUrl}/listening`;
 
 const getToken = (): string | null => {
   const token = localStorage.getItem('token');
