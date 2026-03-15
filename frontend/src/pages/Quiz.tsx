@@ -46,7 +46,7 @@ const Quiz: React.FC = () => {
 
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("Vocabulary");
+  const [filter, setFilter] = useState("Grammar");
 
   useEffect(() => {
     const fetchQuizzes = async () => {

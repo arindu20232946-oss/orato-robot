@@ -156,7 +156,7 @@ const GrammarQuiz: React.FC = () => {
   };
 
   const handleComplete = () => {
-    navigate("/dashboard");
+    navigate("/grammar");
   };
 
   if (loading) {
