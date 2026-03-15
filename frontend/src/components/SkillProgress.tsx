@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { TrendingUp } from 'lucide-react';
-import { dashboardService } from '../services/dashboardService';
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { TrendingUp } from "lucide-react";
+import { dashboardService } from "../services/dashboardService";
 
 interface Skill {
   name: string;
@@ -22,9 +22,9 @@ interface FetchedSkill {
 }
 
 const defaultSkills: Skill[] = [
-  { name: 'Vocabulary', percentage: 0, color: '#3B82F6' },
-  { name: 'Grammar', percentage: 0, color: '#8B5CF6' },
-  { name: 'Listening', percentage: 0, color: '#F97316' },
+  { name: "Vocabulary", percentage: 0, color: "#3B82F6" },
+  { name: "Grammar", percentage: 0, color: "#8B5CF6" },
+  { name: "Listening", percentage: 0, color: "#F97316" },
 ];
 
 function AnimatedPercentage({ value }: { value: number }) {
@@ -33,23 +33,23 @@ function AnimatedPercentage({ value }: { value: number }) {
   useEffect(() => {
     const duration = 1000;
     const startTime = Date.now();
-    
+
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easeOut = 1 - Math.pow(1 - progress, 3);
-      
+
       setDisplayValue(Math.floor(easeOut * value));
-      
+
       if (progress < 1) {
         requestAnimationFrame(animate);
       }
     };
-    
+
     const timer = setTimeout(() => {
       requestAnimationFrame(animate);
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, [value]);
 
@@ -65,16 +65,18 @@ export default function SkillProgress() {
 
   useEffect(() => {
     const fetchSkills = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const authHeaders = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       };
 
       try {
         const [dashboardRes, grammarRes] = await Promise.all([
           dashboardService.getSkills(),
-          fetch('http://localhost:5002/api/grammar/progress', { headers: authHeaders })
+          fetch("http://localhost:5002/api/grammar/progress", {
+            headers: authHeaders,
+          }),
         ]);
 
         let grammarPercentage = 0;
@@ -85,29 +87,37 @@ export default function SkillProgress() {
         }
 
         if (dashboardRes.data?.skills?.length > 0) {
-          const fetchedSkills = dashboardRes.data.skills.map((s: FetchedSkill) => ({
-            name: s.name,
-            percentage: s.percentage || 0,
-            color: s.color || '#3B82F6',
-            details: s.details
-          }));
-          
-          const mergedSkills = defaultSkills.map(defaultSkill => {
-            if (defaultSkill.name === 'Grammar') {
+          const fetchedSkills = dashboardRes.data.skills.map(
+            (s: FetchedSkill) => ({
+              name: s.name,
+              percentage: s.percentage || 0,
+              color: s.color || "#3B82F6",
+              details: s.details,
+            }),
+          );
+
+          const mergedSkills = defaultSkills.map((defaultSkill) => {
+            if (defaultSkill.name === "Grammar") {
               return { ...defaultSkill, percentage: grammarPercentage };
             }
-            const found = fetchedSkills.find((s: FetchedSkill) => s.name === defaultSkill.name);
+            const found = fetchedSkills.find(
+              (s: FetchedSkill) => s.name === defaultSkill.name,
+            );
             return found || defaultSkill;
           });
-          
+
           setSkills(mergedSkills);
         } else {
-          setSkills(defaultSkills.map(s => 
-            s.name === 'Grammar' ? { ...s, percentage: grammarPercentage } : s
-          ));
+          setSkills(
+            defaultSkills.map((s) =>
+              s.name === "Grammar"
+                ? { ...s, percentage: grammarPercentage }
+                : s,
+            ),
+          );
         }
       } catch (error) {
-        console.error('Failed to fetch skills:', error);
+        console.error("Failed to fetch skills:", error);
       } finally {
         setLoading(false);
       }
@@ -124,13 +134,13 @@ export default function SkillProgress() {
             const skill = skills[index];
             gsap.fromTo(
               bar,
-              { width: '0%' },
-              { 
-                width: `${skill.percentage}%`, 
-                duration: 1, 
+              { width: "0%" },
+              {
+                width: `${skill.percentage}%`,
+                duration: 1,
                 delay: 0.2 + index * 0.1,
-                ease: 'expo.out',
-              }
+                ease: "expo.out",
+              },
             );
           }
         });
@@ -141,14 +151,11 @@ export default function SkillProgress() {
   }, [loading, skills]);
 
   return (
-    <div 
-      ref={containerRef}
-      className="bg-white rounded-2xl p-6 card-shadow"
-    >
+    <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
       {/* Header */}
       <div className="flex items-center gap-2 mb-5">
         <TrendingUp className="w-5 h-5 text-orato-green" />
-        <h3 className="text-lg font-semibold text-gray-900 font-heading">
+        <h3 className="text-xl font-semibold text-gray-900 font-heading">
           Skill Progress
         </h3>
       </div>
@@ -157,9 +164,9 @@ export default function SkillProgress() {
       <div className="space-y-4">
         {skills.map((skill, index) => {
           const isHovered = hoveredSkill === skill.name;
-          
+
           return (
-            <div 
+            <div
               key={skill.name}
               className="group"
               onMouseEnter={() => setHoveredSkill(skill.name)}
@@ -173,18 +180,20 @@ export default function SkillProgress() {
                   <AnimatedPercentage value={skill.percentage} />
                 </span>
               </div>
-              
+
               {/* Progress Bar */}
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  ref={(el) => { barsRef.current[index] = el; }}
+                  ref={(el) => {
+                    barsRef.current[index] = el;
+                  }}
                   className="h-full rounded-full transition-all duration-300 relative"
-                  style={{ 
-                    width: '0%',
+                  style={{
+                    width: "0%",
                     backgroundColor: skill.color,
-                    height: isHovered ? '10px' : '8px',
-                    marginTop: isHovered ? '-1px' : '0',
-                    boxShadow: isHovered ? `0 0 12px ${skill.color}50` : 'none',
+                    height: isHovered ? "10px" : "8px",
+                    marginTop: isHovered ? "-1px" : "0",
+                    boxShadow: isHovered ? `0 0 12px ${skill.color}50` : "none",
                   }}
                 />
               </div>
