@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "prestart": "kill-port 5002 || true",
     "start": "node -r dotenv/config src/server.js",
     "dev": "nodemon src/server.js",
     "seed": "node -r dotenv/config src/utils/seedQuestions.js"
@@ -23,17 +22,13 @@
     "express-session": "^1.19.0",
     "express-validator": "^7.3.1",
     "jsonwebtoken": "^9.0.3",
-    "moment": "^2.30.1",
     "mongoose": "^9.2.1",
     "multer": "^2.0.2",
-    "node-cron": "^4.2.1",
     "nodemailer": "^8.0.0",
-    "openai": "^6.29.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
-    "kill-port": "^2.0.1",
     "nodemon": "^3.1.14"
   },
   "overrides": {

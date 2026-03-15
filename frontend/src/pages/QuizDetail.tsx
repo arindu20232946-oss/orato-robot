@@ -272,6 +272,90 @@ const mockQuizzes: Record<string, QuizData> = {
       },
     ],
   },
+
+  "5": {
+    id: "5",
+    title: "Intermediate Vocabulary Quiz",
+    category: "Vocabulary",
+    difficulty: "Intermediate",
+    icon: "📚",
+    points: 20,
+    timeLimit: 12,
+    questions: [
+      {
+        id: 0,
+        text: 'What is a synonym for "abundant"?',
+        options: ["Scarce", "Plentiful", "Rare", "Few"],
+        correctAnswer: 1,
+      },
+      {
+        id: 1,
+        text: 'What does "meticulous" mean?',
+        options: ["Careless", "Sloppy", "Thorough", "Quick"],
+        correctAnswer: 2,
+      },
+      {
+        id: 2,
+        text: 'Which word means "to make something less severe"?',
+        options: ["Aggravate", "Worsen", "Mitigate", "Intensify"],
+        correctAnswer: 2,
+      },
+      {
+        id: 3,
+        text: 'What is the opposite of "ambiguous"?',
+        options: ["Clear", "Vague", "Uncertain", "Obscure"],
+        correctAnswer: 0,
+      },
+      {
+        id: 4,
+        text: 'Which word means "a person who is deeply involved in reading"?',
+        options: ["Bookworm", "Athlete", "Musician", "Artist"],
+        correctAnswer: 0,
+      },
+    ],
+  },
+
+  "6": {
+    id: "6",
+    title: "Advanced Vocabulary Quiz",
+    category: "Vocabulary",
+    difficulty: "Advanced",
+    icon: "🎓",
+    points: 30,
+    timeLimit: 15,
+    questions: [
+      {
+        id: 0,
+        text: 'What does the word "ephemeral" signify?',
+        options: ["Eternal", "Short-lived", "Permanent", "Endless"],
+        correctAnswer: 1,
+      },
+      {
+        id: 1,
+        text: 'Choose the correct synonym for "ubiquitous":',
+        options: ["Rare", "Omnipresent", "Isolated", "Hidden"],
+        correctAnswer: 1,
+      },
+      {
+        id: 2,
+        text: 'Which of the following is an antonym for "cacophony"?',
+        options: ["Noise", "Clamor", "Harmony", "Uproar"],
+        correctAnswer: 2,
+      },
+      {
+        id: 3,
+        text: 'What does "esoteric" mean?',
+        options: ["Common", "Understood by few", "Public", "Obvious"],
+        correctAnswer: 1,
+      },
+      {
+        id: 4,
+        text: 'Which word means "having a stubbornly uncooperative attitude"?',
+        options: ["Compliant", "Docile", "Recalcitrant", "Amenable"],
+        correctAnswer: 2,
+      },
+    ],
+  },
 };
 
 const QuizDetail: React.FC = () => {
