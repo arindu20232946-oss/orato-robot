@@ -9,17 +9,6 @@ import { quizService } from "../services/quizService";
 
 const mockQuizzes: Quiz[] = [
   {
-    id: "1",
-    title: "Present Tense Quiz",
-    category: "Grammar",
-    difficulty: "Beginner",
-    icon: "📝",
-    iconBg: "bg-blue-100",
-    timeLimit: 10,
-    points: 50,
-    totalQuestions: 5,
-  },
-  {
     id: "2",
     title: "Daily Vocabulary Quiz",
     category: "Vocabulary",
@@ -28,28 +17,6 @@ const mockQuizzes: Quiz[] = [
     iconBg: "bg-green-100",
     timeLimit: 8,
     points: 10,
-    totalQuestions: 5,
-  },
-  {
-    id: "3",
-    title: "Intermediate Grammar Quiz",
-    category: "Grammar",
-    difficulty: "Intermediate",
-    icon: "✍️",
-    iconBg: "bg-purple-100",
-    timeLimit: 15,
-    points: 25,
-    totalQuestions: 5,
-  },
-  {
-    id: "4",
-    title: "Advanced Grammar Quiz",
-    category: "Grammar",
-    difficulty: "Advanced",
-    icon: "🖋️",
-    iconBg: "bg-red-100",
-    timeLimit: 20,
-    points: 40,
     totalQuestions: 5,
   },
 ];
@@ -67,12 +34,9 @@ interface Quiz {
 }
 
 const categories = [
-  "All",
   "Grammar",
   "Vocabulary",
-  "Speaking",
   "Listening",
-  "Writing",
 ];
 
 const Quiz: React.FC = () => {
@@ -82,7 +46,7 @@ const Quiz: React.FC = () => {
 
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("All");
+  const [filter, setFilter] = useState("Vocabulary");
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -127,13 +91,20 @@ const Quiz: React.FC = () => {
     }
   }, [loading]);
 
-  const filteredQuizzes =
-    filter === "All" ? quizzes : quizzes.filter((q) => q.category === filter);
+  const filteredQuizzes = quizzes.filter((q) => {
+    if (filter === "Grammar") {
+      return false;
+    }
+    return q.category === filter;
+  });
 
-  // Redirect to dedicated Listening page when Listening filter is selected
+  // Redirect to dedicated pages
   useEffect(() => {
     if (filter === "Listening") {
       navigate("/listening");
+    }
+    if (filter === "Grammar") {
+      navigate("/grammar");
     }
   }, [filter, navigate]);
 
@@ -196,8 +167,9 @@ const Quiz: React.FC = () => {
         {/* Quiz Grid */}
         {filteredQuizzes.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-400 text-lg">
-              No quizzes found for this category.
+            <p className="text-4xl mb-4">😊</p>
+            <p className="text-gray-500 text-lg">
+              More quizzes coming soon!
             </p>
           </div>
         ) : (

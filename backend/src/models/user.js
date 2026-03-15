@@ -128,6 +128,7 @@ const userSchema = new mongoose.Schema({
     badgesToNextLevel: { type: Number, default: 5 },
     lessonsDone: { type: Number, default: 0 },
     lessonsThisWeek: { type: Number, default: 0 },
+    lessonsLastWeek: { type: Number, default: 0 },
     lastStreakUpdate: { type: Date, default: Date.now }
   },
 });

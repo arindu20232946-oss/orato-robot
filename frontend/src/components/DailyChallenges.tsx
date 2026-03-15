@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Target, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Challenge {
   id: number;
@@ -8,41 +9,114 @@ interface Challenge {
   current: number;
   target: number;
   points: number;
+  navigateTo: string;
 }
-
-const challenges: Challenge[] = [
-  {
-    id: 1,
-    title: 'Complete 3 lessons',
-    current: 2,
-    target: 3,
-    points: 50,
-  },
-  {
-    id: 2,
-    title: 'Practice speaking for 10 min',
-    current: 7,
-    target: 10,
-    points: 30,
-  },
-  {
-    id: 3,
-    title: 'Master 20 new words',
-    current: 15,
-    target: 20,
-    points: 40,
-  },
-];
 
 export default function DailyChallenges() {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showPoints] = useState<number | null>(null);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchChallengeData = async () => {
+      const token = localStorage.getItem('token');
+      const authHeaders = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+
+      try {
+        const [grammarRes, statsRes] = await Promise.all([
+          fetch('http://localhost:5002/api/grammar/progress', { headers: authHeaders }),
+          fetch('http://localhost:5002/api/dashboard/stats', { headers: authHeaders })
+        ]);
+
+        let grammarProgress = { completedLevels: [] as number[] };
+        let stats = { totalPoints: 0 };
+
+        if (grammarRes.ok) {
+          const grammarData = await grammarRes.json();
+          grammarProgress = grammarData.data || { completedLevels: [] };
+        }
+
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          stats = statsData.data?.stats || { totalPoints: 0 };
+        }
+
+        const completedLevelsCount = grammarProgress.completedLevels?.length || 0;
+        const totalPoints = stats.totalPoints || 0;
+
+        const newChallenges: Challenge[] = [
+          {
+            id: 1,
+            title: 'Complete 3 Quiz Levels today',
+            current: Math.min(completedLevelsCount, 3),
+            target: 3,
+            points: 50,
+            navigateTo: '/grammar'
+          },
+          {
+            id: 2,
+            title: 'Complete 5 Grammar Levels total',
+            current: Math.min(completedLevelsCount, 5),
+            target: 5,
+            points: 30,
+            navigateTo: '/grammar'
+          },
+          {
+            id: 3,
+            title: 'Earn 100 Points from Quizzes',
+            current: Math.min(totalPoints, 100),
+            target: 100,
+            points: 40,
+            navigateTo: '/quiz'
+          }
+        ];
+
+        setChallenges(newChallenges);
+      } catch (error) {
+        console.error('Failed to fetch challenge data:', error);
+        setChallenges([
+          {
+            id: 1,
+            title: 'Complete 3 Quiz Levels today',
+            current: 0,
+            target: 3,
+            points: 50,
+            navigateTo: '/grammar'
+          },
+          {
+            id: 2,
+            title: 'Complete 5 Grammar Levels total',
+            current: 0,
+            target: 5,
+            points: 30,
+            navigateTo: '/grammar'
+          },
+          {
+            id: 3,
+            title: 'Earn 100 Points from Quizzes',
+            current: 0,
+            target: 100,
+            points: 40,
+            navigateTo: '/quiz'
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChallengeData();
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header fade in
       const header = containerRef.current?.querySelector('.header');
       if (header) {
         gsap.fromTo(
@@ -52,7 +126,6 @@ export default function DailyChallenges() {
         );
       }
 
-      // Challenges stagger up
       itemsRef.current.forEach((item, index) => {
         if (item) {
           gsap.fromTo(
@@ -69,9 +142,8 @@ export default function DailyChallenges() {
         }
       });
 
-      // Progress bars liquid animation
       progressRefs.current.forEach((progress, index) => {
-        if (progress) {
+        if (progress && challenges[index]) {
           const challenge = challenges[index];
           const percentage = (challenge.current / challenge.target) * 100;
           gsap.fromTo(
@@ -89,7 +161,34 @@ export default function DailyChallenges() {
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [challenges]);
+
+  const handleChallengeClick = (navigateTo: string) => {
+    navigate(navigateTo);
+  };
+
+  if (loading) {
+    return (
+      <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
+        <div className="header flex items-center gap-2 mb-5">
+          <div className="w-8 h-8 rounded-lg bg-emerald-green-light flex items-center justify-center">
+            <Target className="w-4 h-4 text-emerald-green" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 font-heading">
+            Daily Challenges
+          </h3>
+        </div>
+        <div className="space-y-5">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-2.5 bg-gray-200 rounded-full"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -116,7 +215,8 @@ export default function DailyChallenges() {
             <div
               key={challenge.id}
               ref={(el) => { itemsRef.current[index] = el; }}
-              className="relative"
+              className="relative cursor-pointer"
+              onClick={() => handleChallengeClick(challenge.navigateTo)}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-900">

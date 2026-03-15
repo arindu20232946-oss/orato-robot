@@ -7,7 +7,7 @@ import ReadingContent from "./src/models/readingContent.js";
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
 const tasks = [
-  // ─── BEGINNER ───────────────────────────────────────────
+  //  BEGINNER Questions
   {
     level: "beginner", order: 1, type: "paragraph",
     title: "My Daily Routine",
@@ -17,7 +17,8 @@ const tasks = [
       { questionText: "What time does the person wake up?", type: "mcq", options: ["6 o'clock", "7 o'clock", "8 o'clock", "9 o'clock"], correctAnswer: "7 o'clock" },
       { questionText: "How does the person go to school?", type: "mcq", options: ["By car", "By bicycle", "By bus", "On foot"], correctAnswer: "By bus" },
       { questionText: "What does the person eat for breakfast?", type: "mcq", options: ["Rice and curry", "Bread and tea", "Eggs and milk", "Fruits and juice"], correctAnswer: "Bread and tea" },
-      { questionText: "Write about your own daily routine in 2-3 sentences.", type: "writing" },
+      { questionText: "What does the person do after school?", type: "mcq", options: ["Watches TV", "Plays with friends", "Does homework", "Goes to sleep"], correctAnswer: "Plays with friends" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -29,7 +30,8 @@ const tasks = [
       { questionText: "What does the star look like in the poem?", type: "mcq", options: ["A ball", "A diamond", "A flower", "A candle"], correctAnswer: "A diamond" },
       { questionText: "When does the star shine?", type: "mcq", options: ["During the day", "At sunset", "At night", "In the morning"], correctAnswer: "At night" },
       { questionText: "What does the star never do until the sun rises?", type: "mcq", options: ["Twinkle", "Move", "Shut its eye", "Shine"], correctAnswer: "Shut its eye" },
-      { questionText: "How does this poem make you feel? Write 1-2 sentences.", type: "writing" },
+      { questionText: "Where does the star sit in the sky?", type: "mcq", options: ["Low and close", "In the dark blue sky", "Behind the clouds", "Near the moon"], correctAnswer: "In the dark blue sky" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -41,7 +43,8 @@ const tasks = [
       { questionText: "What do cows give us?", type: "mcq", options: ["Eggs", "Wool", "Milk", "Meat"], correctAnswer: "Milk" },
       { questionText: "Why do pigs roll in the mud?", type: "mcq", options: ["To get clean", "To keep cool", "To find food", "To sleep"], correctAnswer: "To keep cool" },
       { questionText: "What do sheep give us?", type: "mcq", options: ["Milk", "Eggs", "Wool", "Honey"], correctAnswer: "Wool" },
-      { questionText: "Name two animals from the passage and what they give us.", type: "writing" },
+      { questionText: "What do dogs do on the farm?", type: "mcq", options: ["Give milk", "Carry heavy things", "Watch over other animals", "Lay eggs"], correctAnswer: "Watch over other animals" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -53,7 +56,8 @@ const tasks = [
       { questionText: "Why do the children want the rain to go away?", type: "mcq", options: ["They are scared", "They want to play", "They are sleeping", "They are studying"], correctAnswer: "They want to play" },
       { questionText: "Where does the rain fall in the second verse?", type: "mcq", options: ["On mountains and rivers", "On grass, tree and housetop", "On roads and cars", "On flowers and gardens"], correctAnswer: "On grass, tree and housetop" },
       { questionText: "What do the raindrops fall into?", type: "mcq", options: ["Rivers", "Buckets", "Puddles", "Gardens"], correctAnswer: "Puddles" },
-      { questionText: "Do you like rainy days? Write 1-2 sentences about why or why not.", type: "writing" },
+      { questionText: "How does the rain fall according to the poem?", type: "mcq", options: ["Slowly and gently", "Fast and splashing", "Quietly and softly", "Heavily and loudly"], correctAnswer: "Fast and splashing" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -65,7 +69,8 @@ const tasks = [
       { questionText: "What does food give us?", type: "mcq", options: ["Sleep", "Energy", "Water", "Air"], correctAnswer: "Energy" },
       { questionText: "What is the writer's favourite food?", type: "mcq", options: ["Bread and butter", "Noodles and soup", "Rice and curry", "Fruits and juice"], correctAnswer: "Rice and curry" },
       { questionText: "Which fruits are mentioned as popular in Sri Lanka?", type: "mcq", options: ["Grapes, oranges, and pears", "Bananas, mangoes, and apples", "Strawberries, kiwi, and plums", "Watermelon, papaya, and guava"], correctAnswer: "Bananas, mangoes, and apples" },
-      { questionText: "What is your favourite food and why? Write 2 sentences.", type: "writing" },
+      { questionText: "What should we avoid eating too much of?", type: "mcq", options: ["Rice and curry", "Fruits and vegetables", "Junk food like chips and sweets", "Bread and butter"], correctAnswer: "Junk food like chips and sweets" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -77,7 +82,8 @@ const tasks = [
       { questionText: "What does the mother do in the poem?", type: "mcq", options: ["Reads books", "Cooks and sings", "Tells stories", "Works all day"], correctAnswer: "Cooks and sings" },
       { questionText: "What does grandma do?", type: "mcq", options: ["Cooks food", "Reads books", "Tells old stories", "Plays games"], correctAnswer: "Tells old stories" },
       { questionText: "How does the family end each night?", type: "mcq", options: ["By watching TV", "By hugging each other", "By eating dinner", "By reading books"], correctAnswer: "By hugging each other" },
-      { questionText: "Write 2 sentences about your own family.", type: "writing" },
+      { questionText: "What does the brother like to do?", type: "mcq", options: ["Read books", "Sing songs", "Cook and look", "Tell stories"], correctAnswer: "Cook and look" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -89,7 +95,8 @@ const tasks = [
       { questionText: "When did the family go to the beach?", type: "mcq", options: ["Saturday", "Sunday", "Monday", "Friday"], correctAnswer: "Sunday" },
       { questionText: "What did the little sister find?", type: "mcq", options: ["Crabs", "Fish", "Shells", "Stones"], correctAnswer: "Shells" },
       { questionText: "Why did they put on sunscreen?", type: "mcq", options: ["To smell good", "To protect their skin", "To swim better", "To look nice"], correctAnswer: "To protect their skin" },
-      { questionText: "Describe your favourite trip in 2-3 sentences.", type: "writing" },
+      { questionText: "What colour did the sky turn in the evening?", type: "mcq", options: ["Blue and purple", "Grey and white", "Orange and pink", "Red and green"], correctAnswer: "Orange and pink" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -101,7 +108,8 @@ const tasks = [
       { questionText: "What happens in spring according to the poem?", type: "mcq", options: ["Snow falls", "Leaves turn red", "Birds come back and sing", "Children play on beaches"], correctAnswer: "Birds come back and sing" },
       { questionText: "What do fireflies do in summer?", type: "mcq", options: ["Sing songs", "Glow at night", "Fall from trees", "Play with children"], correctAnswer: "Glow at night" },
       { questionText: "What colours are the autumn leaves?", type: "mcq", options: ["Green and blue", "White and grey", "Red, yellow and orange", "Pink and purple"], correctAnswer: "Red, yellow and orange" },
-      { questionText: "Which season do you like most and why? Write 2 sentences.", type: "writing" },
+      { questionText: "How is rain described in spring?", type: "mcq", options: ["Heavy and loud", "Gentle showers", "Cold and icy", "Fast and splashing"], correctAnswer: "Gentle showers" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -113,7 +121,8 @@ const tasks = [
       { questionText: "What is in the school besides classrooms?", type: "mcq", options: ["A swimming pool and gym", "A library and playground", "A cinema and garden only", "A hospital and shop"], correctAnswer: "A library and playground" },
       { questionText: "What do students grow in the school garden?", type: "mcq", options: ["Fruits and trees", "Vegetables and flowers", "Rice and wheat", "Herbs and spices"], correctAnswer: "Vegetables and flowers" },
       { questionText: "When is music class held?", type: "mcq", options: ["Monday", "Wednesday", "Thursday", "Friday"], correctAnswer: "Friday" },
-      { questionText: "What do you like most about your school? Write 2 sentences.", type: "writing" },
+      { questionText: "How are the teachers described?", type: "mcq", options: ["Strict and serious", "Kind and helpful", "Busy and quiet", "Loud and funny"], correctAnswer: "Kind and helpful" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -125,11 +134,12 @@ const tasks = [
       { questionText: "What did the sun chase away?", type: "mcq", options: ["Rain", "Clouds", "The dark of night", "The cold wind"], correctAnswer: "The dark of night" },
       { questionText: "What do flowers do when the sun rises?", type: "mcq", options: ["Close up", "Fall down", "Open up", "Change colour"], correctAnswer: "Open up" },
       { questionText: "What does the sun give according to the last verse?", type: "mcq", options: ["Rain and wind", "Life with every glow", "Snow and frost", "Darkness and cold"], correctAnswer: "Life with every glow" },
-      { questionText: "Write 2 sentences about why the sun is important to you.", type: "writing" },
+      { questionText: "How is the sun described in the poem?", type: "mcq", options: ["A silver moon", "A white cloud", "A golden ball", "A bright star"], correctAnswer: "A golden ball" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
 
-  // ─── INTERMEDIATE ────────────────────────────────────────
+  // INTERMEDIATE Questions
   {
     level: "intermediate", order: 1, type: "paragraph",
     title: "Technology in Daily Life",
@@ -139,7 +149,8 @@ const tasks = [
       { questionText: "How has online learning benefited students?", type: "mcq", options: ["It made school more expensive", "It allows access to quality courses without leaving home", "It replaced all physical schools", "It reduced the quality of education"], correctAnswer: "It allows access to quality courses without leaving home" },
       { questionText: "What is one negative effect of excessive screen time?", type: "mcq", options: ["Better eyesight", "Improved sleep", "Eye strain", "More physical activity"], correctAnswer: "Eye strain" },
       { questionText: "What do most experts believe about technology?", type: "mcq", options: ["It is more harmful than helpful", "Its benefits outweigh disadvantages if used responsibly", "It should be banned completely", "It only benefits rich people"], correctAnswer: "Its benefits outweigh disadvantages if used responsibly" },
-      { questionText: "How has technology changed your own daily life? Give two examples.", type: "writing" },
+      { questionText: "What growing issues are mentioned in the digital age?", type: "mcq", options: ["Power cuts and slow internet", "Cybercrime and privacy concerns", "Too many devices and high cost", "Lack of education and jobs"], correctAnswer: "Cybercrime and privacy concerns" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -151,7 +162,8 @@ const tasks = [
       { questionText: "Why was the traveler standing at the fork in the road?", type: "mcq", options: ["He was lost", "He could not choose which road to take", "He was waiting for someone", "He was tired"], correctAnswer: "He could not choose which road to take" },
       { questionText: "Which road did the traveler choose?", type: "mcq", options: ["The more popular road", "The road with signs", "The less traveled road", "The shorter road"], correctAnswer: "The less traveled road" },
       { questionText: "What does 'that has made all the difference' suggest?", type: "mcq", options: ["The choice did not matter", "The wrong road was chosen", "The choice had a big impact on his life", "Both roads were the same"], correctAnswer: "The choice had a big impact on his life" },
-      { questionText: "What does this poem mean to you personally? Write 3-4 sentences.", type: "writing" },
+      { questionText: "How were the two roads actually compared in the poem?", type: "mcq", options: ["One was much longer", "One was darker", "They were worn about the same", "One had more flowers"], correctAnswer: "They were worn about the same" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -163,7 +175,8 @@ const tasks = [
       { questionText: "What is the main cause of climate change mentioned?", type: "mcq", options: ["Volcanic eruptions", "Burning of fossil fuels", "Ocean pollution", "Deforestation"], correctAnswer: "Burning of fossil fuels" },
       { questionText: "What is deforestation doing to species?", type: "mcq", options: ["Helping them thrive", "Moving them to cities", "Pushing them toward extinction", "Making them stronger"], correctAnswer: "Pushing them toward extinction" },
       { questionText: "Which renewable energy sources are mentioned?", type: "mcq", options: ["Coal and gas", "Nuclear and hydro", "Solar and wind", "Oil and steam"], correctAnswer: "Solar and wind" },
-      { questionText: "What are two things you personally do or could do to help the environment?", type: "writing" },
+      { questionText: "What is ocean pollution from plastic waste doing?", type: "mcq", options: ["Helping fish grow", "Killing marine life and entering the food chain", "Cleaning the ocean", "Reducing ocean temperature"], correctAnswer: "Killing marine life and entering the food chain" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -175,7 +188,8 @@ const tasks = [
       { questionText: "What is the main theme of this poem?", type: "mcq", options: ["Sadness and defeat", "Resilience and strength", "Anger and revenge", "Fear and loneliness"], correctAnswer: "Resilience and strength" },
       { questionText: "What natural things does the speaker compare rising to?", type: "mcq", options: ["Rivers and mountains", "Moons, suns and tides", "Stars and planets", "Wind and rain"], correctAnswer: "Moons, suns and tides" },
       { questionText: "What tone does the speaker use throughout the poem?", type: "mcq", options: ["Fearful and uncertain", "Sad and hopeless", "Confident and defiant", "Quiet and gentle"], correctAnswer: "Confident and defiant" },
-      { questionText: "What difficulties have you overcome in your life? How does this poem relate to your experience? Write 3-4 sentences.", type: "writing" },
+      { questionText: "What does the speaker leave behind according to the last verse?", type: "mcq", options: ["Joy and happiness", "Nights of terror and fear", "Friends and family", "Songs and stories"], correctAnswer: "Nights of terror and fear" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -187,7 +201,8 @@ const tasks = [
       { questionText: "What is one benefit of travelling to different countries?", type: "mcq", options: ["It wastes money", "It builds empathy and understanding", "It creates more stereotypes", "It makes people less confident"], correctAnswer: "It builds empathy and understanding" },
       { questionText: "What does visiting Japan teach you according to the passage?", type: "mcq", options: ["Cooking skills", "Art and architecture", "Discipline and respect", "Language and literature"], correctAnswer: "Discipline and respect" },
       { questionText: "How has travel become more accessible?", type: "mcq", options: ["Free government programs", "Affordable airlines and digital booking", "More cruise ships", "Cheaper hotels"], correctAnswer: "Affordable airlines and digital booking" },
-      { questionText: "Describe a place you have visited or would like to visit. What would you learn there? Write 3-4 sentences.", type: "writing" },
+      { questionText: "What personal skill does navigating unfamiliar places build?", type: "mcq", options: ["Cooking and cleaning", "Confidence and problem-solving", "Reading and writing", "Singing and dancing"], correctAnswer: "Confidence and problem-solving" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -199,7 +214,8 @@ const tasks = [
       { questionText: "What quality is described in the first stanza?", type: "mcq", options: ["Being popular", "Staying calm under pressure", "Making others blame themselves", "Avoiding all problems"], correctAnswer: "Staying calm under pressure" },
       { questionText: "How should Triumph and Disaster be treated according to the poem?", type: "mcq", options: ["Celebrate triumph and mourn disaster", "Fear both equally", "Treat them both the same", "Ignore them both"], correctAnswer: "Treat them both the same" },
       { questionText: "What is the reward for meeting all the conditions in the poem?", type: "mcq", options: ["Fame and fortune", "The Earth and everything in it", "Wisdom and knowledge", "Peace and silence"], correctAnswer: "The Earth and everything in it" },
-      { questionText: "Which quality described in this poem do you find most difficult? Why? Write 3-4 sentences.", type: "writing" },
+      { questionText: "What should you not do when others lie about you?", type: "mcq", options: ["Stay quiet", "Fight back", "Deal in lies yourself", "Leave the country"], correctAnswer: "Deal in lies yourself" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -211,7 +227,8 @@ const tasks = [
       { questionText: "How much daily exercise is mentioned as beneficial?", type: "mcq", options: ["10 minutes", "20 minutes", "30 minutes", "60 minutes"], correctAnswer: "30 minutes" },
       { questionText: "How many hours of sleep do adults need per night?", type: "mcq", options: ["5 to 6 hours", "6 to 7 hours", "7 to 9 hours", "10 to 12 hours"], correctAnswer: "7 to 9 hours" },
       { questionText: "What is mentioned as a way to manage stress?", type: "mcq", options: ["Sleeping more", "Eating more", "Meditation and hobbies", "Watching TV"], correctAnswer: "Meditation and hobbies" },
-      { questionText: "What healthy habits do you practise in your daily life? What would you like to improve? Write 3-4 sentences.", type: "writing" },
+      { questionText: "What three simple habits are mentioned in the passage?", type: "mcq", options: ["Exercise, sleep and diet", "Avoiding smoking, limiting alcohol and staying hydrated", "Reading, writing and running", "Cooking, cleaning and working"], correctAnswer: "Avoiding smoking, limiting alcohol and staying hydrated" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -223,7 +240,8 @@ const tasks = [
       { questionText: "What does 'my head is bloody, but unbowed' mean?", type: "mcq", options: ["The speaker is physically injured", "Despite hardship, the speaker refuses to give up", "The speaker lost a battle", "The speaker is angry"], correctAnswer: "Despite hardship, the speaker refuses to give up" },
       { questionText: "What is the speaker's attitude toward the future?", type: "mcq", options: ["Fearful and uncertain", "Hopeless and sad", "Unafraid and determined", "Excited and cheerful"], correctAnswer: "Unafraid and determined" },
       { questionText: "What do the last two lines mean?", type: "mcq", options: ["Others control the speaker's life", "The speaker controls their own destiny", "God controls everything", "Fate cannot be changed"], correctAnswer: "The speaker controls their own destiny" },
-      { questionText: "Do you believe you are the master of your own fate? Explain your view in 3-4 sentences.", type: "writing" },
+      { questionText: "What does the speaker thank the gods for?", type: "mcq", options: ["Health and wealth", "Friends and family", "An unconquerable soul", "Peace and quiet"], correctAnswer: "An unconquerable soul" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -235,7 +253,8 @@ const tasks = [
       { questionText: "What negative effect is linked to excessive social media use?", type: "mcq", options: ["Better grades", "Anxiety and depression", "More exercise", "Improved sleep"], correctAnswer: "Anxiety and depression" },
       { questionText: "What positive role has social media played for youth?", type: "mcq", options: ["Replacing education", "Empowering youth activism", "Eliminating cyberbullying", "Reducing screen time"], correctAnswer: "Empowering youth activism" },
       { questionText: "What do psychologists say is the key to healthy social media use?", type: "mcq", options: ["Deleting all accounts", "Using only one platform", "Digital literacy and healthy boundaries", "Parental monitoring only"], correctAnswer: "Digital literacy and healthy boundaries" },
-      { questionText: "How does social media affect your own life — both positively and negatively? Write 3-4 sentences.", type: "writing" },
+      { questionText: "Who shares responsibility for a safer online environment?", type: "mcq", options: ["Only governments", "Only parents", "Parents, schools and technology companies", "Only young people themselves"], correctAnswer: "Parents, schools and technology companies" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -247,11 +266,12 @@ const tasks = [
       { questionText: "What is the poet's view of life?", type: "mcq", options: ["Life is an empty dream", "Life is real and earnest", "Life is sad and hopeless", "Life is short and meaningless"], correctAnswer: "Life is real and earnest" },
       { questionText: "What should each tomorrow find us according to the poem?", type: "mcq", options: ["Resting and relaxing", "Farther than today", "Closer to death", "Full of sorrow"], correctAnswer: "Farther than today" },
       { questionText: "What does 'footprints on the sands of time' mean?", type: "mcq", options: ["Walking on a beach", "Leaving a lasting legacy", "Forgetting the past", "Living in the present only"], correctAnswer: "Leaving a lasting legacy" },
-      { questionText: "What legacy or footprint do you want to leave in your life? Write 3-4 sentences.", type: "writing" },
+      { questionText: "What is NOT the destined end or way according to the poem?", type: "mcq", options: ["To act and improve", "Enjoyment and sorrow", "Leaving a legacy", "Moving forward each day"], correctAnswer: "Enjoyment and sorrow" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
 
-  // ─── ADVANCED ────────────────────────────────────────────
+  // ADVANCED Questions
   {
     level: "advanced", order: 1, type: "paragraph",
     title: "Artificial Intelligence and Society",
@@ -261,7 +281,8 @@ const tasks = [
       { questionText: "What concern is raised about facial recognition systems?", type: "mcq", options: ["They are too expensive", "They are less accurate on darker-skinned individuals", "They invade all privacy equally", "They only work indoors"], correctAnswer: "They are less accurate on darker-skinned individuals" },
       { questionText: "What do economists debate regarding AI automation?", type: "mcq", options: ["Whether AI is too slow", "Whether new industries will create enough jobs", "Whether robots should vote", "Whether AI should teach in schools"], correctAnswer: "Whether new industries will create enough jobs" },
       { questionText: "What do philosophers argue is needed before deploying AI in high-stakes contexts?", type: "mcq", options: ["More computing power", "Faster internet", "Robust regulatory frameworks and ethical guidelines", "Cheaper hardware"], correctAnswer: "Robust regulatory frameworks and ethical guidelines" },
-      { questionText: "Discuss the ethical implications of using AI in criminal justice. What safeguards would you recommend? Write 4-5 sentences.", type: "writing" },
+      { questionText: "What is artificial general intelligence described as in the passage?", type: "mcq", options: ["Already fully developed", "A machine that can perform any intellectual task a human can", "A simple calculator", "A voice assistant"], correctAnswer: "A machine that can perform any intellectual task a human can" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -273,7 +294,8 @@ const tasks = [
       { questionText: "What does 'the centre cannot hold' suggest?", type: "mcq", options: ["A building is collapsing", "Society is losing its order and stability", "A political election is happening", "A storm is approaching"], correctAnswer: "Society is losing its order and stability" },
       { questionText: "What paradox does Yeats present about conviction?", type: "mcq", options: ["The brave are fearful", "The best lack conviction while the worst are intensely passionate", "The young are wiser than the old", "The rich are sadder than the poor"], correctAnswer: "The best lack conviction while the worst are intensely passionate" },
       { questionText: "What does the 'rough beast' symbolise?", type: "mcq", options: ["A real lion", "A coming apocalyptic force or era", "A religious saviour", "A natural disaster"], correctAnswer: "A coming apocalyptic force or era" },
-      { questionText: "Analyse how this poem relates to a contemporary global crisis of your choice. Write 5-6 sentences.", type: "writing" },
+      { questionText: "How is the beast's gaze described in the poem?", type: "mcq", options: ["Warm and kind", "Blank and pitiless as the sun", "Bright and hopeful", "Sad and lonely"], correctAnswer: "Blank and pitiless as the sun" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -285,7 +307,8 @@ const tasks = [
       { questionText: "By how much have human activities raised global temperatures?", type: "mcq", options: ["0.5 degrees Celsius", "1.1 degrees Celsius", "2.5 degrees Celsius", "3.0 degrees Celsius"], correctAnswer: "1.1 degrees Celsius" },
       { questionText: "What is the core argument of climate justice?", type: "mcq", options: ["All countries are equally responsible", "Wealthy nations who caused more emissions should bear greater responsibility", "Developing nations should pay for climate change", "Technology alone will solve climate change"], correctAnswer: "Wealthy nations who caused more emissions should bear greater responsibility" },
       { questionText: "What criticism is made of the Paris Agreement?", type: "mcq", options: ["It is too expensive", "It excludes developing nations", "It relies on voluntary pledges without binding enforcement", "It focuses only on deforestation"], correctAnswer: "It relies on voluntary pledges without binding enforcement" },
-      { questionText: "Should wealthy nations pay climate reparations to developing countries? Construct a detailed argument for or against this position. Write 5-6 sentences.", type: "writing" },
+      { questionText: "Who is leading innovative responses to climate disruption according to the passage?", type: "mcq", options: ["Wealthy governments", "Technology companies", "Indigenous communities", "International banks"], correctAnswer: "Indigenous communities" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -297,7 +320,8 @@ const tasks = [
       { questionText: "What remains of Ozymandias's great empire?", type: "mcq", options: ["A magnificent palace", "A great army", "Shattered ruins in empty desert", "A thriving city"], correctAnswer: "Shattered ruins in empty desert" },
       { questionText: "What is the central irony of the poem?", type: "mcq", options: ["A weak king became powerful", "A boastful king's works have completely vanished despite his claim to eternal greatness", "The sculptor became more famous than the king", "The desert preserved the statue perfectly"], correctAnswer: "A boastful king's works have completely vanished despite his claim to eternal greatness" },
       { questionText: "What universal theme does the poem explore?", type: "mcq", options: ["The importance of art", "The inevitability of war", "The transience of power and human achievement", "The beauty of nature"], correctAnswer: "The transience of power and human achievement" },
-      { questionText: "Apply the theme of this poem to a modern political leader or institution. What does Ozymandias warn us about power? Write 5-6 sentences.", type: "writing" },
+      { questionText: "How is the expression on the statue's face described?", type: "mcq", options: ["Joyful and kind", "Frown, wrinkled lip and sneer of cold command", "Peaceful and calm", "Sad and regretful"], correctAnswer: "Frown, wrinkled lip and sneer of cold command" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -309,7 +333,8 @@ const tasks = [
       { questionText: "How have the internet and social media positively impacted human rights?", type: "mcq", options: ["By enabling government surveillance", "By providing platforms for dissent and social movements", "By replacing legal systems", "By reducing access to information"], correctAnswer: "By providing platforms for dissent and social movements" },
       { questionText: "What criticism has China's Social Credit System received?", type: "mcq", options: ["It is too expensive to run", "It improves citizen behaviour", "It is an Orwellian instrument of social control", "It protects privacy effectively"], correctAnswer: "It is an Orwellian instrument of social control" },
       { questionText: "Why do traditional human rights frameworks struggle in the digital age?", type: "mcq", options: ["They are too modern", "They were conceived before digital technology existed and cannot keep pace", "They only apply to wealthy nations", "They focus too much on economic rights"], correctAnswer: "They were conceived before digital technology existed and cannot keep pace" },
-      { questionText: "Do you believe privacy is still a meaningful right in the digital age? Construct a nuanced argument drawing on examples from the passage and your own knowledge. Write 5-6 sentences.", type: "writing" },
+      { questionText: "What did Edward Snowden reveal according to the passage?", type: "mcq", options: ["Corporate tax evasion", "Mass surveillance programmes by democratic governments", "Climate data manipulation", "Election fraud"], correctAnswer: "Mass surveillance programmes by democratic governments" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -321,7 +346,8 @@ const tasks = [
       { questionText: "What does the 'Sea of Faith' represent in the poem?", type: "mcq", options: ["The literal ocean", "Religious belief and certainty that is fading", "Political power", "Scientific knowledge"], correctAnswer: "Religious belief and certainty that is fading" },
       { questionText: "What is the poet's solution to the loss of faith and meaning?", type: "mcq", options: ["Return to religion", "Pursue wealth", "Be true to each other in love", "Seek political power"], correctAnswer: "Be true to each other in love" },
       { questionText: "What does the 'darkling plain' in the final lines symbolise?", type: "mcq", options: ["A beautiful landscape", "A peaceful battlefield", "A world of confusion, conflict and meaninglessness", "A religious sanctuary"], correctAnswer: "A world of confusion, conflict and meaninglessness" },
-      { questionText: "How does the tension between scientific progress and spiritual meaning manifest in the modern world? Connect your answer to the poem's central themes. Write 5-6 sentences.", type: "writing" },
+      { questionText: "How is the Sea of Faith described as it retreats?", type: "mcq", options: ["Bright and cheerful", "Melancholy and withdrawing", "Loud and violent", "Swift and sudden"], correctAnswer: "Melancholy and withdrawing" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -333,7 +359,8 @@ const tasks = [
       { questionText: "What did Milgram's experiments demonstrate?", type: "mcq", options: ["People always disobey authority", "Ordinary people would cause harm when instructed by authority figures", "Authority figures are always correct", "People make independent moral decisions"], correctAnswer: "Ordinary people would cause harm when instructed by authority figures" },
       { questionText: "What does social neuroscience reveal about social rejection?", type: "mcq", options: ["It improves performance", "It activates the same neural pathways as physical pain", "It has no biological basis", "It makes people more creative"], correctAnswer: "It activates the same neural pathways as physical pain" },
       { questionText: "What paradox does the passage identify about conformity and dissent?", type: "mcq", options: ["Conformity is always harmful", "Dissent destroys societies", "Societies need conformity for cohesion but dissent for growth", "Individual conscience is irrelevant"], correctAnswer: "Societies need conformity for cohesion but dissent for growth" },
-      { questionText: "Reflect on a situation where you conformed despite personal reservations, or dissented despite pressure. What psychological forces were at work? Write 5-6 sentences.", type: "writing" },
+      { questionText: "What did Asch's experiments show about individuals in groups?", type: "mcq", options: ["They always tell the truth", "They would deny clear visual evidence to align with group consensus", "They are more intelligent alone", "They ignore group pressure easily"], correctAnswer: "They would deny clear visual evidence to align with group consensus" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -345,7 +372,8 @@ const tasks = [
       { questionText: "What contrast does Keats draw between the nightingale and humans?", type: "mcq", options: ["Humans are happier than birds", "The nightingale is mortal while humans are immortal", "The nightingale transcends death while humans are subject to it", "Birds are less intelligent than humans"], correctAnswer: "The nightingale transcends death while humans are subject to it" },
       { questionText: "How does the poet wish to reach the nightingale?", type: "mcq", options: ["Through alcohol", "Through sleep", "On the wings of poetry", "By climbing a tree"], correctAnswer: "On the wings of poetry" },
       { questionText: "What does the phrase 'viewless wings of Poesy' suggest about poetry?", type: "mcq", options: ["Poetry is invisible and useless", "Poetry has the power to transcend physical reality", "Poetry is only for educated people", "Poetry describes only nature"], correctAnswer: "Poetry has the power to transcend physical reality" },
-      { questionText: "Explore the tension between the desire for transcendence and the reality of human mortality in this poem. How does this tension resonate with contemporary human experience? Write 5-6 sentences.", type: "writing" },
+      { questionText: "Who else heard the nightingale's voice in ancient days according to the poem?", type: "mcq", options: ["Kings and queens only", "Soldiers and priests", "Emperor and clown", "Poets and painters"], correctAnswer: "Emperor and clown" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -357,7 +385,8 @@ const tasks = [
       { questionText: "What does Rawls argue about a just society?", type: "mcq", options: ["Inequality should be eliminated completely", "Inequalities should benefit the least advantaged", "The wealthy deserve their position", "Government should control all wealth"], correctAnswer: "Inequalities should benefit the least advantaged" },
       { questionText: "What is Peter Singer's utilitarian argument?", type: "mcq", options: ["The wealthy have no obligation to help others", "Affluent people have a moral duty to donate significantly to address global poverty", "Poverty is a natural condition", "Markets will solve poverty automatically"], correctAnswer: "Affluent people have a moral duty to donate significantly to address global poverty" },
       { questionText: "What counter-argument do critics of redistribution make?", type: "mcq", options: ["The poor do not deserve help", "Inequality is beneficial to everyone", "Market mechanisms and growth create more effective pathways out of poverty", "Only governments can address poverty"], correctAnswer: "Market mechanisms and growth create more effective pathways out of poverty" },
-      { questionText: "Do wealthy individuals have a moral obligation to address global poverty? Construct a philosophically grounded argument drawing on at least two perspectives from the passage. Write 5-6 sentences.", type: "writing" },
+      { questionText: "How much wealth do the world's ten richest individuals possess compared to others?", type: "mcq", options: ["More than the bottom 10% of humanity", "More than the bottom 40% of humanity", "More than the bottom 60% of humanity", "More than the bottom 20% of humanity"], correctAnswer: "More than the bottom 40% of humanity" },
+      { questionText: "Did you find this passage easy to understand?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
   {
@@ -369,7 +398,8 @@ const tasks = [
       { questionText: "What does 'I have measured out my life with coffee spoons' convey?", type: "mcq", options: ["Prufrock loves coffee", "Prufrock's life has been trivial and lacking in meaningful action", "Prufrock is very organised", "Prufrock is wealthy"], correctAnswer: "Prufrock's life has been trivial and lacking in meaningful action" },
       { questionText: "What does Prufrock's question 'Do I dare disturb the universe?' reveal?", type: "mcq", options: ["His ambition to become a leader", "His paralysing self-doubt and fear of decisive action", "His scientific curiosity", "His desire for adventure"], correctAnswer: "His paralysing self-doubt and fear of decisive action" },
       { questionText: "What does 'I do not think that they will sing to me' suggest about Prufrock?", type: "mcq", options: ["He cannot hear music", "He believes he is unworthy of beauty, love and transcendence", "He prefers silence", "He is too busy to listen"], correctAnswer: "He believes he is unworthy of beauty, love and transcendence" },
-      { questionText: "Prufrock is often read as a portrait of modern alienation and existential paralysis. How does this resonate with the psychological experience of contemporary life? Write 5-6 sentences.", type: "writing" },
+      { questionText: "How is the evening described in the opening lines of the poem?", type: "mcq", options: ["Bright and cheerful", "Like a patient etherized upon a table", "Warm and romantic", "Dark and stormy"], correctAnswer: "Like a patient etherized upon a table" },
+      { questionText: "Did you enjoy reading this poem?", type: "mcq", options: ["Yes", "No"], correctAnswer: "Yes" },
     ],
   },
 ];

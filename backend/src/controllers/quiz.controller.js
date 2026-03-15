@@ -121,7 +121,8 @@ export const submitQuiz = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $inc: {
         'stats.totalPoints': pointsEarned,
-        'stats.badgesEarned': score === 100 ? 1 : 0
+        'stats.badgesEarned': score === 100 ? 1 : 0,
+        'stats.lessonsDone': 1
       }
     });
 

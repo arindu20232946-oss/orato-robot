@@ -23,6 +23,8 @@ import ReadingTask from "./pages/ReadingTask";
 import ReadingDetail from "./pages/ReadingDetail";
 import VisualCardsPage from "./pages/VisualCardsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GrammarLevels from "./pages/GrammarLevels";
+import GrammarQuiz from "./pages/GrammarQuiz";
 
 import { Toaster } from "react-hot-toast";
 
@@ -71,6 +73,23 @@ function App() {
             element={
               <ProtectedRoute>
                 <ListeningDetail />
+              </ProtectedRoute>
+            } 
+          />
+          {/* Grammar Quiz Routes */}
+          <Route 
+            path="/grammar" 
+            element={
+              <ProtectedRoute>
+                <GrammarLevels />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/grammar/:level" 
+            element={
+              <ProtectedRoute>
+                <GrammarQuiz />
               </ProtectedRoute>
             } 
           />

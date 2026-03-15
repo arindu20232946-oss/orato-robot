@@ -77,6 +77,28 @@ export const initCronJobs = () => {
             console.error('❌ [CRON] Error in Weekly Progress Job:', error);
         }
     });
+    
+    // ============================================
+    // 3. Weekly Stats Reset (Runs every Sunday at midnight)
+    // ============================================
+    // Moves lessonsThisWeek to lessonsLastWeek and resets lessonsThisWeek
+    cron.schedule('0 0 * * 0', async () => {
+        try {
+            console.log('🔄 [CRON] Resetting weekly stats...');
+
+            await User.updateMany(
+                { 'stats.lessonsThisWeek': { $gt: 0 } },
+                {
+                    $set: { 'stats.lessonsLastWeek': '$stats.lessonsThisWeek' },
+                    $set: { 'stats.lessonsThisWeek': 0 }
+                }
+            );
+
+            console.log('✅ Weekly stats reset completed');
+        } catch (error) {
+            console.error('❌ [CRON] Error in Weekly Stats Reset:', error);
+        }
+    });
 
     console.log('✅ Cron Jobs initialized successfully.');
 };
