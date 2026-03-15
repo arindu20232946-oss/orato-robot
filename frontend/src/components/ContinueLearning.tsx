@@ -1,8 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { Clock, ChevronRight, PlayCircle, BookOpen, BookMarked } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { dashboardService } from '../services/dashboardService';
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import {
+  Clock,
+  ChevronRight,
+  PlayCircle,
+  BookOpen,
+  BookMarked,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { dashboardService } from "../services/dashboardService";
 
 interface Lesson {
   id: number | string;
@@ -20,27 +26,27 @@ interface Lesson {
 const defaultLessons: Lesson[] = [
   {
     id: 2,
-    title: 'English Pronunciation Basics',
-    timeLeft: '25 min left',
+    title: "English Pronunciation Basics",
+    timeLeft: "25 min left",
     progress: 0,
-    icon: '🗣️',
-    iconBg: 'bg-purple-100',
+    icon: "🗣️",
+    iconBg: "bg-purple-100",
   },
   {
     id: 3,
-    title: 'English Vocabulary: Daily Life',
-    timeLeft: '5 min left',
+    title: "English Vocabulary: Daily Life",
+    timeLeft: "5 min left",
     progress: 0,
-    icon: '📖',
-    iconBg: 'bg-blue-100',
+    icon: "📖",
+    iconBg: "bg-blue-100",
   },
   {
     id: 4,
-    title: 'Visual Vocabulary Cards',
-    timeLeft: '10 min left',
+    title: "Visual Vocabulary Cards",
+    timeLeft: "10 min left",
     progress: 0,
-    icon: '🃏',
-    iconBg: 'bg-yellow-100',
+    icon: "🃏",
+    iconBg: "bg-yellow-100",
   },
 ];
 
@@ -48,7 +54,9 @@ interface ContinueLearningProps {
   onLessonClick?: (lessonId: number | string, lessonTitle: string) => void;
 }
 
-export default function ContinueLearning({ onLessonClick }: ContinueLearningProps = {}) {
+export default function ContinueLearning({
+  onLessonClick,
+}: ContinueLearningProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const quizBtnRef = useRef<HTMLButtonElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -66,12 +74,14 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
         const res = await dashboardService.getContinueLearning();
         if (res.data?.lessons) {
           const filteredLessons = res.data.lessons.filter(
-            (lesson: Lesson) => !lesson.isGrammar && !lesson.title?.toLowerCase().includes('grammar')
+            (lesson: Lesson) =>
+              !lesson.isGrammar &&
+              !lesson.title?.toLowerCase().includes("grammar"),
           );
           setLessons(filteredLessons);
         }
       } catch (error) {
-        console.error('Failed to fetch lessons:', error);
+        console.error("Failed to fetch lessons:", error);
       } finally {
         setLoading(false);
       }
@@ -151,7 +161,7 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
     <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-lg font-semibold text-gray-900 font-heading">
+        <h3 className="text-2xl font-semibold text-gray-900 font-heading">
           Continue Learning
         </h3>
         <button className="text-sm text-orato-green font-medium hover:underline flex items-center gap-1 transition-all duration-300 hover:gap-2">
@@ -168,9 +178,13 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
           return (
             <div
               key={lesson.id}
-              ref={(el) => { itemsRef.current[index] = el; }}
+              ref={(el) => {
+                itemsRef.current[index] = el;
+              }}
               className={`p-4 rounded-xl transition-all duration-300 cursor-pointer ${
-                isHovered ? 'bg-orato-green-light' : 'bg-gray-50 hover:bg-gray-100'
+                isHovered
+                  ? "bg-orato-green-light"
+                  : "bg-gray-50 hover:bg-gray-100"
               }`}
               onMouseEnter={() => setHoveredId(lesson.id)}
               onMouseLeave={() => setHoveredId(null)}
@@ -178,13 +192,15 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
             >
               <div className="flex items-start gap-4">
                 {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl ${lesson.iconBg} flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 ${isHovered ? 'scale-110' : ''}`}>
+                <div
+                  className={`w-12 h-12 rounded-xl ${lesson.iconBg} flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 ${isHovered ? "scale-110" : ""}`}
+                >
                   {lesson.icon}
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1 truncate">
+                  <h4 className="font-semibold text-gray-900 text-base mb-1 truncate">
                     {lesson.title}
                   </h4>
 
@@ -197,16 +213,19 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
                   <div className="relative">
                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        ref={(el) => { progressRefs.current[index] = el; }}
+                        ref={(el) => {
+                          progressRefs.current[index] = el;
+                        }}
                         className="h-full bg-green-300 rounded-full relative overflow-hidden"
-                        style={{ width: '0%' }}
+                        style={{ width: "0%" }}
                       >
                         <div
                           className="absolute inset-0 opacity-30"
                           style={{
-                            backgroundImage: 'linear-gradient(45deg, rgba(255,255,255,.3) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.3) 75%, transparent 75%, transparent)',
-                            backgroundSize: '1rem 1rem',
-                            animation: 'move-stripes 1s linear infinite',
+                            backgroundImage:
+                              "linear-gradient(45deg, rgba(255,255,255,.3) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.3) 75%, transparent 75%, transparent)",
+                            backgroundSize: "1rem 1rem",
+                            animation: "move-stripes 1s linear infinite",
                           }}
                         />
                       </div>
@@ -226,8 +245,8 @@ export default function ContinueLearning({ onLessonClick }: ContinueLearningProp
                     }}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                       isHovered
-                        ? 'bg-green-500 text-white shadow-md scale-105'
-                        : 'bg-green-100 text-green-700 hover:bg-green-200'
+                        ? "bg-green-500 text-white shadow-md scale-105"
+                        : "bg-green-100 text-green-700 hover:bg-green-200"
                     }`}
                   >
                     <PlayCircle className="w-4 h-4" />
