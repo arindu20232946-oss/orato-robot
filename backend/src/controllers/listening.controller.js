@@ -1,6 +1,7 @@
 import ListeningContent from '../models/listeningContent.js';
 import ListeningProgress from '../models/listeningProgress.js';
 import User from '../models/user.js';
+import { checkAndUpgradeLevel } from '../services/progressService.js';
 
 const levelRanks = {
   beginner: 0,
@@ -219,16 +220,12 @@ export const submitListeningAnswers = async (req, res) => {
 
       if (nextItem) {
         nextItemUnlocked = true;
-      } else if (item.order === 10) {
-        // If it was the 10th item and no next item in this level -> LEVEL UP
-        const currentRank = levelRanks[item.level];
-        if (currentRank < 2) {
-          const newLevel = Object.keys(levelRanks).find(key => levelRanks[key] === currentRank + 1);
-          if (newLevel) {
-            await User.findByIdAndUpdate(userId, { skillLevel: newLevel });
-            levelUpgraded = true;
-          }
-        }
+      }
+      
+      // Call unified level upgrade check
+      const upgradeResult = await checkAndUpgradeLevel(userId);
+      if (upgradeResult.upgraded) {
+        levelUpgraded = true;
       }
     }
 

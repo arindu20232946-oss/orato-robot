@@ -1,5 +1,6 @@
 import ReadingContent from "../models/readingContent.js";
 import ReadingProgress from "../models/readingProgress.js";
+import { checkAndUpgradeLevel } from "../services/progressService.js";
 
 // GET /api/reading — get all tasks for user's level
 export const getAllReadingContent = async (req, res) => {
@@ -144,12 +145,19 @@ export const submitReadingAnswers = async (req, res) => {
       };
     });
 
+    // Check for level upgrade
+    const upgradeResult = await checkAndUpgradeLevel(user._id);
+    let levelUpgraded = upgradeResult.upgraded;
+    let newLevel = upgradeResult.newLevel;
+
     res.json({
       success: true,
       score,
       correctMcq,
       totalMcq,
       feedback,
+      levelUpgraded,
+      newLevel,
       message:
         score >= 60
           ? "Great job! Next task unlocked! 🎉"

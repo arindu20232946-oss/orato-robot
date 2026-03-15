@@ -1,6 +1,7 @@
 import Quiz from '../models/quiz.js';
 import QuizResult from '../models/quizResult.js';
 import User from '../models/user.js';
+import { checkAndUpgradeLevel } from '../services/progressService.js';
 
 /**
  * Get all quizzes
@@ -126,6 +127,15 @@ export const submitQuiz = async (req, res) => {
       }
     });
 
+    // Check for level upgrade if it was a Vocabulary quiz
+    let levelUpgraded = false;
+    let newLevel = null;
+    if (quiz.category === 'Vocabulary') {
+      const upgradeResult = await checkAndUpgradeLevel(userId);
+      levelUpgraded = upgradeResult.upgraded;
+      newLevel = upgradeResult.newLevel;
+    }
+
     // Return full result with correct answers and explanations
     const questionsWithAnswers = quiz.questions.map((q, index) => ({
       text: q.text,
@@ -146,7 +156,9 @@ export const submitQuiz = async (req, res) => {
           correctAnswers,
           pointsEarned,
           timeTaken: timeTaken || 0,
-          questions: questionsWithAnswers
+          questions: questionsWithAnswers,
+          levelUpgraded,
+          newLevel
         }
       }
     });
