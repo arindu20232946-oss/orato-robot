@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Lock, CheckCircle, BookOpen, Feather, ChevronRight, Loader2 } from "lucide-react";
+import { Lock, CheckCircle, BookOpen, Feather, ChevronRight, Loader2, ArrowLeft } from "lucide-react";
 import API from "../services/api";
 
 interface Task {
@@ -46,7 +46,7 @@ export default function ReadingTask() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-green-50">
         <Loader2 className="w-12 h-12 text-green-500 animate-spin mb-4" />
         <h2 className="text-xl font-semibold">Loading reading tasks...</h2>
       </div>
@@ -54,9 +54,16 @@ export default function ReadingTask() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-green-50">
       <Navbar />
-      <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-10">
+      <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm font-medium">Back to Dashboard</span>
+        </button>
 
         {/* Header */}
         <div className="mb-8">

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, BookOpen, Loader2 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -34,9 +34,7 @@ interface Quiz {
 }
 
 const categories = [
-  "Grammar",
   "Vocabulary",
-  "Listening",
 ];
 
 const Quiz: React.FC = () => {
@@ -47,6 +45,15 @@ const Quiz: React.FC = () => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("Vocabulary");
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const filterParam = params.get("filter");
+    if (filterParam && categories.includes(filterParam)) {
+      setFilter(filterParam);
+    }
+  }, [location]);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -92,25 +99,13 @@ const Quiz: React.FC = () => {
   }, [loading]);
 
   const filteredQuizzes = quizzes.filter((q) => {
-    if (filter === "Grammar") {
-      return false;
-    }
     return q.category === filter;
   });
 
-  // Redirect to dedicated pages
-  useEffect(() => {
-    if (filter === "Listening") {
-      navigate("/listening");
-    }
-    if (filter === "Grammar") {
-      navigate("/grammar");
-    }
-  }, [filter, navigate]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-green-50">
         <Loader2 className="w-12 h-12 text-green-500 animate-spin mb-4" />
         <h2 className="text-xl font-semibold text-gray-700">
           Loading quizzes...
@@ -120,7 +115,7 @@ const Quiz: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-green-50">
       <Navbar isLoggedIn={true} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
@@ -139,7 +134,7 @@ const Quiz: React.FC = () => {
               <BookOpen className="w-5 h-5 text-green-600" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 font-heading">
-              Quiz Center
+              Vocabulary Quizzes
             </h1>
           </div>
           <p className="text-gray-500 text-sm ml-1">

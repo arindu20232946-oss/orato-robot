@@ -88,7 +88,7 @@ const GrammarLevels: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-green-50">
         <Loader2 className="w-12 h-12 text-green-500 animate-spin mb-4" />
         <h2 className="text-xl font-semibold text-gray-700">
           Loading grammar content...
@@ -102,17 +102,17 @@ const GrammarLevels: React.FC = () => {
   const progressPercent = Math.round((completedCount / totalLevels) * 100);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-green-50">
       <Navbar isLoggedIn={true} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <div ref={headerRef} className="mb-8">
           <button
-            onClick={() => navigate("/quiz")}
+            onClick={() => navigate("/dashboard")}
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-5 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Back to Quiz Center</span>
+            <span className="text-sm font-medium">Back to Dashboard</span>
           </button>
 
           <div className="flex items-center gap-3 mb-2">

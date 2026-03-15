@@ -4,10 +4,7 @@ import {
   Clock,
   ChevronRight,
   PlayCircle,
-  BookOpen,
-  BookMarked,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { dashboardService } from "../services/dashboardService";
 
 interface Lesson {
@@ -25,14 +22,6 @@ interface Lesson {
 
 const defaultLessons: Lesson[] = [
   {
-    id: 2,
-    title: "English Pronunciation Basics",
-    timeLeft: "25 min left",
-    progress: 0,
-    icon: "🗣️",
-    iconBg: "bg-purple-100",
-  },
-  {
     id: 3,
     title: "English Vocabulary: Daily Life",
     timeLeft: "5 min left",
@@ -48,6 +37,30 @@ const defaultLessons: Lesson[] = [
     icon: "🃏",
     iconBg: "bg-yellow-100",
   },
+  {
+    id: 2,
+    title: "Listening Lab",
+    timeLeft: "25 min left",
+    progress: 0,
+    icon: "🎧",
+    iconBg: "bg-orange-100",
+  },
+  {
+    id: 5,
+    title: "Reading Tasks",
+    timeLeft: "15 min left",
+    progress: 0,
+    icon: "📚",
+    iconBg: "bg-green-100",
+  },
+  {
+    id: 1,
+    title: "Grammar Practice",
+    timeLeft: "20 min left",
+    progress: 0,
+    icon: "✍️",
+    iconBg: "bg-purple-100",
+  },
 ];
 
 interface ContinueLearningProps {
@@ -58,13 +71,11 @@ export default function ContinueLearning({
   onLessonClick,
 }: ContinueLearningProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const quizBtnRef = useRef<HTMLButtonElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
   const progressRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [hoveredId, setHoveredId] = useState<number | string | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const displayedLessons = lessons.length > 0 ? lessons : defaultLessons;
 
@@ -98,18 +109,6 @@ export default function ContinueLearning({
       );
 
       if (!loading) {
-        gsap.fromTo(
-          quizBtnRef.current,
-          { scale: 0, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.5,
-            delay: 0.3,
-            ease: "elastic.out(1, 0.5)",
-          },
-        );
-
         progressRefs.current.forEach((progressBar, index) => {
           if (progressBar) {
             const lesson = displayedLessons[index];
@@ -125,21 +124,7 @@ export default function ContinueLearning({
     });
 
     return () => ctx.revert();
-  }, [loading]);
-
-  const handleQuizClick = () => {
-    gsap.to(quizBtnRef.current, {
-      scale: 0.95,
-      duration: 0.1,
-      onComplete: () => {
-        navigate("/quiz");
-      },
-    });
-  };
-
-  const handleReadingClick = () => {
-    navigate("/reading");
-  };
+  }, [loading, displayedLessons]);
 
   const handleLessonClick = (lesson: Lesson) => {
     onLessonClick?.(lesson.id, lesson.title);
@@ -149,7 +134,7 @@ export default function ContinueLearning({
     return (
       <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
         <div className="animate-pulse space-y-4">
-          {[1, 2, 3, 4].map((i) => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-24 bg-gray-100 rounded-xl"></div>
           ))}
         </div>
@@ -265,45 +250,6 @@ export default function ContinueLearning({
           100% { background-position: 1rem 0; }
         }
       `}</style>
-
-      {/* Reading Tasks Button */}
-      <button
-        onClick={handleReadingClick}
-        className="w-full flex items-center justify-between p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-300 group border border-green-100 mt-4"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-green-400 flex items-center justify-center">
-            <BookMarked className="w-5 h-5 text-white" />
-          </div>
-          <div className="text-left">
-            <p className="font-semibold text-gray-900 text-sm">Reading Tasks</p>
-            <p className="text-xs text-gray-500">
-              Read passages & poems, answer questions
-            </p>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-purple-500 transition-transform duration-300 group-hover:translate-x-1" />
-      </button>
-
-      {/* Quiz Button */}
-      <button
-        ref={quizBtnRef}
-        onClick={handleQuizClick}
-        className="w-full flex items-center justify-between p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-300 group border border-green-100 mt-3"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-white" />
-          </div>
-          <div className="text-left">
-            <p className="font-semibold text-gray-900 text-sm">Take a Quiz</p>
-            <p className="text-xs text-gray-500">
-              Test your knowledge & earn points
-            </p>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-green-500 transition-transform duration-300 group-hover:translate-x-1" />
-      </button>
     </div>
   );
 }
