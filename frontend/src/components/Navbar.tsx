@@ -13,7 +13,6 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
   const [userAvatar, setUserAvatar] = useState("");
   const [userInitials, setUserInitials] = useState("U");
 
-  // Sync state from localStorage
   const syncFromStorage = () => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -36,25 +35,17 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
 
   useEffect(() => {
     syncFromStorage();
-
-    // Re-sync when another tab/page mutates localStorage
     window.addEventListener("storage", syncFromStorage);
     return () => window.removeEventListener("storage", syncFromStorage);
   }, [propIsLoggedIn]);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  // Active link styling
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `font-medium transition-all duration-200 py-2 px-4 block no-underline rounded-lg
-   hover:bg-green-100 hover:scale-105 hover:shadow-md
-   ${isActive ? 'text-green-600 font-semibold bg-green-50' : 'text-gray-700'}`;
+     hover:bg-green-100 hover:scale-105 hover:shadow-md
+     ${isActive ? 'text-green-600 font-semibold bg-green-50' : 'text-gray-700'}`;
 
   return (
     <nav className="sticky top-4 z-50 w-full px-4 sm:px-6 lg:px-8">
@@ -78,43 +69,28 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
               </Link>
             </div>
 
-            {/* Navigation Links - ALL VISIBLE TO EVERYONE */}
-            <ul
-              className={`
-                hidden md:flex md:items-center md:gap-6
-                absolute md:static left-1/2 -translate-x-1/2 md:translate-x-0 top-[80px]
-                ${isMobileMenuOpen ? 'flex flex-col bg-white w-full left-0 top-[80px] p-6 shadow-md rounded-b-2xl' : ''}
-              `}
-            >
-              {/* Home - Always visible */}
+            {/* Desktop Navigation */}
+            <ul className="hidden md:flex md:items-center md:gap-6">
               <li>
                 <NavLink to="/" className={navLinkClass} onClick={closeMobileMenu}>
                   Home
                 </NavLink>
               </li>
-
-              {/* Dashboard - Visible to everyone */}
               <li>
                 <NavLink to="/dashboard" className={navLinkClass} onClick={closeMobileMenu}>
                   Dashboard
                 </NavLink>
               </li>
-
-              {/* Progress - Visible to everyone */}
               <li>
                 <NavLink to="/progress" className={navLinkClass} onClick={closeMobileMenu}>
                   Progress
                 </NavLink>
               </li>
-
-              {/* Settings - Visible to everyone */}
               <li>
                 <NavLink to="/setting" className={navLinkClass} onClick={closeMobileMenu}>
                   Settings
                 </NavLink>
               </li>
-
-              {/* About Us - Always visible */}
               <li>
                 <NavLink to="/about" className={navLinkClass} onClick={closeMobileMenu}>
                   About Us
@@ -124,7 +100,6 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
 
             {/* Right Section */}
             <div className="flex items-center gap-4">
-
               {isLoggedIn ? (
                 <NavLink
                   to="/account"
@@ -146,7 +121,6 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
                       {userInitials}
                     </div>
                   )}
-
                   <span className="font-semibold hidden md:inline">
                     {userName}
                   </span>
@@ -154,7 +128,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
               ) : (
                 <Link
                   to="/signin"
-                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-bold text-base transition shadow-md hover:shadow-lg no-underline"
+                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-bold text-base transition shadow-md hover:shadow-lg no-underline hidden md:block"
                   onClick={closeMobileMenu}
                 >
                   Login
@@ -166,14 +140,46 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
                 className="md:hidden flex flex-col gap-1 cursor-pointer z-50"
                 onClick={toggleMobileMenu}
               >
-                <span className={`w-6 h-0.5 bg-gray-700 transition-all ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-                <span className={`w-6 h-0.5 bg-gray-700 transition-all ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
-                <span className={`w-6 h-0.5 bg-gray-700 transition-all ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+                <span className={`w-6 h-0.5 bg-gray-700 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+                <span className={`w-6 h-0.5 bg-gray-700 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
+                <span className={`w-6 h-0.5 bg-gray-700 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
               </div>
-
             </div>
           </div>
         </div>
+
+        {/*  Mobile Menu - FIXED */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-green-100 px-6 py-4 flex flex-col gap-2">
+            <NavLink to="/" className={navLinkClass} onClick={closeMobileMenu}>
+              Home
+            </NavLink>
+            <NavLink to="/dashboard" className={navLinkClass} onClick={closeMobileMenu}>
+              Dashboard
+            </NavLink>
+            <NavLink to="/progress" className={navLinkClass} onClick={closeMobileMenu}>
+              Progress
+            </NavLink>
+            <NavLink to="/setting" className={navLinkClass} onClick={closeMobileMenu}>
+              Settings
+            </NavLink>
+            <NavLink to="/about" className={navLinkClass} onClick={closeMobileMenu}>
+              About Us
+            </NavLink>
+
+            {/* Login button in mobile menu */}
+            {!isLoggedIn && (
+              <Link
+                to="/signin"
+                className="mt-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-base transition shadow-md text-center no-underline"
+                onClick={closeMobileMenu}
+              >
+                Login
+              </Link>
+            )}
+          </div>
+        )}
+
       </div>
     </nav>
   );
