@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import User from '../models/user.js';
 import Settings from '../models/settings.model.js';
+import mongoose from 'mongoose';
 import { sendDailyReminderEmail, sendWeeklyProgressEmail } from './emailService.js';
 import moment from 'moment';
 
@@ -52,6 +53,12 @@ export const initCronJobs = () => {
     // Scheduled using standard cron expression format: minute hour dayOfMonth month dayOfWeek
     cron.schedule('0 10 * * 0', async () => {
         try {
+            // Add mongoose connection check
+            if (mongoose.connection.readyState !== 1) {
+                console.warn("⚠️  [CRON] Skipping Weekly Progress Job (MongoDB not connected)");
+                return;
+            }
+
             console.log('📊 [CRON] Triggering Weekly Progress Updates...');
 
             // Find all users who have progressUpdates ON

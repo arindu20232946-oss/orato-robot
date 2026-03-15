@@ -27,6 +27,7 @@ import quizRoutes from "./routes/quiz-routes.js"
 import listeningRoutes from "./routes/listening-routes.js"
 import readingRoutes from "./routes/reading-routes.js"
 import grammarRoutes from "./routes/grammar-routes.js"
+import speakingCoachRoutes from "./routes/speakingCoachRoutes.js"
 
 console.log("Cloudinary Key:", process.env.CLOUDINARY_API_KEY);
 
@@ -86,6 +87,7 @@ app.use("/api/quiz", quizRoutes);
 app.use("/api/listening", listeningRoutes);
 app.use("/api/reading", readingRoutes);
 app.use("/api/grammar", grammarRoutes);
+app.use("/api/speaking-coach", speakingCoachRoutes);
 
 // Protected route test
 app.get("/api/protected", protect, (req, res) => {

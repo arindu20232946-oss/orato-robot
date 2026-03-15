@@ -12,6 +12,10 @@ declare global {
   }
 }
 
+/**
+ * Initializes the browser's native Web Speech API.
+ * Returns null if the browser does not support it (e.g., non-Chrome/Edge browsers).
+ */
 function getRecognition(): any | null {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return null;
@@ -35,25 +39,11 @@ function speak(text: string) {
   window.speechSynthesis.speak(u);
 }
 
-function localCoachReply(userText: string) {
-  const t = userText.trim();
-  if (!t) return "Say something and I will help you practice.";
-
-  const tips: string[] = [];
-  if (/\bi am go\b/i.test(t)) tips.push(`Try: "I am going"`);
-  if (/\bhe go\b/i.test(t)) tips.push(`Try: "He goes"`);
-  if (/\bshe go\b/i.test(t)) tips.push(`Try: "She goes"`);
-  if (/\byesterday\b/i.test(t) && /\bgo\b/i.test(t))
-    tips.push(`Because you said "yesterday", use past tense: "went"`);
-
-  const question = "Tell me more about that. Why do you think so?";
-  const praise = "Nice! Your sentence is understandable.";
-
-  return tips.length
-    ? `${praise}\n\nSmall correction(s):\n- ${tips.join("\n- ")}\n\n${question}`
-    : `${praise}\n\n${question}`;
-}
-
+/**
+ * SpeakingCoach Component
+ * Provide an interactive chat interface for users to converse with an AI english speaking coach.
+ * Supports native Web Speech API listening for browsers that support it, with a graceful text fallback.
+ */
 function SpeakingCoach() {
   const recognition = useMemo(() => getRecognition(), []);
   const [supported, setSupported] = useState(true);
@@ -61,6 +51,7 @@ function SpeakingCoach() {
   const [listening, setListening] = useState(false);
   const [interim, setInterim] = useState("");
   const [textInput, setTextInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [messages, setMessages] = useState<ChatMsg[]>([
     {
@@ -75,26 +66,59 @@ function SpeakingCoach() {
 
   const [autoSpeak, setAutoSpeak] = useState(true);
   const lastAssistantSpokenRef = useRef<string>("");
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!recognition) setSupported(false);
   }, [recognition]);
 
-  const addUserAndReply = (userText: string) => {
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const addUserAndReply = async (userText: string) => {
     const userMsg: ChatMsg = { role: "user", text: userText };
     setMessages((prev) => [...prev, userMsg]);
+    setLoading(true);
 
-    const assistantText = localCoachReply(userText);
-    const assistantMsg: ChatMsg = { role: "assistant", text: assistantText };
-    setMessages((prev) => [...prev, assistantMsg]);
+    try {
+      const res = await fetch("http://localhost:5002/api/speaking-coach/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: userText }),
+      });
 
-    if (
-      autoSpeak &&
-      assistantText &&
-      assistantText !== lastAssistantSpokenRef.current
-    ) {
-      lastAssistantSpokenRef.current = assistantText;
-      speak(assistantText);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to get coach reply");
+      }
+
+      const assistantText = data.coachReply;
+      const assistantMsg: ChatMsg = { role: "assistant", text: assistantText };
+
+      setMessages((prev) => [...prev, assistantMsg]);
+
+      if (
+        autoSpeak &&
+        assistantText &&
+        assistantText !== lastAssistantSpokenRef.current
+      ) {
+        lastAssistantSpokenRef.current = assistantText;
+        speak(assistantText);
+      }
+    } catch (error) {
+      const errorMsg: ChatMsg = {
+        role: "assistant",
+        text: "Sorry, I could not connect to the AI coach server.",
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,6 +139,7 @@ function SpeakingCoach() {
       }
 
       if (inter) setInterim(inter);
+
       if (full) {
         setInterim("");
         setListening(false);
@@ -131,13 +156,15 @@ function SpeakingCoach() {
   const stopListening = () => {
     try {
       recognition?.stop();
-    } catch {}
+    } catch (err) {
+      console.warn("Speech recognition stop error:", err);
+    }
     setListening(false);
   };
 
   const sendText = () => {
     const t = textInput.trim();
-    if (!t) return;
+    if (!t || loading) return;
     setTextInput("");
     addUserAndReply(t);
   };
@@ -173,12 +200,11 @@ function SpeakingCoach() {
       <div className="flex flex-wrap gap-2 mt-4">
         <button
           onClick={startListening}
-          disabled={!supported || listening}
-          className={`px-4 py-2 rounded-xl border font-semibold ${
-            listening
-              ? "bg-gray-100 cursor-not-allowed"
-              : "bg-green-50 hover:bg-green-100"
-          }`}
+          disabled={!supported || listening || loading}
+          className={`px-4 py-2 rounded-xl border font-semibold transition-colors duration-200 ${listening || loading
+            ? "bg-gray-100 cursor-not-allowed"
+            : "bg-green-50 hover:bg-green-100"
+            }`}
         >
           🎤 Start
         </button>
@@ -186,11 +212,10 @@ function SpeakingCoach() {
         <button
           onClick={stopListening}
           disabled={!supported || !listening}
-          className={`px-4 py-2 rounded-xl border font-semibold ${
-            !listening
-              ? "bg-gray-100 cursor-not-allowed"
-              : "bg-red-50 hover:bg-red-100"
-          }`}
+          className={`px-4 py-2 rounded-xl border font-semibold transition-colors duration-200 ${!listening
+            ? "bg-gray-100 cursor-not-allowed"
+            : "bg-red-50 hover:bg-red-100"
+            }`}
         >
           ⏹ Stop
         </button>
@@ -200,7 +225,7 @@ function SpeakingCoach() {
             setMessages((prev) => prev.slice(0, 2));
             setInterim("");
           }}
-          className="px-4 py-2 rounded-xl border font-semibold bg-indigo-50 hover:bg-indigo-100"
+          className="px-4 py-2 rounded-xl border font-semibold bg-indigo-50 hover:bg-indigo-100 transition-colors duration-200"
         >
           🧹 Clear Chat
         </button>
@@ -212,17 +237,25 @@ function SpeakingCoach() {
         </div>
       )}
 
-      <div className="mt-4 bg-gray-50 border border-gray-200 rounded-2xl p-3 h-72 overflow-y-auto">
+      {loading && (
+        <div className="mt-3 text-sm text-blue-600 font-medium flex items-center gap-2">
+          <span className="animate-pulse">💭 Coach is thinking...</span>
+        </div>
+      )}
+
+      <div
+        ref={chatContainerRef}
+        className="mt-4 bg-gray-50 border border-gray-200 rounded-2xl p-3 h-72 overflow-y-auto"
+      >
         {messages
           .filter((m) => m.role !== "system")
           .map((m, idx) => (
             <div
               key={idx}
-              className={`flex mb-3 ${
-                m.role === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex mb-3 ${m.role === "user" ? "justify-end" : "justify-start"
+                }`}
             >
-              <div className="max-w-[78%] p-3 rounded-2xl bg-white border border-gray-200 whitespace-pre-wrap">
+              <div className="max-w-[78%] p-3 rounded-2xl bg-white border border-gray-100 shadow-sm whitespace-pre-wrap">
                 <div className="text-xs text-gray-500 mb-1">
                   {m.role === "user" ? "You" : "Coach"}
                 </div>
@@ -237,22 +270,27 @@ function SpeakingCoach() {
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
           placeholder="Type in English…"
-          className="flex-1 px-3 py-2 rounded-xl border border-gray-300 outline-none"
+          disabled={loading}
+          className={`flex-1 px-3 py-2 rounded-xl border border-gray-300 outline-none ${loading ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
           onKeyDown={(e) => {
             if (e.key === "Enter") sendText();
           }}
         />
         <button
           onClick={sendText}
-          className="px-4 py-2 rounded-xl border font-bold bg-green-50 hover:bg-green-100"
+          disabled={loading}
+          className={`px-4 py-2 rounded-xl border font-bold transition-colors duration-200 ${loading
+            ? "bg-gray-100 cursor-not-allowed"
+            : "bg-green-50 hover:bg-green-100"
+            }`}
         >
           Send
         </button>
       </div>
 
       <p className="mt-2 text-xs text-gray-500">
-        Note: Speech feature works best in Chrome/Edge. Current coach replies
-        offline (no API).
+        Note: Speech feature works best in Chrome/Edge. Coach replies come from
+        the backend API.
       </p>
     </div>
   );

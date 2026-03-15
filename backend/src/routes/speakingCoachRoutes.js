@@ -1,10 +1,13 @@
-const express = require("express");
+import express from "express";
+import { chatWithSpeakingCoach } from "../controllers/speakingCoachController.js";
+
 const router = express.Router();
 
-const {
-  chatWithSpeakingCoach,
-} = require("../controllers/speakingCoachController");
-
+/**
+ * @route   POST /api/speaking-coach/chat
+ * @desc    Get AI-generated feedback and grammar correction for a spoken sentence
+ * @access  Public
+ */
 router.post("/chat", chatWithSpeakingCoach);
 
-module.exports = router;
+export default router;
