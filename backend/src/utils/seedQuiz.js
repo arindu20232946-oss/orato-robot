@@ -233,6 +233,94 @@ const seedQuizzes = async () => {
             explanation: 'Abstract nouns like "knowledge" are uncountable and generally take no article unless specified.'
           }
         ]
+      },
+
+      // ─── QUIZ 5: Intermediate Vocabulary ───────────────────────────────────
+      {
+        title: 'Intermediate Vocabulary Quiz',
+        category: 'Vocabulary',
+        difficulty: 'Intermediate',
+        description: 'Enhance your vocabulary with intermediate words',
+        icon: '📚',
+        iconBg: 'bg-yellow-100',
+        timeLimit: 12,
+        points: 20,
+        questions: [
+          {
+            text: 'What is a synonym for "abundant"?',
+            options: ['Scarce', 'Plentiful', 'Rare', 'Few'],
+            correctAnswer: 1,
+            explanation: '"Abundant" means existing or available in large quantities; plentiful.'
+          },
+          {
+            text: 'What does "meticulous" mean?',
+            options: ['Careless', 'Sloppy', 'Thorough', 'Quick'],
+            correctAnswer: 2,
+            explanation: '"Meticulous" means showing great attention to detail; very careful and precise.'
+          },
+          {
+            text: 'Which word means "to make something less severe"?',
+            options: ['Aggravate', 'Worsen', 'Mitigate', 'Intensify'],
+            correctAnswer: 2,
+            explanation: '"Mitigate" means make less severe, serious, or painful.'
+          },
+          {
+            text: 'What is the opposite of "ambiguous"?',
+            options: ['Clear', 'Vague', 'Uncertain', 'Obscure'],
+            correctAnswer: 0,
+            explanation: '"Ambiguous" means open to more than one interpretation; clear is its opposite.'
+          },
+          {
+            text: 'Which word means "a person who is deeply involved in reading"?',
+            options: ['Bookworm', 'Athlete', 'Musician', 'Artist'],
+            correctAnswer: 0,
+            explanation: '"Bookworm" is an informal term for a person devoted to reading.'
+          }
+        ]
+      },
+
+      // ─── QUIZ 6: Advanced Vocabulary ──────────────────────────────────────
+      {
+        title: 'Advanced Vocabulary Quiz',
+        category: 'Vocabulary',
+        difficulty: 'Advanced',
+        description: 'Master complex English vocabulary',
+        icon: '🎓',
+        iconBg: 'bg-indigo-100',
+        timeLimit: 15,
+        points: 30,
+        questions: [
+          {
+            text: 'What does the word "ephemeral" signify?',
+            options: ['Eternal', 'Short-lived', 'Permanent', 'Endless'],
+            correctAnswer: 1,
+            explanation: '"Ephemeral" means lasting for a very short time.'
+          },
+          {
+            text: 'Choose the correct synonym for "ubiquitous":',
+            options: ['Rare', 'Omnipresent', 'Isolated', 'Hidden'],
+            correctAnswer: 1,
+            explanation: '"Ubiquitous" means present, appearing, or found everywhere.'
+          },
+          {
+            text: 'Which of the following is an antonym for "cacophony"?',
+            options: ['Noise', 'Clamor', 'Harmony', 'Uproar'],
+            correctAnswer: 2,
+            explanation: '"Cacophony" is a harsh discordant mixture of sounds, so its antonym is harmony.'
+          },
+          {
+            text: 'What does "esoteric" mean?',
+            options: ['Common', 'Understood by few', 'Public', 'Obvious'],
+            correctAnswer: 1,
+            explanation: '"Esoteric" refers to something intended for or likely to be understood by only a small number of people.'
+          },
+          {
+            text: 'Which word means "having a stubbornly uncooperative attitude"?',
+            options: ['Compliant', 'Docile', 'Recalcitrant', 'Amenable'],
+            correctAnswer: 2,
+            explanation: '"Recalcitrant" means having a stubbornly uncooperative attitude towards authority or discipline.'
+          }
+        ]
       }
 
     ]);
