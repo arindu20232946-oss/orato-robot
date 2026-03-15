@@ -10,6 +10,8 @@ interface Skill {
   details?: {
     totalLevels?: number;
     completedLevels?: number;
+    totalReading?: number;
+    completedReading?: number;
     points?: number;
   };
 }
@@ -25,6 +27,7 @@ const defaultSkills: Skill[] = [
   { name: "Vocabulary", percentage: 0, color: "#3B82F6" },
   { name: "Grammar", percentage: 0, color: "#8B5CF6" },
   { name: "Listening", percentage: 0, color: "#F97316" },
+  { name: "Reading", percentage: 0, color: "#10B981" },
 ];
 
 function AnimatedPercentage({ value }: { value: number }) {

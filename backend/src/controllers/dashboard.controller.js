@@ -4,6 +4,7 @@ import Challenge from '../models/challenge.js';
 import Skill from '../models/skill.js';
 import Achievement from '../models/achievement.js';
 import GrammarProgress from '../models/grammarProgress.js';
+import ReadingProgress from '../models/readingProgress.js';
 
 /**
  * Get full dashboard data
@@ -186,6 +187,21 @@ export const getSkills = async (req, res) => {
     const grammarPercentage = Math.round((completedLevels / totalLevels) * 100);
     const grammarPoints = grammarProgress?.totalScore || 0;
     
+    let readingPercentage = 0;
+    let completedReading = 0;
+    let totalReading = 0;
+    let readingPoints = 0;
+    
+    try {
+      const readingProgress = await ReadingProgress.find({ userId, level: skillLevel });
+      completedReading = readingProgress.filter(r => r.completed).length;
+      totalReading = 10;
+      readingPercentage = Math.round((completedReading / totalReading) * 100);
+      readingPoints = readingProgress.reduce((sum, r) => sum + (r.score || 0), 0);
+    } catch (readingError) {
+      console.error('Error fetching reading progress:', readingError);
+    }
+    
     const skillsWithGrammar = skills.map(s => ({
       id: s._id,
       name: s.name,
@@ -213,6 +229,29 @@ export const getSkills = async (req, res) => {
           totalLevels,
           completedLevels,
           points: grammarPoints
+        }
+      });
+    }
+
+    const readingSkillIndex = skillsWithGrammar.findIndex(s => s.name === 'Reading');
+    if (readingSkillIndex >= 0) {
+      skillsWithGrammar[readingSkillIndex].percentage = readingPercentage;
+      skillsWithGrammar[readingSkillIndex].details = {
+        ...skillsWithGrammar[readingSkillIndex].details,
+        totalReading,
+        completedReading,
+        points: readingPoints
+      };
+    } else {
+      skillsWithGrammar.push({
+        id: 'reading',
+        name: 'Reading',
+        percentage: readingPercentage,
+        color: '#3B82F6',
+        details: {
+          totalReading,
+          completedReading,
+          points: readingPoints
         }
       });
     }
