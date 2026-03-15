@@ -19,6 +19,28 @@ const mockQuizzes: Quiz[] = [
     points: 10,
     totalQuestions: 5,
   },
+  {
+    id: "5",
+    title: "Intermediate Vocabulary Quiz",
+    category: "Vocabulary",
+    difficulty: "Intermediate",
+    icon: "📚",
+    iconBg: "bg-yellow-100",
+    timeLimit: 12,
+    points: 20,
+    totalQuestions: 5,
+  },
+  {
+    id: "6",
+    title: "Advanced Vocabulary Quiz",
+    category: "Vocabulary",
+    difficulty: "Advanced",
+    icon: "🎓",
+    iconBg: "bg-indigo-100",
+    timeLimit: 15,
+    points: 30,
+    totalQuestions: 5,
+  },
 ];
 
 interface Quiz {
@@ -52,7 +74,22 @@ const Quiz: React.FC = () => {
     const fetchQuizzes = async () => {
       try {
         const res = await quizService.getAllQuizzes();
-        setQuizzes(res.data.quizzes);
+        let fetchedQuizzes: Quiz[] = res.data.quizzes;
+
+        // If backend does not have Intermediate and Advanced Vocabulary quizzes, add them from mock
+        const hasIntermediate = fetchedQuizzes.some(q => q.title === "Intermediate Vocabulary Quiz");
+        const hasAdvanced = fetchedQuizzes.some(q => q.title === "Advanced Vocabulary Quiz");
+
+        if (!hasIntermediate) {
+          const interMock = mockQuizzes.find(q => q.id === "5");
+          if (interMock) fetchedQuizzes.push(interMock);
+        }
+        if (!hasAdvanced) {
+          const advMock = mockQuizzes.find(q => q.id === "6");
+          if (advMock) fetchedQuizzes.push(advMock);
+        }
+
+        setQuizzes(fetchedQuizzes);
         // AFTER
       } catch (error) {
         console.error("Failed to fetch quizzes:", error);
