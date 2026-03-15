@@ -1,123 +1,91 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, BookOpen, Loader2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Loader2, PenTool, Headphones, BookMarked } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import QuizCard from "../components/QuizCard";
-import { quizService } from "../services/quizService";
 
-const mockQuizzes: Quiz[] = [
-  {
-    id: "2",
-    title: "Daily Vocabulary Quiz",
-    category: "Vocabulary",
-    difficulty: "Beginner",
-    icon: "📖",
-    iconBg: "bg-green-100",
-    timeLimit: 8,
-    points: 10,
-    totalQuestions: 5,
-  },
-];
-
-interface Quiz {
+interface QuizCategory {
   id: string;
-  title: string;
-  category: string;
-  difficulty: string;
-  icon: string;
-  iconBg: string;
-  timeLimit: number;
-  points: number;
-  totalQuestions: number;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  color: string;
+  bgColor: string;
+  path: string;
+  available: boolean;
 }
-
-const categories = [
-  "Grammar",
-  "Vocabulary",
-  "Listening",
-];
 
 const Quiz: React.FC = () => {
   const navigate = useNavigate();
   const headerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("Grammar");
+  const [loading, setLoading] = useState(false);
+
+  const categories: QuizCategory[] = [
+    {
+      id: "grammar",
+      name: "Grammar",
+      description: "Master grammar rules and patterns",
+      icon: <PenTool className="w-8 h-8" />,
+      color: "text-purple-600",
+      bgColor: "bg-purple-100",
+      path: "/grammar",
+      available: true,
+    },
+    {
+      id: "vocabulary",
+      name: "Vocabulary",
+      description: "Expand your word knowledge",
+      icon: <BookMarked className="w-8 h-8" />,
+      color: "text-green-600",
+      bgColor: "bg-green-100",
+      path: "/visual-cards",
+      available: false,
+    },
+    {
+      id: "listening",
+      name: "Listening",
+      description: "Improve your listening skills",
+      icon: <Headphones className="w-8 h-8" />,
+      color: "text-orange-600",
+      bgColor: "bg-orange-100",
+      path: "/listening",
+      available: true,
+    },
+  ];
 
   useEffect(() => {
-    const fetchQuizzes = async () => {
-      try {
-        const res = await quizService.getAllQuizzes();
-        setQuizzes(res.data.quizzes);
-        // AFTER
-      } catch (error) {
-        console.error("Failed to fetch quizzes:", error);
-        setQuizzes(mockQuizzes); // ← back to mock fallback
-      } finally {
-        setLoading(false);
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" },
+      );
+      if (cardsRef.current?.children) {
+        gsap.fromTo(
+          cardsRef.current.children,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.1,
+            delay: 0.2,
+            ease: "power2.out",
+          },
+        );
       }
-    };
-    fetchQuizzes();
+    });
+    return () => ctx.revert();
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      const ctx = gsap.context(() => {
-        gsap.fromTo(
-          headerRef.current,
-          { y: -20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" },
-        );
-        if (cardsRef.current?.children) {
-          gsap.fromTo(
-            cardsRef.current.children,
-            { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.5,
-              stagger: 0.1,
-              delay: 0.2,
-              ease: "power2.out",
-            },
-          );
-        }
-      });
-      return () => ctx.revert();
+  const handleCategoryClick = (category: QuizCategory) => {
+    if (category.available) {
+      navigate(category.path);
     }
-  }, [loading]);
-
-  const filteredQuizzes = quizzes.filter((q) => {
-    if (filter === "Grammar") {
-      return false;
-    }
-    return q.category === filter;
-  });
-
-  // Redirect to dedicated pages
-  useEffect(() => {
-    if (filter === "Listening") {
-      navigate("/listening");
-    }
-    if (filter === "Grammar") {
-      navigate("/grammar");
-    }
-  }, [filter, navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
-        <Loader2 className="w-12 h-12 text-green-500 animate-spin mb-4" />
-        <h2 className="text-xl font-semibold text-gray-700">
-          Loading quizzes...
-        </h2>
-      </div>
-    );
-  }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
@@ -143,45 +111,60 @@ const Quiz: React.FC = () => {
             </h1>
           </div>
           <p className="text-gray-500 text-sm ml-1">
-            Test your knowledge and earn points!
+            Select a category to test your knowledge!
           </p>
-
-          {/* Category Filter */}
-          <div className="flex gap-2 mt-5 flex-wrap">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
-                  filter === cat
-                    ? "bg-green-500 text-white shadow-md"
-                    : "bg-white text-gray-600 hover:bg-gray-100 card-shadow"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
         </div>
 
-        {/* Quiz Grid */}
-        {filteredQuizzes.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-4xl mb-4">😊</p>
-            <p className="text-gray-500 text-lg">
-              More quizzes coming soon!
-            </p>
-          </div>
-        ) : (
-          <div
-            ref={cardsRef}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-          >
-            {filteredQuizzes.map((quiz) => (
-              <QuizCard key={quiz.id} {...quiz} />
-            ))}
-          </div>
-        )}
+        {/* Category Grid */}
+        <div
+          ref={cardsRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => handleCategoryClick(category)}
+              disabled={!category.available}
+              className={`relative p-6 rounded-2xl card-shadow transition-all duration-300 hover:scale-[1.02] ${
+                category.available
+                  ? "bg-white cursor-pointer hover:shadow-lg"
+                  : "bg-gray-100 cursor-not-allowed opacity-60"
+              }`}
+            >
+              {/* Icon */}
+              <div
+                className={`w-16 h-16 rounded-xl ${category.bgColor} ${category.color} flex items-center justify-center mb-4`}
+              >
+                {category.icon}
+              </div>
+
+              {/* Content */}
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {category.name}
+              </h3>
+              <p className="text-gray-500 text-sm">
+                {category.description}
+              </p>
+
+              {/* Status Badge */}
+              {!category.available && (
+                <div className="absolute top-4 right-4">
+                  <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs font-medium rounded-full">
+                    Coming Soon
+                  </span>
+                </div>
+              )}
+
+              {category.available && (
+                <div className="absolute top-4 right-4">
+                  <span className="px-2 py-1 bg-green-100 text-green-600 text-xs font-medium rounded-full">
+                    Available
+                  </span>
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
       </main>
 
       <Footer />
