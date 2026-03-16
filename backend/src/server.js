@@ -26,6 +26,7 @@ import dashboardRoutes from "./routes/dashboard-routes.js";
 import quizRoutes from "./routes/quiz-routes.js"
 import listeningRoutes from "./routes/listening-routes.js"
 import readingRoutes from "./routes/reading-routes.js"
+import vocabularyRoutes from "./routes/vocabulary-routes.js"
 import grammarRoutes from "./routes/grammar-routes.js"
 import speakingCoachRoutes from "./routes/speakingCoachRoutes.js"
 import { initCronJobs } from "./services/cronJobs.js";
@@ -86,6 +87,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/quiz", quizRoutes);
 app.use("/api/listening", listeningRoutes);
 app.use("/api/reading", readingRoutes);
+app.use("/api/vocabulary", vocabularyRoutes);
 app.use("/api/grammar", grammarRoutes);
 app.use("/api/speaking-coach", speakingCoachRoutes);
 
