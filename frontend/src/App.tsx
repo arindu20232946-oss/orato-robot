@@ -21,6 +21,8 @@ import ListeningQuiz from "./pages/ListeningQuiz";
 import ListeningDetail from "./pages/ListeningDetail";
 import ReadingTask from "./pages/ReadingTask";
 import ReadingDetail from "./pages/ReadingDetail";
+import VocabularyTask from "./pages/VocabularyTask";
+import VocabularyDetail from "./pages/VocabularyDetail";
 import VisualCardsPage from "./pages/VisualCardsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import GrammarLevels from "./pages/GrammarLevels";
@@ -113,6 +115,8 @@ function App() {
             </ProtectedRoute>
             }
           />
+          <Route path="/vocabulary" element={<ProtectedRoute><VocabularyTask /></ProtectedRoute>} />
+          <Route path="/vocabulary/:id" element={<ProtectedRoute><VocabularyDetail /></ProtectedRoute>} />
 
           {/* 404 Not Found */}
           <Route

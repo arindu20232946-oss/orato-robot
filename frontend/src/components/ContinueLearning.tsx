@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import {
-  Clock,
-  ChevronRight,
-  PlayCircle,
-} from "lucide-react";
+import { Clock, ChevronRight, PlayCircle } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 import { dashboardService } from "../services/dashboardService";
 
 interface Lesson {
@@ -48,6 +45,14 @@ const defaultLessons: Lesson[] = [
     iconBg: "bg-green-100",
   },
   {
+    id: 6,
+    title: "Vocabulary Practice",
+    timeLeft: "10 min left",
+    progress: 0,
+    icon: "🔤",
+    iconBg: "bg-blue-100",
+  },
+  {
     id: 1,
     title: "Grammar Practice",
     timeLeft: "20 min left",
@@ -70,6 +75,7 @@ export default function ContinueLearning({
   const [hoveredId, setHoveredId] = useState<number | string | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const displayedLessons = lessons.length > 0 ? lessons : defaultLessons;
 
@@ -78,7 +84,6 @@ export default function ContinueLearning({
       try {
         const res = await dashboardService.getContinueLearning();
         if (res.data?.lessons) {
-          // Only use default lessons, ignore backend Grammar/Reading/Listening
           setLessons(defaultLessons);
         } else {
           setLessons(defaultLessons);
@@ -120,7 +125,19 @@ export default function ContinueLearning({
   }, [loading, displayedLessons]);
 
   const handleLessonClick = (lesson: Lesson) => {
-    onLessonClick?.(lesson.id, lesson.title);
+    if (lesson.title === "Visual Vocabulary Cards") {
+      navigate("/visual-cards");
+    } else if (lesson.title === "Listening Lab") {
+      navigate("/listening");
+    } else if (lesson.title === "Reading Tasks") {
+      navigate("/reading");
+    } else if (lesson.title === "Vocabulary Practice") {
+      navigate("/vocabulary");
+    } else if (lesson.title === "Grammar Practice") {
+      navigate("/quiz");
+    } else {
+      onLessonClick?.(lesson.id, lesson.title);
+    }
   };
 
   if (loading) {
@@ -216,7 +233,7 @@ export default function ContinueLearning({
                   </div>
                 </div>
 
-                {/* Continue Button */}
+                {/* Start Button */}
                 <div className="flex-shrink-0">
                   <button
                     onClick={(e) => {
