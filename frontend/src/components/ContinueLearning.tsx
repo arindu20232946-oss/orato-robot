@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { Clock, ChevronRight, PlayCircle } from 'lucide-react';
+import { ChevronRight, PlayCircle } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { dashboardService } from "../services/dashboardService";
 
@@ -242,11 +242,6 @@ export default function ContinueLearning({
                   <h4 className="font-semibold text-gray-900 text-base mb-1 truncate">
                     {lesson.title}
                   </h4>
-
-                  <div className="flex items-center gap-2 text-gray-500 text-xs mb-3">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{lesson.timeLeft}</span>
-                  </div>
 
                   <div className="relative">
                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">

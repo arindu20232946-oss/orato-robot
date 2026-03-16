@@ -83,6 +83,7 @@ export const getStats = async (req, res) => {
     let grammarAttempts = 0;
     let readingAttempts = 0;
     let listeningAttempts = 0;
+    let vocabularyAttempts = 0;
 
     try {
       const grammarProgress = await GrammarProgress.findOne({ userId, skillLevel });
@@ -106,7 +107,15 @@ export const getStats = async (req, res) => {
       console.error('Error fetching listening progress:', e);
     }
 
-    const totalLessonsDone = grammarAttempts + readingAttempts + listeningAttempts;
+    try {
+      const VocabularyProgress = (await import('../models/vocabularyProgress.js')).default;
+      const vocabularyProgress = await VocabularyProgress.find({ userId, level: skillLevel });
+      vocabularyAttempts = vocabularyProgress.filter(v => v.completed).length;
+    } catch (e) {
+      console.error('Error fetching vocabulary progress:', e);
+    }
+
+    const totalLessonsDone = grammarAttempts + readingAttempts + listeningAttempts + vocabularyAttempts;
 
     res.status(200).json({
       status: 'success',

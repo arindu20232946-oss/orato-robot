@@ -70,10 +70,9 @@ export default function SkillProgress() {
     const fetchSkills = async () => {
       try {
         const dashboardRes = await dashboardService.getSkills();
-        console.log("SkillProgress - Dashboard response:", dashboardRes);
 
         if (dashboardRes.data?.skills?.length > 0) {
-          const fetchedSkills = dashboardRes.data.skills.map(
+          let fetchedSkills = dashboardRes.data.skills.map(
             (s: FetchedSkill) => ({
               name: s.name,
               percentage: s.percentage || 0,
@@ -82,10 +81,19 @@ export default function SkillProgress() {
             }),
           );
 
-        console.log("SkillProgress - Fetched skills:", JSON.stringify(fetchedSkills, null, 2));
-          
-          const vocabSkill = fetchedSkills.find((s: any) => s.name === 'Vocabulary');
-          console.log("SkillProgress - Vocabulary skill:", vocabSkill);
+          // Sort by highest completion (get completed levels from details)
+          const getCompletedCount = (skill: any) => {
+            if (skill.name === 'Grammar') return skill.details?.completedLevels || 0;
+            if (skill.name === 'Reading') return skill.details?.completedReading || 0;
+            if (skill.name === 'Listening') return skill.details?.completedListening || 0;
+            if (skill.name === 'Vocabulary') return skill.details?.completedVocabulary || 0;
+            return skill.percentage || 0;
+          };
+
+          fetchedSkills = fetchedSkills.sort((a: any, b: any) => {
+            return getCompletedCount(b) - getCompletedCount(a);
+          });
+
           setSkills(fetchedSkills);
         } else {
           setSkills(defaultSkills);
