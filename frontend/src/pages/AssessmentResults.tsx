@@ -105,11 +105,11 @@ const AssessmentResults = () => {
       }
 
       // Show success message briefly
-      alert("🎉 Account created successfully! Welcome to Orato!");
+      alert(" Account created successfully! Welcome to Orato!");
 
       // Navigate to dashboard
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 500);
 
     } catch (error: any) {

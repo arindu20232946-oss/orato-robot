@@ -29,7 +29,7 @@ export default function SignIn() {
       toast.success("Login successful!");
 
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 800);
 
     } catch (error: any) {

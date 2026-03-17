@@ -68,7 +68,7 @@ export default function GoogleCallback() {
 
         // Redirect to dashboard
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/');
         }, 500);
 
       } catch (err) {
