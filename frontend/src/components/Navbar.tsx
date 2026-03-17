@@ -150,7 +150,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
 
         {/*  Mobile Menu - FIXED */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-green-100 px-6 py-4 flex flex-col gap-2">
+          <div className="md:hidden border-t border-green-100 flex flex-col gap-2 p-6 bg-white/95 backdrop-blur-md rounded-b-2xl animate-fade-in-down">
             <NavLink to="/" className={navLinkClass} onClick={closeMobileMenu}>
               Home
             </NavLink>

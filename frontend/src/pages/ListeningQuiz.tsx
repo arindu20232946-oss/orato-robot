@@ -179,8 +179,8 @@ const ListeningQuiz: React.FC = () => {
             <span className="text-sm font-medium">Back to Dashboard</span>
           </button>
 
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-green-500/20">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
+            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-green-500/20 shrink-0">
               <Headphones className="w-6 h-6 text-white" />
             </div>
             <div>
