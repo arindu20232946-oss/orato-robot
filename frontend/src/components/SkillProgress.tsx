@@ -12,6 +12,8 @@ interface Skill {
     completedLevels?: number;
     totalReading?: number;
     completedReading?: number;
+    completedVocabulary?: number;
+    completedListening?: number;
     points?: number;
   };
 }
@@ -72,7 +74,7 @@ export default function SkillProgress() {
         const dashboardRes = await dashboardService.getSkills();
 
         if (dashboardRes.data?.skills?.length > 0) {
-          let fetchedSkills = dashboardRes.data.skills.map(
+          let fetchedSkills: Skill[] = dashboardRes.data.skills.map(
             (s: FetchedSkill) => ({
               name: s.name,
               percentage: s.percentage || 0,
@@ -81,8 +83,7 @@ export default function SkillProgress() {
             }),
           );
 
-          // Sort by highest completion (get completed levels from details)
-          const getCompletedCount = (skill: any) => {
+          const getCompletedCount = (skill: Skill): number => {
             if (skill.name === 'Grammar') return skill.details?.completedLevels || 0;
             if (skill.name === 'Reading') return skill.details?.completedReading || 0;
             if (skill.name === 'Listening') return skill.details?.completedListening || 0;
@@ -90,7 +91,7 @@ export default function SkillProgress() {
             return skill.percentage || 0;
           };
 
-          fetchedSkills = fetchedSkills.sort((a: any, b: any) => {
+          fetchedSkills = fetchedSkills.sort((a: Skill, b: Skill) => {
             return getCompletedCount(b) - getCompletedCount(a);
           });
 
@@ -158,7 +159,7 @@ export default function SkillProgress() {
                   {skill.name}
                 </span>
                 <span className="text-sm font-semibold text-gray-900">
-                  {skill.name === 'Reading' 
+                  {skill.name === 'Reading'
                     ? `Level ${skill.details?.completedReading || 0}`
                     : skill.name === 'Grammar'
                     ? `Level ${skill.details?.completedLevels || 0}`
