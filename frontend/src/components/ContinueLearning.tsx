@@ -174,15 +174,8 @@ export default function ContinueLearning({
   const handleLessonClick = (lesson: Lesson) => {
     if (lesson.title === "Visual Vocabulary Cards") {
       navigate("/visual-cards");
-    } else if (lesson.title === "Listening Lab") {
-      navigate("/listening");
-    } else if (lesson.title === "Reading Tasks") {
-      navigate("/reading");
-    } else if (lesson.title === "Vocabulary Practice") {
-      navigate("/vocabulary");
-    } else if (lesson.title === "Grammar Practice") {
-      navigate("/grammar");
     } else {
+      navigate(`/progress?focus=lessons&task=${encodeURIComponent(lesson.title)}`);
       onLessonClick?.(lesson.id, lesson.title);
     }
   };
