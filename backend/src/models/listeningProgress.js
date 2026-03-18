@@ -23,6 +23,15 @@ const listeningProgressSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  level: {
+    type: String,
+    enum: ['beginner', 'intermediate', 'advanced'],
+    required: true
+  },
+  order: {
+    type: Number,
+    required: true
+  },
   completedAt: {
     type: Date
   }

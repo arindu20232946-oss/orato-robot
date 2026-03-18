@@ -86,31 +86,29 @@ export const getStats = async (req, res) => {
     let vocabularyAttempts = 0;
 
     try {
-      const grammarProgress = await GrammarProgress.findOne({ userId, skillLevel });
-      grammarAttempts = grammarProgress?.completedLevels?.length || 0;
+      const grammarProgressData = await GrammarProgress.findOne({ userId });
+      grammarAttempts = grammarProgressData?.completedLevels?.length || 0;
     } catch (e) {
       console.error('Error fetching grammar progress:', e);
     }
 
     try {
-      const readingProgress = await ReadingProgress.find({ userId, level: skillLevel });
-      readingAttempts = readingProgress.filter(r => r.completed).length;
+      const readingProgressData = await ReadingProgress.find({ userId });
+      readingAttempts = readingProgressData.filter(r => r.completed).length;
     } catch (e) {
       console.error('Error fetching reading progress:', e);
     }
 
     try {
-      const ListeningProgress = (await import('../models/listeningProgress.js')).default;
-      const listeningProgress = await ListeningProgress.find({ userId, level: skillLevel });
-      listeningAttempts = listeningProgress.filter(l => l.completed).length;
+      const listeningProgressData = await ListeningProgress.find({ userId });
+      listeningAttempts = listeningProgressData.filter(l => l.completed).length;
     } catch (e) {
       console.error('Error fetching listening progress:', e);
     }
 
     try {
-      const VocabularyProgress = (await import('../models/vocabularyProgress.js')).default;
-      const vocabularyProgress = await VocabularyProgress.find({ userId, level: skillLevel });
-      vocabularyAttempts = vocabularyProgress.filter(v => v.completed).length;
+      const vocabularyProgressData = await VocabularyProgress.find({ userId });
+      vocabularyAttempts = vocabularyProgressData.filter(v => v.completed).length;
     } catch (e) {
       console.error('Error fetching vocabulary progress:', e);
     }
@@ -291,11 +289,12 @@ export const getSkills = async (req, res) => {
     let readingPoints = 0;
     
     try {
-      const readingProgress = await ReadingProgress.find({ userId, level: skillLevel });
-      completedReading = readingProgress.filter(r => r.completed).length;
-      totalReading = 10;
-      readingPercentage = Math.round((completedReading / totalReading) * 100);
-      readingPoints = readingProgress.reduce((sum, r) => sum + (r.score || 0), 0);
+      const ReadingContent = (await import('../models/readingContent.js')).default;
+      const readingProgressData = await ReadingProgress.find({ userId, level: skillLevel });
+      completedReading = readingProgressData.filter(r => r.completed).length;
+      totalReading = await ReadingContent.countDocuments({ level: skillLevel });
+      readingPercentage = totalReading > 0 ? Math.round((completedReading / totalReading) * 100) : 0;
+      readingPoints = readingProgressData.reduce((sum, r) => sum + (r.score || 0), 0);
     } catch (readingError) {
       console.error('Error fetching reading progress:', readingError);
     }
@@ -361,11 +360,12 @@ export const getSkills = async (req, res) => {
     let listeningPoints = 0;
 
     try {
-      const listeningProgress = await ListeningProgress.find({ userId, level: skillLevel });
-      completedListening = listeningProgress.filter(l => l.completed).length;
-      totalListening = 10;
-      listeningPercentage = Math.round((completedListening / totalListening) * 100);
-      listeningPoints = listeningProgress.reduce((sum, l) => sum + (l.score || 0), 0);
+      const ListeningContent = (await import('../models/listeningContent.js')).default;
+      const listeningProgressData = await ListeningProgress.find({ userId, level: skillLevel });
+      completedListening = listeningProgressData.filter(l => l.completed).length;
+      totalListening = await ListeningContent.countDocuments({ level: skillLevel });
+      listeningPercentage = totalListening > 0 ? Math.round((completedListening / totalListening) * 100) : 0;
+      listeningPoints = listeningProgressData.reduce((sum, l) => sum + (l.correctAnswers || 0), 0);
     } catch (listeningError) {
       console.error('Error fetching listening progress:', listeningError);
     }
@@ -400,11 +400,12 @@ export const getSkills = async (req, res) => {
     let vocabularyPoints = 0;
 
     try {
-      const vocabularyProgress = await VocabularyProgress.find({ userId, level: skillLevel });
-      completedVocabulary = vocabularyProgress.filter(v => v.completed).length;
-      totalVocabulary = 10;
-      vocabularyPercentage = Math.round((completedVocabulary / totalVocabulary) * 100);
-      vocabularyPoints = vocabularyProgress.reduce((sum, v) => sum + (v.score || 0), 0);
+      const VocabularyContent = (await import('../models/vocabularyContent.js')).default;
+      const vocabularyProgressData = await VocabularyProgress.find({ userId, level: skillLevel });
+      completedVocabulary = vocabularyProgressData.filter(v => v.completed).length;
+      totalVocabulary = await VocabularyContent.countDocuments({ level: skillLevel });
+      vocabularyPercentage = totalVocabulary > 0 ? Math.round((completedVocabulary / totalVocabulary) * 100) : 0;
+      vocabularyPoints = vocabularyProgressData.reduce((sum, v) => sum + (v.score || 0), 0);
     } catch (vocabError) {
       console.error('Error fetching vocabulary progress:', vocabError);
     }

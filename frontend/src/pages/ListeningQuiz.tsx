@@ -54,11 +54,6 @@ const levelColors: Record<string, { bg: string; text: string; ring: string; badg
   },
 };
 
-const levelRanks: Record<string, number> = {
-  beginner: 0,
-  intermediate: 1,
-  advanced: 2,
-};
 
 const ListeningQuiz: React.FC = () => {
   const navigate = useNavigate();
@@ -68,7 +63,6 @@ const ListeningQuiz: React.FC = () => {
   const [items, setItems] = useState<ListeningItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeLevel, setActiveLevel] = useState("beginner");
-  const [userLevel, setUserLevel] = useState("beginner");
   const [completedCount, setCompletedCount] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [error, setError] = useState("");
@@ -80,7 +74,6 @@ const ListeningQuiz: React.FC = () => {
       try {
         const user = JSON.parse(stored);
         if (user.skillLevel && levels.includes(user.skillLevel)) {
-          setUserLevel(user.skillLevel);
           setActiveLevel(user.skillLevel);
         }
       } catch {}
@@ -102,7 +95,6 @@ const ListeningQuiz: React.FC = () => {
       setTotalItems(res.data.totalItems);
       // Sync user level if backend returns it (it might have upgraded)
       if (res.data.userLevel) {
-        setUserLevel(res.data.userLevel);
         // Update local storage if needed
         const stored = localStorage.getItem("user");
         if (stored) {
@@ -110,6 +102,7 @@ const ListeningQuiz: React.FC = () => {
           if (user.skillLevel !== res.data.userLevel) {
             user.skillLevel = res.data.userLevel;
             localStorage.setItem("user", JSON.stringify(user));
+            setActiveLevel(res.data.userLevel);
           }
         }
       }
@@ -186,8 +179,8 @@ const ListeningQuiz: React.FC = () => {
             <span className="text-sm font-medium">Back to Dashboard</span>
           </button>
 
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-green-500/20">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
+            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-green-500/20 shrink-0">
               <Headphones className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -216,30 +209,6 @@ const ListeningQuiz: React.FC = () => {
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-          </div>
-
-          {/* Level Tabs */}
-          <div className="flex flex-wrap gap-2 mt-5">
-            {levels.map((level) => {
-              const isTabLocked = levelRanks[level] > levelRanks[userLevel];
-              return (
-                <button
-                  key={level}
-                  onClick={() => !isTabLocked && setActiveLevel(level)}
-                  disabled={isTabLocked}
-                  className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    activeLevel === level
-                      ? "gradient-primary text-white shadow-lg shadow-green-500/25 scale-105"
-                      : isTabLocked
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-60 border border-gray-200"
-                      : "bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200"
-                  }`}
-                >
-                  {isTabLocked && <Lock className="w-3 h-3" />}
-                  {levelLabels[level]}
-                </button>
-              );
-            })}
           </div>
         </div>
 
