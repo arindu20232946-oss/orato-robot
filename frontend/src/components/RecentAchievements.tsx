@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Star, Flame, Zap, BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { dashboardService } from '../services/dashboardService';
 
 interface Achievement {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   icon: React.ElementType;
@@ -41,7 +43,40 @@ const achievements: Achievement[] = [
 export default function RecentAchievements() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<number | string | null>(null);
+  const [items, setItems] = useState<Achievement[]>(achievements);
+  const navigate = useNavigate();
+
+  const iconMap: Record<string, React.ElementType> = {
+    flame: Flame,
+    zap: Zap,
+    'book-open': BookOpen,
+    star: Star,
+  };
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const res = await dashboardService.getAchievements();
+        const fetched = res.data?.achievements || [];
+        if (fetched.length > 0) {
+          const mapped: Achievement[] = fetched.map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            description: a.description,
+            icon: iconMap[a.icon] || Star,
+            iconColor: a.iconColor || 'text-orato-green',
+            iconBg: a.iconBg || 'bg-green-100',
+          }));
+          setItems(mapped);
+        }
+      } catch (error) {
+        console.error('Failed to fetch achievements:', error);
+      }
+    };
+
+    fetchAchievements();
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -117,7 +152,7 @@ export default function RecentAchievements() {
 
       {/* Achievements List */}
       <div className="space-y-3" style={{ perspective: '500px' }}>
-        {achievements.map((achievement, index) => {
+        {items.map((achievement, index) => {
           const Icon = achievement.icon;
           const isHovered = hoveredId === achievement.id;
           
@@ -133,6 +168,7 @@ export default function RecentAchievements() {
               onMouseMove={(e) => handleMouseMove(e, index)}
               onMouseEnter={() => setHoveredId(achievement.id)}
               onMouseLeave={() => handleMouseLeave(index)}
+              onClick={() => navigate(`/progress?focus=milestones&task=${encodeURIComponent(achievement.title)}`)}
             >
               {/* Icon */}
               <div 

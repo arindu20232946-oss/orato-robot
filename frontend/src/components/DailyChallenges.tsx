@@ -118,19 +118,7 @@ export default function DailyChallenges() {
   }, [loading, challenges]);
 
   const handleChallengeClick = (challenge: Challenge) => {
-    switch (challenge.type) {
-      case 'lessons':
-        navigate('/grammar');
-        break;
-      case 'reading':
-        navigate('/reading');
-        break;
-      case 'listening':
-        navigate('/listening');
-        break;
-      default:
-        break;
-    }
+    navigate(`/progress?focus=challenges&type=${encodeURIComponent(challenge.type)}&task=${encodeURIComponent(challenge.title)}`);
   };
 
   const completedCount = challenges.filter(c => c.completed).length;
@@ -204,7 +192,7 @@ export default function DailyChallenges() {
             </div>
           </div>
           {completedCount === challenges.length && (
-            <div className="text-2xl">🎉</div>
+            <div className="text-2xl"></div>
           )}
         </div>
       )}

@@ -48,13 +48,12 @@ const defaultLessons: Lesson[] = [
     isReading: true,
   },
   {
-    id: 6,
-    title: "Vocabulary Practice",
-    timeLeft: "10 min left",
-    progress: 0,
-    icon: "🔤",
-    iconBg: "bg-blue-100",
-    isVocabulary: true,
+    id: 3,
+    title: 'English Vocabulary: Daily Life',
+    timeLeft: '5 min left',
+    progress: 90,
+    icon: '📖',
+    iconBg: 'bg-blue-100',
   },
   {
     id: 1,
@@ -175,15 +174,8 @@ export default function ContinueLearning({
   const handleLessonClick = (lesson: Lesson) => {
     if (lesson.title === "Visual Vocabulary Cards") {
       navigate("/visual-cards");
-    } else if (lesson.title === "Listening Lab") {
-      navigate("/listening");
-    } else if (lesson.title === "Reading Tasks") {
-      navigate("/reading");
-    } else if (lesson.title === "Vocabulary Practice") {
-      navigate("/vocabulary");
-    } else if (lesson.title === "Grammar Practice") {
-      navigate("/grammar");
     } else {
+      navigate(`/progress?focus=lessons&task=${encodeURIComponent(lesson.title)}`);
       onLessonClick?.(lesson.id, lesson.title);
     }
   };

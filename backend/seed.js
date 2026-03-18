@@ -1,13 +1,36 @@
 import mongoose from 'mongoose';
-import Card from './src/models/card.js';
+import Card from './src/models/Card.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/english_learning_db';
 
-// Helper function to generate a unique image URL based on the word
-const getImageUrl = (word) => `https://picsum.photos/seed/${word}/400/400`;
+// Deterministic image mapping: each word gets a matching emoji illustration (stable, fast, consistent)
+const wordEmojiMap = {
+  cat: '🐱', dog: '🐶', elephant: '🐘', bird: '🐦', lion: '🦁', tiger: '🐯', bear: '🐻', monkey: '🐵', snake: '🐍', frog: '🐸',
+  fish: '🐟', shark: '🦈', whale: '🐋', dolphin: '🐬', penguin: '🐧', kangaroo: '🦘', zebra: '🦓', giraffe: '🦒', horse: '🐴', cow: '🐄',
+  apple: '🍎', banana: '🍌', orange: '🍊', grape: '🍇', strawberry: '🍓', watermelon: '🍉', carrot: '🥕', potato: '🥔', tomato: '🍅', onion: '🧅',
+  bread: '🍞', cheese: '🧀', milk: '🥛', water: '💧', coffee: '☕', tea: '🍵', juice: '🧃', pizza: '🍕', burger: '🍔', salad: '🥗',
+  chair: '🪑', table: '🍽️', bed: '🛏️', sofa: '🛋️', lamp: '💡', television: '📺', computer: '💻', phone: '📱', book: '📘', pen: '🖊️',
+  pencil: '✏️', notebook: '📓', clock: '🕒', mirror: '🪞', window: '🪟', door: '🚪', key: '🔑', lock: '🔒', cup: '☕', plate: '🍽️',
+  sun: '☀️', moon: '🌙', star: '⭐', cloud: '☁️', rain: '🌧️', snow: '❄️', wind: '💨', storm: '⛈️', tree: '🌳', flower: '🌸',
+  grass: '🌿', mountain: '⛰️', river: '🏞️', lake: '🏞️', ocean: '🌊', beach: '🏖️', forest: '🌲', desert: '🏜️', island: '🏝️', valley: '🏞️',
+  run: '🏃', walk: '🚶', jump: '🤸', swim: '🏊', fly: '🕊️', read: '📖', write: '✍️', speak: '🗣️', listen: '👂', think: '🤔',
+  smile: '🙂', laugh: '😄', cry: '😢', sleep: '😴', wake: '⏰', eat: '🍽️', drink: '🥤', work: '💼', play: '⚽', study: '📚',
+};
+
+const emojiToCodepoint = (emoji) =>
+  Array.from(emoji)
+    .map((char) => char.codePointAt(0).toString(16))
+    .filter((codepoint) => codepoint !== 'fe0f')
+    .join('-');
+
+const getImageUrl = (word) => {
+  const emoji = wordEmojiMap[word.toLowerCase()] || '📘';
+  const codepoint = emojiToCodepoint(emoji);
+  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codepoint}.svg`;
+};
 
 const vocabularyData = [
   // --- Animals (1-20) ---
@@ -99,37 +122,37 @@ const vocabularyData = [
   { word: "Valley", definition: "A low area of land between hills or mountains.", imageUrl: getImageUrl("Valley"), difficultyLevel: "Advanced" },
 
   // --- Actions & Abstract (81-100) ---
-  { word: "Run", definition: "Move at a speed faster than a walk.", imageUrl: getImageUrl("Run"), difficultyLevel: "Beginner" },
-  { word: "Walk", definition: "Move at a regular pace by lifting and setting down each foot in turn.", imageUrl: getImageUrl("Walk"), difficultyLevel: "Beginner" },
-  { word: "Jump", definition: "Push oneself off a surface and into the air by using the muscles in one's legs and feet.", imageUrl: getImageUrl("Jump"), difficultyLevel: "Beginner" },
+  { word: "Run", definition: "Move at a speed faster than a walk.", imageUrl: getImageUrl("Running person"), difficultyLevel: "Beginner" },
+  { word: "Walk", definition: "Move at a regular pace by lifting and setting down each foot in turn.", imageUrl: getImageUrl("Walking person"), difficultyLevel: "Beginner" },
+  { word: "Jump", definition: "Push oneself off a surface and into the air.", imageUrl: getImageUrl("Jumping person"), difficultyLevel: "Beginner" },
   { word: "Swim", definition: "Propel the body through water by using the limbs.", imageUrl: getImageUrl("Swim"), difficultyLevel: "Beginner" },
-  { word: "Fly", definition: "Move through the air using wings.", imageUrl: getImageUrl("Fly"), difficultyLevel: "Beginner" },
-  { word: "Read", definition: "Look at and comprehend the meaning of written or printed matter.", imageUrl: getImageUrl("Read"), difficultyLevel: "Beginner" },
-  { word: "Write", definition: "Mark letters, words, or other symbols on a surface, typically paper, with a pen, pencil, or similar implement.", imageUrl: getImageUrl("Write"), difficultyLevel: "Beginner" },
-  { word: "Speak", definition: "Say something in order to convey information, an opinion, or a feeling.", imageUrl: getImageUrl("Speak"), difficultyLevel: "Beginner" },
-  { word: "Listen", definition: "Give one's attention to a sound.", imageUrl: getImageUrl("Listen"), difficultyLevel: "Beginner" },
-  { word: "Think", definition: "Have a particular opinion, belief, or idea about someone or something.", imageUrl: getImageUrl("Think"), difficultyLevel: "Intermediate" },
-  { word: "Smile", definition: "Form one's features into a pleased, kind, or amused expression.", imageUrl: getImageUrl("Smile"), difficultyLevel: "Beginner" },
-  { word: "Laugh", definition: "Make the spontaneous sounds and movements of the face and body that are the instinctive expressions of lively amusement.", imageUrl: getImageUrl("Laugh"), difficultyLevel: "Beginner" },
-  { word: "Cry", definition: "Shed tears, typically as an expression of distress, pain, or sorrow.", imageUrl: getImageUrl("Cry"), difficultyLevel: "Beginner" },
+  { word: "Fly", definition: "Move through the air using wings.", imageUrl: getImageUrl("Bird flying"), difficultyLevel: "Beginner" },
+  { word: "Read", definition: "Look at and comprehend the meaning of written matter.", imageUrl: getImageUrl("Person reading a book"), difficultyLevel: "Beginner" },
+  { word: "Write", definition: "Mark letters, words, or other symbols on a surface.", imageUrl: getImageUrl("Hand writing with pen"), difficultyLevel: "Beginner" },
+  { word: "Speak", definition: "Say something in order to convey information.", imageUrl: getImageUrl("Person speaking"), difficultyLevel: "Beginner" },
+  { word: "Listen", definition: "Give one's attention to a sound.", imageUrl: getImageUrl("Person listening"), difficultyLevel: "Beginner" },
+  { word: "Think", definition: "Have a particular opinion, belief, or idea.", imageUrl: getImageUrl("Person thinking"), difficultyLevel: "Intermediate" },
+  { word: "Smile", definition: "Form one's features into a pleased expression.", imageUrl: getImageUrl("Smiling face"), difficultyLevel: "Beginner" },
+  { word: "Laugh", definition: "Make the spontaneous sounds of amusement.", imageUrl: getImageUrl("Laughing face"), difficultyLevel: "Beginner" },
+  { word: "Cry", definition: "Shed tears, typically as an expression of distress.", imageUrl: getImageUrl("Crying face"), difficultyLevel: "Beginner" },
   { word: "Sleep", definition: "Provide a person with a bed or room to sleep in.", imageUrl: getImageUrl("Sleep"), difficultyLevel: "Beginner" },
-  { word: "Wake", definition: "Emerge or cause to emerge from a state of sleep; stop sleeping.", imageUrl: getImageUrl("Wake"), difficultyLevel: "Beginner" },
+  { word: "Wake", definition: "Emerge or cause to emerge from a state of sleep.", imageUrl: getImageUrl("Person waking up"), difficultyLevel: "Beginner" },
   { word: "Eat", definition: "Put food into the mouth and chew and swallow it.", imageUrl: getImageUrl("Eat"), difficultyLevel: "Beginner" },
-  { word: "Drink", definition: "Take a liquid into the mouth and swallow.", imageUrl: getImageUrl("Drink"), difficultyLevel: "Beginner" },
-  { word: "Work", definition: "Activity involving mental or physical effort done in order to achieve a purpose or result.", imageUrl: getImageUrl("Work"), difficultyLevel: "Beginner" },
-  { word: "Play", definition: "Engage in activity for enjoyment and recreation rather than a serious or practical purpose.", imageUrl: getImageUrl("Play"), difficultyLevel: "Beginner" },
-  { word: "Study", definition: "The devotion of time and attention to acquiring knowledge on an academic subject.", imageUrl: getImageUrl("Study"), difficultyLevel: "Intermediate" }
+  { word: "Drink", definition: "Take a liquid into the mouth and swallow.", imageUrl: getImageUrl("Person drinking water"), difficultyLevel: "Beginner" },
+  { word: "Work", definition: "Activity involving mental or physical effort.", imageUrl: getImageUrl("Person working at desk"), difficultyLevel: "Beginner" },
+  { word: "Play", definition: "Engage in activity for enjoyment and recreation.", imageUrl: getImageUrl("Children playing"), difficultyLevel: "Beginner" },
+  { word: "Study", definition: "The devotion of time and attention to acquiring knowledge.", imageUrl: getImageUrl("Student studying"), difficultyLevel: "Intermediate" }
 ];
 
 mongoose.connect(MONGO_URI)
   .then(async () => {
     console.log("Connected to MongoDB...");
     
-    // Clear the existing cards to prevent duplicates
+    // Clear the existing cards with the bad images
     await Card.deleteMany({}); 
     console.log("Old cards cleared.");
 
-    // Insert the 100 new cards
+    // Insert the 100 new cards with correct images
     await Card.insertMany(vocabularyData);
     console.log(`Database seeded successfully with ${vocabularyData.length} cards!`);
     

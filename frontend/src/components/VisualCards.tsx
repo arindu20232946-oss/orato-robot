@@ -17,6 +17,10 @@ const VisualCards: React.FC = () => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+
+  const getFallbackImageUrl = (word: string) =>
+    `https://placehold.co/400x400/F3F4F6/111827?text=${encodeURIComponent(word)}`;
 
   // 2. Fetch data from backend when the component loads
   useEffect(() => {
@@ -77,6 +81,9 @@ const VisualCards: React.FC = () => {
   if (cards.length === 0) return <div className="text-center p-12 text-lg text-gray-500">No cards found in the database.</div>;
 
   const currentCard = cards[currentIndex];
+  const currentImageSrc = failedImages[currentCard._id]
+    ? getFallbackImageUrl(currentCard.word)
+    : currentCard.imageUrl;
 
   return (
     <div className="flex flex-col items-center font-sans max-w-[600px] mx-auto mt-10 p-5 bg-gray-50 rounded-xl shadow-sm">
@@ -97,9 +104,15 @@ const VisualCards: React.FC = () => {
           {/* FRONT OF CARD: Image Only */}
           <div className="absolute w-full h-full [backface-visibility:hidden] rounded-2xl shadow-lg flex flex-col justify-center items-center p-5 overflow-hidden bg-white">
             <img 
-              src={currentCard.imageUrl} 
+              src={currentImageSrc}
               alt={currentCard.word} 
-              className="w-full h-4/5 object-cover rounded-lg mb-2.5"
+              className="w-full h-4/5 object-contain rounded-lg mb-2.5 bg-gray-100"
+              onError={() => {
+                setFailedImages((prev) => ({
+                  ...prev,
+                  [currentCard._id]: true,
+                }));
+              }}
             />
             <p className="text-gray-400 text-sm m-0 uppercase tracking-wide">
               Click card to reveal meaning
@@ -107,12 +120,12 @@ const VisualCards: React.FC = () => {
           </div>
 
           {/* BACK OF CARD: Word, Definition, and Audio */}
-          <div className="absolute w-full h-full [backface-visibility:hidden] rounded-2xl shadow-lg flex flex-col justify-center items-center p-5 overflow-hidden bg-blue-600 text-white [transform:rotateY(180deg)]">
+          <div className="absolute w-full h-full [backface-visibility:hidden] rounded-2xl shadow-lg flex flex-col justify-center items-center p-5 overflow-hidden bg-green-600 text-white [transform:rotateY(180deg)]">
             <h3 className="text-5xl m-0 mb-2.5 capitalize">{currentCard.word}</h3>
             <p className="text-xl leading-relaxed mb-7 opacity-90">{currentCard.definition}</p>
             
             <button 
-              className="bg-white text-blue-600 border-none py-2.5 px-5 rounded-full font-bold cursor-pointer flex items-center gap-2 transition-all hover:scale-105 hover:shadow-[0_4px_12px_rgba(255,255,255,0.3)]"
+              className="bg-white text-green-600 border-none py-2.5 px-5 rounded-full font-bold cursor-pointer flex items-center gap-2 transition-all hover:scale-105 hover:shadow-[0_4px_12px_rgba(255,255,255,0.3)]"
               onClick={(e) => playAudio(e, currentCard.word)}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -132,7 +145,7 @@ const VisualCards: React.FC = () => {
           className={`py-3 px-6 text-base border-none rounded-lg cursor-pointer font-bold transition-colors ${
             currentIndex === cards.length - 1 
               ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' 
-              : 'bg-blue-600 text-white hover:bg-blue-800'
+              : 'bg-green-600 text-white hover:bg-green-700'
           }`} 
           onClick={handleNextCard}
         >
