@@ -17,17 +17,9 @@ export const getAllListeningContent = async (req, res) => {
   try {
     const userId = req.user._id;
     const userRoleLevel = req.user.skillLevel || 'beginner';
-    const requestedLevel = req.query.level || userRoleLevel;
+    const requestedLevel = userRoleLevel; // Strictly use user's current level
 
-    // Check if user is trying to access a level higher than their current skill level
-    if (levelRanks[requestedLevel] > levelRanks[userRoleLevel]) {
-      return res.status(403).json({
-        status: 'error',
-        message: `Your account level is ${userRoleLevel}. Complete this level to unlock ${requestedLevel}.`
-      });
-    }
-
-    // Get all items for the requested level, sorted by order
+    // Get all items for the user's current level, sorted by order
     const items = await ListeningContent.find({ level: requestedLevel })
       .select('-questions.correctAnswer')
       .sort({ order: 1 });
@@ -194,6 +186,10 @@ export const submitListeningAnswers = async (req, res) => {
 
     const allCorrect = correctCount === 3;
 
+    // Check if was previously completed
+    const existingProgress = await ListeningProgress.findOne({ userId, contentId: item._id });
+    const wasCompleted = existingProgress ? existingProgress.completed : false;
+
     // Update or create progress
     const progress = await ListeningProgress.findOneAndUpdate(
       { userId, contentId: item._id },
@@ -201,12 +197,21 @@ export const submitListeningAnswers = async (req, res) => {
         $set: {
           completed: allCorrect,
           correctAnswers: correctCount,
+          level: item.level, // Ensure level is saved
+          order: item.order, // Ensure order is saved
           ...(allCorrect ? { completedAt: new Date() } : {})
         },
         $inc: { attempts: 1 }
       },
       { upsert: true, new: true }
     );
+
+    // Increment global lessons count if newly completed
+    if (allCorrect && !wasCompleted) {
+      await User.findByIdAndUpdate(userId, {
+        $inc: { 'stats.lessonsDone': 1 }
+      });
+    }
 
     // Check if next item exists and is now unlocked
     let nextItemUnlocked = false;
