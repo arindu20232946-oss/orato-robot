@@ -67,7 +67,7 @@ export const getStats = async (req, res) => {
     const user = req.user;
     const userId = user._id;
     const skillLevel = user.skillLevel || 'beginner';
-    
+
     const stats = user.stats || {
       dayStreak: 0,
       streakChange: 0,
@@ -117,7 +117,7 @@ export const getStats = async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      data: { 
+      data: {
         stats: {
           ...stats,
           lessonsDone: totalLessonsDone
@@ -137,7 +137,7 @@ export const getStats = async (req, res) => {
 export const getContinueLearning = async (req, res) => {
   try {
     const userId = req.user._id;
-    
+
     const lessons = await Lesson.find({ userId }).sort({ order: 1 });
 
     res.status(200).json({
@@ -165,7 +165,7 @@ export const getChallenges = async (req, res) => {
   try {
     const userId = req.user._id;
     const skillLevel = req.user.skillLevel || 'beginner';
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -206,7 +206,7 @@ export const getChallenges = async (req, res) => {
       }));
 
       await Challenge.insertMany(newChallenges);
-      
+
       challenges = await Challenge.find({
         userId,
         date: today
@@ -237,7 +237,7 @@ export const updateChallengeProgress = async (req, res) => {
   try {
     const userId = req.user._id;
     const { type, amount = 1 } = req.body;
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -273,21 +273,21 @@ export const getSkills = async (req, res) => {
   try {
     const userId = req.user._id;
     const skillLevel = req.user.skillLevel || 'beginner';
-    
+
     const skills = await Skill.find({ userId });
-    
+
     const grammarProgress = await GrammarProgress.findOne({ userId, skillLevel });
-    
+
     const completedLevels = grammarProgress?.completedLevels?.length || 0;
     const totalLevels = 10;
     const grammarPercentage = Math.round((completedLevels / totalLevels) * 100);
     const grammarPoints = grammarProgress?.totalScore || 0;
-    
+
     let readingPercentage = 0;
     let completedReading = 0;
     let totalReading = 0;
     let readingPoints = 0;
-    
+
     try {
       const ReadingContent = (await import('../models/readingContent.js')).default;
       const readingProgressData = await ReadingProgress.find({ userId, level: skillLevel });
@@ -298,7 +298,7 @@ export const getSkills = async (req, res) => {
     } catch (readingError) {
       console.error('Error fetching reading progress:', readingError);
     }
-    
+
     const skillsWithGrammar = skills.map(s => ({
       id: s._id,
       name: s.name,
@@ -306,7 +306,7 @@ export const getSkills = async (req, res) => {
       color: s.color,
       details: s.details
     }));
-    
+
     const grammarSkillIndex = skillsWithGrammar.findIndex(s => s.name === 'Grammar');
     if (grammarSkillIndex >= 0) {
       skillsWithGrammar[grammarSkillIndex].percentage = grammarPercentage;
