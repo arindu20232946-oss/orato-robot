@@ -15,7 +15,6 @@ import AchievementSection from "../components/account/AchievementSection";
 // Modals
 import EditProfileModal from "../components/EditProfileModal";
 import LanguageModal from "../components/account/LanguageModal";
-import EditGoalModal from "../components/account/EditGoalModal";
 import AddGoalController from "../components/account/AddGoalController";
 
 // Services & Utilities
@@ -30,17 +29,24 @@ const Account: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [goals, setGoals] = useState<any[]>([]);
-  const [editingGoal, setEditingGoal] = useState<any>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-
-      setGoals([]);
     }
+
+    // Load goals from backend
+    API.get("/users/goals")
+      .then((res) => {
+        if (res.data?.goals) setGoals(res.data.goals);
+      })
+      .catch(() => {
+        // silently fail — user may not be authenticated yet
+      });
   }, []);
+
 
   // Write user to localStorage AND notify same-tab listeners (e.g. Navbar)
   const setUserStorage = (updatedUser: any) => {
@@ -131,13 +137,16 @@ const Account: React.FC = () => {
         <main className="max-w-6xl mx-auto px-4 py-10 space-y-8">
 
           {/* HEADER */}
-          <div className="pb-6 mb-2">
-            <p className="text-xs font-semibold uppercase tracking-widest text-emerald-600 mb-1">My Account</p>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-              Profile & Settings
+          <div className="pb-8 mb-4 relative">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-px w-8 bg-emerald-500/50" />
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Workspace</p>
+            </div>
+            <h1 className="text-4xl font-extrabold text-emerald-950 tracking-tight">
+              Profile <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">& Setting</span>
             </h1>
-            <p className="mt-1.5 text-gray-400 text-base">
-              Manage your profile, goals, and learning preferences
+            <p className="mt-3 text-gray-400 font-medium text-lg max-w-2xl leading-relaxed">
+              Curate your digital identity and fine-tune your language learning trajectory with precision.
             </p>
           </div>
 
@@ -162,7 +171,7 @@ const Account: React.FC = () => {
           <GoalsSection
             goals={goals}
             onOpenAddGoal={() => setIsAddGoalOpen(true)}
-            onEditGoal={(goal) => setEditingGoal(goal)}
+            setGoals={setGoals}
           />
 
           {/* ACHIEVEMENT BADGES */}
@@ -193,13 +202,6 @@ const Account: React.FC = () => {
       <LanguageModal
         isOpen={isLanguageOpen}
         onClose={() => setIsLanguageOpen(false)}
-      />
-
-      <EditGoalModal
-        goal={editingGoal}
-        onClose={() => setEditingGoal(null)}
-        setGoals={setGoals}
-        setEditingGoal={setEditingGoal}
       />
 
     </div>

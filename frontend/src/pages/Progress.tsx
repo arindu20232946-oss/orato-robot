@@ -380,7 +380,7 @@ export default function Progress() {
           
           <Navbar />
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+          <div className="mt-8 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">Your Progress</h1>
             <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>

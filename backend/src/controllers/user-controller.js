@@ -127,40 +127,133 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// ✅ Add learning goal
-export const addGoal = async (req, res) => {
-  try {
-    const { title, targetDate } = req.body;
-
-    if (!title || !targetDate) {
-      return res.status(400).json({ message: "Title and target date required" });
-    }
-
-    const user = await User.findById(req.user.userId);
-
-    user.goals.push({
-      title,
-      targetDate
-    });
-
-    await user.save();
-
-    res.status(201).json({ message: "Goal added successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to add goal" });
-  }
-};
-
-// ✅ Get learning goals
+// ✅ Get user's learning goals with live progress
 export const getGoals = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = req.user;
+    const userId = user._id;
 
-    res.json(user.goals);
+    // Fetch skill progress data to compute live goal progress
+    let grammarPct = 0, vocabPct = 0, listeningPct = 0, readingPct = 0;
+
+    try {
+      const GrammarProgress = (await import("../models/grammarProgress.js")).default;
+      const gp = await GrammarProgress.findOne({ userId });
+      grammarPct = Math.min(Math.round(((gp?.completedLevels?.length || 0) / 10) * 100), 100);
+    } catch (_) {}
+
+    try {
+      const VocabularyProgress = (await import("../models/vocabularyProgress.js")).default;
+      const VocabularyContent = (await import("../models/vocabularyContent.js")).default;
+      const vp = await VocabularyProgress.find({ userId, completed: true });
+      const total = await VocabularyContent.countDocuments({ level: user.skillLevel || "beginner" });
+      vocabPct = total > 0 ? Math.min(Math.round((vp.length / total) * 100), 100) : 0;
+    } catch (_) {}
+
+    try {
+      const ListeningProgress = (await import("../models/listeningProgress.js")).default;
+      const ListeningContent = (await import("../models/listeningContent.js")).default;
+      const lp = await ListeningProgress.find({ userId, completed: true });
+      const total = await ListeningContent.countDocuments({ level: user.skillLevel || "beginner" });
+      listeningPct = total > 0 ? Math.min(Math.round((lp.length / total) * 100), 100) : 0;
+    } catch (_) {}
+
+    try {
+      const ReadingProgress = (await import("../models/readingProgress.js")).default;
+      const ReadingContent = (await import("../models/readingContent.js")).default;
+      const rp = await ReadingProgress.find({ userId, completed: true });
+      const total = await ReadingContent.countDocuments({ level: user.skillLevel || "beginner" });
+      readingPct = total > 0 ? Math.min(Math.round((rp.length / total) * 100), 100) : 0;
+    } catch (_) {}
+
+    const progressMap = {
+      grammar: grammarPct,
+      vocabulary: vocabPct,
+      listening: listeningPct,
+      reading: readingPct,
+      streak: Math.min(user.stats?.dayStreak || 0, 7),
+    };
+
+    const targetMap = {
+      grammar: 80,
+      vocabulary: 80,
+      listening: 80,
+      reading: 80,
+      streak: 7,
+    };
+
+    const goalsWithProgress = user.goals.map((g) => ({
+      _id: g._id,
+      type: g.type,
+      title: g.title,
+      target: targetMap[g.type] ?? 80,
+      current: progressMap[g.type] ?? 0,
+      deadline: g.deadline,
+      createdAt: g.createdAt,
+    }));
+
+    res.json({ success: true, goals: goalsWithProgress });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch goals" });
+    console.error("Get goals error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch goals" });
   }
 };
+
+// ✅ Add a learning goal (max 5, no duplicate types)
+export const addGoal = async (req, res) => {
+  try {
+    const { type, title, deadline } = req.body;
+
+    const validTypes = ["grammar", "vocabulary", "listening", "reading", "streak"];
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({ success: false, message: "Invalid goal type" });
+    }
+    if (!deadline) {
+      return res.status(400).json({ success: false, message: "Deadline is required" });
+    }
+
+    const user = req.user;
+
+    if (user.goals.length >= 5) {
+      return res.status(400).json({ success: false, message: "You can have at most 5 goals" });
+    }
+
+    const duplicate = user.goals.some((g) => g.type === type);
+    if (duplicate) {
+      return res.status(400).json({ success: false, message: "You already have a goal of this type" });
+    }
+
+    user.goals.push({ type, title, deadline: new Date(deadline) });
+    await user.save();
+
+    res.status(201).json({ success: true, message: "Goal added successfully", goals: user.goals });
+  } catch (error) {
+    console.error("Add goal error:", error);
+    res.status(500).json({ success: false, message: "Failed to add goal" });
+  }
+};
+
+// ✅ Delete a learning goal by ID
+export const deleteGoal = async (req, res) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+
+    const goalIndex = user.goals.findIndex((g) => g._id.toString() === id);
+    if (goalIndex === -1) {
+      return res.status(404).json({ success: false, message: "Goal not found" });
+    }
+
+    user.goals.splice(goalIndex, 1);
+    await user.save();
+
+    res.json({ success: true, message: "Goal removed successfully" });
+  } catch (error) {
+    console.error("Delete goal error:", error);
+    res.status(500).json({ success: false, message: "Failed to delete goal" });
+  }
+};
+
 
 // ✅ Remove profile picture
 export const removeProfilePicture = async (req, res) => {

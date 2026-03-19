@@ -1,11 +1,20 @@
 import mongoose from "mongoose";
 
 const goalSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ["grammar", "vocabulary", "listening", "reading", "streak"],
+    required: true,
+  },
   title: {
     type: String,
     required: true,
   },
-  targetDate: {
+  target: {
+    type: Number,
+    default: 80,
+  },
+  deadline: {
     type: Date,
     required: true,
   },

@@ -22,7 +22,7 @@ const Login: React.FC = () => {
       localStorage.setItem("token", data.token);
 
       // Save user info (IMPORTANT for navbar)
-      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       window.location.href = "/dashboard";
     } catch (error) {

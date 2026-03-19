@@ -1,4 +1,5 @@
 import React from "react";
+import { Plus, Languages, Globe } from "lucide-react";
 
 interface LanguagesSectionProps {
     user: any;
@@ -7,55 +8,60 @@ interface LanguagesSectionProps {
 
 const LanguagesSection: React.FC<LanguagesSectionProps> = ({ user, onOpenLanguageModal }) => {
     const levelColors: Record<string, string> = {
-        Beginner: "bg-sky-100 text-sky-700",
-        Intermediate: "bg-amber-100 text-amber-700",
-        Advanced: "bg-emerald-100 text-emerald-700",
+        Beginner: "bg-sky-50 text-sky-600 border-sky-100",
+        Intermediate: "bg-amber-50 text-amber-600 border-amber-100",
+        Advanced: "bg-emerald-50 text-emerald-600 border-emerald-100",
     };
 
     const level = user.skillLevel || "Beginner";
-    const pillClass = levelColors[level] ?? "bg-gray-100 text-gray-600";
+    const pillClass = levelColors[level] ?? "bg-gray-50 text-gray-600 border-gray-100";
 
     return (
-        <section className="max-w-5xl mx-auto bg-white rounded-3xl shadow-lg border border-gray-100 p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
+        <section className="max-w-5xl mx-auto bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-xl border border-white/50 p-8 transition-all duration-300 hover:shadow-2xl">
 
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-8">
                 <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-600 mb-1">Learning</p>
-                    <h2 className="text-xl font-bold text-gray-900">Languages</h2>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 mb-1.5">Learning Journey</p>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Active Languages</h2>
                 </div>
 
                 <button
                     onClick={onOpenLanguageModal}
-                    className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold
-                    text-emerald-600 border border-emerald-200
-                    hover:bg-emerald-500 hover:text-white hover:border-emerald-500
-                    shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+                    className="flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold
+                    text-emerald-700 bg-emerald-50 border border-emerald-100
+                    hover:bg-emerald-600 hover:text-white hover:border-emerald-600
+                    shadow-sm hover:shadow-emerald-500/20 transition-all duration-300 active:scale-95 group"
                 >
-                    <span className="text-base leading-none">+</span> Add Language
+                    <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+                    Add Language
                 </button>
             </div>
 
             {/* Language card */}
             <div
                 onDoubleClick={onOpenLanguageModal}
-                className="group flex items-center justify-between bg-gradient-to-r from-gray-50 to-emerald-50/30 rounded-2xl p-5 border border-gray-100 hover:border-emerald-200 transition-all duration-200 cursor-pointer"
+                className="group flex items-center justify-between bg-gradient-to-br from-gray-50/50 to-white rounded-[1.5rem] p-6 border border-gray-100/80 hover:border-emerald-200 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
             >
-                <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-2xl select-none">
-                        🇬🇧
+                <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Globe className="w-4 h-4 text-emerald-300 animate-pulse" />
+                </div>
+
+                <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-white shadow-md border border-gray-100 flex items-center justify-center text-emerald-500 transition-transform duration-300 group-hover:scale-110">
+                        <Languages className="w-7 h-7" />
                     </div>
                     <div>
-                        <p className="font-bold text-gray-900">English</p>
-                        <p className="text-sm text-gray-500 mt-0.5">Native Speaker → English</p>
+                        <p className="font-black text-gray-900 text-lg leading-tight uppercase tracking-tight">English</p>
+                        <p className="text-sm font-medium text-gray-400 mt-1">Native speaker path</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full ${pillClass}`}>
+                <div className="flex items-center gap-4">
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full border ${pillClass} shadow-sm`}>
                         {level}
                     </span>
-                    <p className="text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden md:block">
+                    <p className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block">
                         Double-click to edit
                     </p>
                 </div>

@@ -9,21 +9,25 @@ import {
   deleteUser,
   getProfile,
   updateProfile,
-  removeProfilePicture
+  removeProfilePicture,
+  getGoals,
+  addGoal,
+  deleteGoal,
 } from "../controllers/user-controller.js";
 import upload from "../middleware/upload.js";
 import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
 
-router.put("/test-profile", (req, res) => {
-  res.json({ message: "Test route works" });
-});
-
 /* ================= AUTHENTICATED USER ================= */
 
 router.get("/profile", protect, getProfile);
 router.put("/profile", protect, updateProfile);
+
+// Goals CRUD
+router.get("/goals", protect, getGoals);
+router.post("/goals", protect, addGoal);
+router.delete("/goals/:id", protect, deleteGoal);
 
 router.post(
   "/upload-profile-picture",
