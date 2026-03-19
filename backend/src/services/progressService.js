@@ -67,7 +67,7 @@ export const checkAndUpgradeLevel = async (userId) => {
 
     // Check notification settings
     const settings = await Settings.findOne({ userId });
-    if (settings?.notifications?.progressUpdates) {
+    if (settings?.notifications?.pushNotifications) {
       await sendLevelUpEmail(user.email, user.fullName, nextLevel);
       console.log(`📧 Level up email sent to ${user.email}`);
     }

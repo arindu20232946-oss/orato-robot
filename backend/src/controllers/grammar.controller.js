@@ -2,6 +2,7 @@ import GrammarQuestion from '../models/grammarQuestion.js';
 import GrammarProgress from '../models/grammarProgress.js';
 import User from '../models/user.js';
 import { checkAndUpgradeLevel } from '../services/progressService.js';
+import { updateUserStats } from '../services/statsService.js';
 
 export const getLevels = async (req, res) => {
   try {
@@ -213,12 +214,7 @@ export const submitAnswers = async (req, res) => {
     }
 
     try {
-      await User.findByIdAndUpdate(userId, { 
-        $inc: { 
-          'stats.lessonsDone': 1,
-          'stats.totalPoints': pointsEarned 
-        } 
-      });
+      await updateUserStats(userId, pointsEarned);
     } catch (err) {
       console.error('Failed to update user stats:', err);
     }

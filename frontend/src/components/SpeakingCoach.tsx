@@ -170,7 +170,7 @@ function SpeakingCoach() {
   };
 
   return (
-    <div className="rounded-2xl bg-white border border-gray-200 p-5 shadow-sm">
+    <div className="rounded-2xl bg-white border border-gray-200 p-4 sm:p-5 shadow-sm h-full flex flex-col">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Speaking Practice (AI Coach)</h2>
@@ -197,7 +197,7 @@ function SpeakingCoach() {
         </label>
       </div>
 
-      <div className="flex flex-wrap gap-2 mt-4">
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mt-4">
         <button
           onClick={startListening}
           disabled={!supported || listening || loading}
@@ -225,7 +225,7 @@ function SpeakingCoach() {
             setMessages((prev) => prev.slice(0, 2));
             setInterim("");
           }}
-          className="px-4 py-2 rounded-xl border font-semibold bg-indigo-50 hover:bg-indigo-100 transition-colors duration-200"
+          className="col-span-2 sm:col-span-1 px-4 py-2 rounded-xl border font-semibold bg-indigo-50 hover:bg-indigo-100 transition-colors duration-200"
         >
           🧹 Clear Chat
         </button>
@@ -245,7 +245,7 @@ function SpeakingCoach() {
 
       <div
         ref={chatContainerRef}
-        className="mt-4 bg-gray-50 border border-gray-200 rounded-2xl p-3 h-72 overflow-y-auto"
+        className="mt-4 bg-gray-50 border border-gray-200 rounded-2xl p-3 flex-1 min-h-[18rem] overflow-y-auto"
       >
         {messages
           .filter((m) => m.role !== "system")
@@ -265,13 +265,13 @@ function SpeakingCoach() {
           ))}
       </div>
 
-      <div className="flex gap-2 mt-3">
+      <div className="flex flex-col sm:flex-row items-center gap-2 mt-3">
         <input
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
           placeholder="Type in English…"
           disabled={loading}
-          className={`flex-1 px-3 py-2 rounded-xl border border-gray-300 outline-none ${loading ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
+          className={`w-full sm:flex-1 px-3 py-2 rounded-xl border border-gray-300 outline-none min-w-0 ${loading ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
           onKeyDown={(e) => {
             if (e.key === "Enter") sendText();
           }}
@@ -279,7 +279,7 @@ function SpeakingCoach() {
         <button
           onClick={sendText}
           disabled={loading}
-          className={`px-4 py-2 rounded-xl border font-bold transition-colors duration-200 ${loading
+          className={`w-full sm:w-auto px-4 py-2 rounded-xl border font-bold transition-colors duration-200 ${loading
             ? "bg-gray-100 cursor-not-allowed"
             : "bg-green-50 hover:bg-green-100"
             }`}

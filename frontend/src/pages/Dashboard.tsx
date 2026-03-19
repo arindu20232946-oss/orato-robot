@@ -68,19 +68,33 @@ const Dashboard: React.FC = () => {
             <StatsGrid />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column */}
-            <div className="lg:col-span-2 space-y-6">
-              <ContinueLearning onLessonClick={handleLessonClick} />
-              <DailyChallenges />
-              <SpeakingCoach />
+          <div className="mb-6">
+            <ContinueLearning onLessonClick={handleLessonClick} />
+          </div>
+
+          <div className="space-y-6">
+            {/* Middle Row Grid: Daily Challenges & Progress */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Left Column */}
+              <div className="md:col-span-2 lg:col-span-2">
+                <DailyChallenges />
+              </div>
+
+              {/* Right Column */}
+              <div className="md:col-span-2 lg:col-span-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+                <SkillProgress />
+                <RecentAchievements />
+              </div>
             </div>
 
-            {/* Right Column */}
-            <div className="space-y-6">
-              <SkillProgress />
-              <RecentAchievements />
-              <VisualVocabularyBanner />
+            {/* Speaking Coach & Vocabulary Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="md:col-span-2 lg:col-span-2">
+                <SpeakingCoach />
+              </div>
+              <div className="md:col-span-2 lg:col-span-1">
+                <VisualVocabularyBanner />
+              </div>
             </div>
           </div>
         </main>

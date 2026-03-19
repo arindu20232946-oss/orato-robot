@@ -50,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
   return (
     <nav className="sticky top-4 z-50 w-full px-4 sm:px-6 lg:px-8">
       <div className="bg-white/60 backdrop-blur-md border border-green-100 shadow-lg rounded-2xl transition-all max-w-7xl mx-auto">
-        <div className="px-8 py-4">
+        <div className="px-4 sm:px-8 py-4">
           <div className="flex justify-between items-center">
 
             {/* Logo */}
@@ -65,7 +65,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
                   alt="Orato Logo"
                   className="w-14 h-14 rounded-xl shadow-md object-cover"
                 />
-                <span className="text-3xl font-bold text-green-600">Orato</span>
+                <span className="text-2xl sm:text-3xl font-bold text-green-600">Orato</span>
               </Link>
             </div>
 

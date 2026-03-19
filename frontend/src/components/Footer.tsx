@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="gradient-dark text-white pt-12 pb-6 mt-auto">
       {/* 4 Column Layout */}
-      <div className="max-w-7xl mx-auto px-8 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
           {/* Column 1: Brand */}
@@ -111,7 +111,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Copyright */}
-      <div className="max-w-7xl mx-auto px-8 pt-6 border-t border-text-light border-opacity-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-6 border-t border-text-light border-opacity-20">
         <p className="text-text-light text-sm text-center">
           © 2026 Orato. All rights reserved.
         </p>

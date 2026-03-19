@@ -191,18 +191,19 @@ export default function ContinueLearning({
   }
 
   return (
-    <div ref={containerRef} className="bg-white rounded-2xl p-6 card-shadow">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-2xl font-semibold text-gray-900 font-heading">
-          Continue Learning
-        </h3>
-        <button className="text-sm text-orato-green font-medium hover:underline flex items-center gap-1 transition-all duration-300 hover:gap-2">
-          View All
-          <ChevronRight className="w-4 h-4" />
-        </button>
+    <div ref={containerRef} className="bg-white rounded-[2rem] p-4 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h3 className="text-2xl font-black text-slate-800 font-heading tracking-tight">
+            Continue Learning
+          </h3>
+          <p className="text-xs font-medium text-slate-400 mt-1">
+            Pick up right where you left off
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {displayedLessons.map((lesson, index) => {
           const isHovered = hoveredId === lesson.id;
 
@@ -212,70 +213,96 @@ export default function ContinueLearning({
               ref={(el) => {
                 itemsRef.current[index] = el;
               }}
-              className={`p-4 rounded-xl transition-all duration-300 cursor-pointer ${
+              className={`group relative p-4 sm:p-6 rounded-[1.5rem] transition-all duration-500 cursor-pointer border ${
                 isHovered
-                  ? "bg-orato-green-light"
-                  : "bg-gray-50 hover:bg-gray-100"
+                  ? "bg-white border-emerald-200 shadow-[0_20px_40px_rgba(16,185,129,0.1)] transform -translate-y-2"
+                  : "bg-slate-50/50 border-transparent hover:bg-white hover:border-emerald-100"
               }`}
               onMouseEnter={() => setHoveredId(lesson.id)}
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => handleLessonClick(lesson)}
             >
-              <div className="flex items-start gap-4">
-                <div
-                  className={`w-12 h-12 rounded-xl ${lesson.iconBg} flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 ${isHovered ? "scale-110" : ""}`}
-                >
-                  {lesson.icon}
-                </div>
+              {/* Decorative background element on hover */}
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full -mr-16 -mt-16 transition-opacity duration-500 blur-3xl opacity-0 ${isHovered ? 'opacity-100' : ''}`} />
 
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-gray-900 text-base mb-1 truncate">
-                    {lesson.title}
-                  </h4>
-
-                  <div className="relative">
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        ref={(el) => {
-                          progressRefs.current[index] = el;
-                        }}
-                        className="h-full bg-green-300 rounded-full relative overflow-hidden"
-                        style={{ width: "0%" }}
-                      >
-                        <div
-                          className="absolute inset-0 opacity-30"
-                          style={{
-                            backgroundImage:
-                              "linear-gradient(45deg, rgba(255,255,255,.3) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.3) 75%, transparent 75%, transparent)",
-                            backgroundSize: "1rem 1rem",
-                            animation: "move-stripes 1s linear infinite",
-                          }}
-                        />
+              <div className="relative flex flex-col gap-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`w-14 h-14 rounded-2xl ${lesson.iconBg} flex items-center justify-center text-3xl flex-shrink-0 transition-all duration-500 shadow-sm ${isHovered ? "rotate-[10deg] scale-110 shadow-lg shadow-emerald-200" : ""}`}
+                    >
+                      {lesson.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-slate-900 text-lg mb-0.5 truncate tracking-tight">
+                        {lesson.title}
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                          Active Task
+                        </p>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1.5">
-                      {lesson.isGrammar || lesson.isReading || lesson.isListening || lesson.isVocabulary
-                        ? `Level ${lesson.completedLevels || 0}/${lesson.totalLevels || 10} (${lesson.progress}%)`
-                        : `${lesson.progress}% complete`}
-                    </p>
                   </div>
-                </div>
-
-                <div className="flex-shrink-0">
+                  
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleLessonClick(lesson);
                     }}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                    className={`flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl text-[10px] sm:text-xs font-black transition-all duration-500 w-full sm:w-auto ${
                       isHovered
-                        ? "bg-green-500 text-white shadow-md scale-105"
-                        : "bg-green-100 text-green-700 hover:bg-green-200"
+                        ? "bg-emerald-600 text-white shadow-xl scale-105"
+                        : "bg-white text-slate-700 shadow-sm border border-slate-100 hover:border-emerald-200"
                     }`}
                   >
-                    <PlayCircle className="w-4 h-4" />
-                    Start
+                    <PlayCircle className={`w-4 h-4 transition-transform duration-500 ${isHovered ? 'rotate-[360deg]' : ''}`} />
+                    START
                   </button>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-end mb-1">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      Course Completion
+                    </p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-lg font-black text-emerald-600">
+                        {lesson.progress}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-400">%</span>
+                    </div>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="h-3 bg-slate-100 rounded-full overflow-hidden p-[2px]">
+                      <div
+                        ref={(el) => {
+                          progressRefs.current[index] = el;
+                        }}
+                        className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 rounded-full relative overflow-hidden transition-all duration-1000"
+                        style={{ width: "0%" }}
+                      >
+                        {/* Shimmer effect for progress bar */}
+                        <div
+                          className="absolute inset-0 opacity-40 bg-gradient-to-r from-transparent via-white to-transparent -translate-x-full animate-[shimmer_2s_infinite]"
+                          style={{
+                            backgroundSize: "200% 100%",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center pt-1">
+                    <p className="text-[10px] font-bold text-slate-400">
+                      {lesson.isGrammar || lesson.isReading || lesson.isListening || lesson.isVocabulary
+                        ? `MILESTONE: LEVEL ${lesson.completedLevels || 0} OF ${lesson.totalLevels || 10}`
+                        : `CONTINUE WHERE YOU LEFT OFF`}
+                    </p>
+                    <ChevronRight className={`w-4 h-4 text-emerald-500 transition-transform duration-500 ${isHovered ? 'translate-x-1' : ''}`} />
+                  </div>
                 </div>
               </div>
             </div>

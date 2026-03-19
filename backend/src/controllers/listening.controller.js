@@ -2,6 +2,7 @@ import ListeningContent from '../models/listeningContent.js';
 import ListeningProgress from '../models/listeningProgress.js';
 import User from '../models/user.js';
 import { checkAndUpgradeLevel } from '../services/progressService.js';
+import { updateUserStats } from '../services/statsService.js';
 
 const levelRanks = {
   beginner: 0,
@@ -203,14 +204,16 @@ export const submitListeningAnswers = async (req, res) => {
         },
         $inc: { attempts: 1 }
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
 
-    // Increment global lessons count if newly completed
+    // Increment global stats if newly completed
     if (allCorrect && !wasCompleted) {
-      await User.findByIdAndUpdate(userId, {
-        $inc: { 'stats.lessonsDone': 1 }
-      });
+      try {
+        await updateUserStats(userId, 50); // 50 points for listening
+      } catch (err) {
+        console.error('Failed to update user stats:', err);
+      }
     }
 
     // Check if next item exists and is now unlocked

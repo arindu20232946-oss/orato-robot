@@ -116,7 +116,7 @@ const ListeningDetail: React.FC = () => {
             }
           })
           .catch(err => console.error("Could not fetch user settings", err));
-      } catch(e) {}
+      } catch (e) { }
     }
   }, []);
 
@@ -168,10 +168,10 @@ const ListeningDetail: React.FC = () => {
 
     const utterance = new SpeechSynthesisUtterance(item.content);
     utterance.lang = "en-US";
-    
+
     // Default rate based on level
     let rate = item.level === "beginner" ? 0.8 : item.level === "intermediate" ? 0.9 : 1.0;
-    
+
     // Override if settings exists
     if (audioSettings?.playbackSpeed) {
       const match = audioSettings.playbackSpeed.match(/(\d+\.\d+|\d+)/);
@@ -180,7 +180,7 @@ const ListeningDetail: React.FC = () => {
       }
     }
     utterance.rate = rate;
-    
+
     // Apply volume
     if (audioSettings?.volume !== undefined) {
       utterance.volume = audioSettings.volume / 100;
@@ -237,7 +237,7 @@ const ListeningDetail: React.FC = () => {
     try {
       const res = await listeningService.submit(id!, finalAnswers);
       setResult(res.data.result);
-      
+
       try {
         await dashboardService.updateChallenge('listening');
       } catch (e) {
@@ -327,9 +327,8 @@ const ListeningDetail: React.FC = () => {
           <div ref={resultRef} className="bg-white rounded-2xl p-8 shadow-xl w-full max-w-lg">
             {/* Trophy */}
             <div
-              className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${
-                result.allCorrect ? "bg-green-100" : "bg-orange-100"
-              }`}
+              className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${result.allCorrect ? "bg-green-100" : "bg-orange-100"
+                }`}
             >
               {result.allCorrect ? (
                 <Trophy className="w-10 h-10 text-green-500" />
@@ -377,11 +376,10 @@ const ListeningDetail: React.FC = () => {
                   {result.questions.map((q, index) => (
                     <div
                       key={index}
-                      className={`p-4 rounded-xl border ${
-                        q.isCorrect
+                      className={`p-4 rounded-xl border ${q.isCorrect
                           ? "border-green-200 bg-green-50"
                           : "border-red-200 bg-red-50"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start gap-2">
                         {q.isCorrect ? (
@@ -476,9 +474,14 @@ const ListeningDetail: React.FC = () => {
 
           {/* Listening Card */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-4">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4 text-center">
-              🎧 Listen Carefully
-            </h2>
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                <Headphones className="w-4 h-4 text-green-600" />
+              </div>
+              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-widest">
+                Listen Carefully
+              </h2>
+            </div>
 
             {/* Visual indicator for listening */}
             <div className="flex justify-center py-8 mb-4">
@@ -496,11 +499,10 @@ const ListeningDetail: React.FC = () => {
             {/* Play button */}
             <button
               onClick={handlePlay}
-              className={`w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-sm transition-all duration-300 tracking-wide ${
-                isPlaying
+              className={`w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-sm transition-all duration-300 tracking-wide ${isPlaying
                   ? "bg-red-50 text-red-600 border-2 border-red-100 hover:bg-red-100"
                   : "gradient-primary text-white shadow-lg shadow-green-500/20 hover:shadow-xl hover:shadow-green-500/30 active:scale-[0.98]"
-              }`}
+                }`}
             >
               {isPlaying ? (
                 <>
@@ -510,14 +512,14 @@ const ListeningDetail: React.FC = () => {
               ) : (
                 <>
                   <Volume2 className="w-5 h-5" />
-                  {hasListened ? "Play Again 🔊" : "Listen to Paragraph 🔊"}
+                  {hasListened ? "Play Again 🔊" : "Listen to Paragraph"}
                 </>
               )}
             </button>
 
             {/* Speed note */}
             <p className="text-xs text-gray-400 text-center mt-2">
-              Speed: {item.level === "beginner" ? "Slow" : item.level === "intermediate" ? "Normal" : "Fast"} •
+              Speed: {audioSettings?.playbackSpeed || (item.level === "beginner" ? "0.8x (Slow)" : item.level === "intermediate" ? "1.0x (Normal)" : "1.2x (Fast)")} •
               You can listen multiple times
             </p>
           </div>
@@ -525,9 +527,14 @@ const ListeningDetail: React.FC = () => {
           {/* Start Quiz or Quiz Section */}
           {!showQuiz ? (
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                📝 Comprehension Quiz
-              </h2>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 text-blue-600" />
+                </div>
+                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+                  Comprehension Quiz
+                </h2>
+              </div>
               <p className="text-gray-600 text-sm mb-5">
                 Answer all 3 questions correctly to unlock the next item.
                 Listen to the paragraph first, then start the quiz.
@@ -535,24 +542,28 @@ const ListeningDetail: React.FC = () => {
               <button
                 onClick={handleStartQuiz}
                 disabled={!hasListened || isPlaying}
-                className={`w-full py-3.5 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg ${
-                  !hasListened || isPlaying
+                className={`w-full py-3.5 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg ${!hasListened || isPlaying
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-green-500 text-white hover:bg-green-600"
-                }`}
+                  }`}
               >
-                {!hasListened 
-                  ? "Listen fully to unlock quiz" 
-                  : isPlaying 
-                  ? "Playing... (Wait for finish)" 
-                  : (currentQuestion > 0 || answers.length > 0) 
-                  ? "Resume Quiz →" 
-                  : "Start Quiz →"}
+                {!hasListened
+                  ? "Listen fully to unlock quiz"
+                  : isPlaying
+                    ? "Playing... (Wait for finish)"
+                    : (currentQuestion > 0 || answers.length > 0)
+                      ? "Resume Quiz →"
+                      : "Start Quiz →"}
               </button>
               {!hasListened && (
-                <p className="text-[10px] text-amber-600 mt-2 text-center font-medium">
-                  ⚠️ The quiz will be available after the paragraph has been heard in full.
-                </p>
+                <div className="flex items-center justify-center gap-2 mt-3 p-2 bg-amber-50 rounded-lg border border-amber-100">
+                  <div className="w-5 h-5 rounded-md bg-amber-500 flex items-center justify-center flex-shrink-0">
+                    <Lock className="w-3 h-3 text-white" />
+                  </div>
+                  <p className="text-[10px] text-amber-700 font-medium">
+                    The quiz will be available after the paragraph has been heard in full.
+                  </p>
+                </div>
               )}
             </div>
           ) : (
@@ -566,9 +577,8 @@ const ListeningDetail: React.FC = () => {
                   {[0, 1, 2].map((i) => (
                     <div
                       key={i}
-                      className={`w-8 h-1.5 rounded-full transition-all ${
-                        i <= currentQuestion ? "bg-green-500" : "bg-gray-200"
-                      }`}
+                      className={`w-8 h-1.5 rounded-full transition-all ${i <= currentQuestion ? "bg-green-500" : "bg-gray-200"
+                        }`}
                     />
                   ))}
                 </div>
@@ -587,18 +597,16 @@ const ListeningDetail: React.FC = () => {
                     <button
                       key={index}
                       onClick={() => handleSelectAnswer(index)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 text-sm font-medium cursor-pointer ${
-                        isSelected
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 text-sm font-medium cursor-pointer ${isSelected
                           ? "border-green-500 bg-green-50 text-green-700"
                           : "border-gray-100 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-gray-100"
-                      }`}
+                        }`}
                     >
                       <span
-                        className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold mr-3 ${
-                          isSelected
+                        className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold mr-3 ${isSelected
                             ? "bg-green-500 text-white"
                             : "bg-gray-200 text-gray-600"
-                        }`}
+                          }`}
                       >
                         {String.fromCharCode(65 + index)}
                       </span>
@@ -612,11 +620,10 @@ const ListeningDetail: React.FC = () => {
               <button
                 onClick={handleNext}
                 disabled={selectedAnswer === null || submitting}
-                className={`w-full mt-6 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                  selectedAnswer !== null && !submitting
+                className={`w-full mt-6 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 ${selectedAnswer !== null && !submitting
                     ? "bg-green-500 text-white hover:bg-green-600 shadow-md"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                }`}
+                  }`}
               >
                 {submitting
                   ? "Submitting..."

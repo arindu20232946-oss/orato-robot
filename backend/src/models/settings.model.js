@@ -15,6 +15,7 @@ const settingsSchema = new mongoose.Schema(
             reminderTime: { type: String, default: '09:00' },
         },
         audioDisplay: {
+            volume: { type: Number, default: 100 },
             soundEffects: { type: Boolean, default: true },
             playbackSpeed: {
                 type: String,

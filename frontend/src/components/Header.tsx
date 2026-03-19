@@ -72,7 +72,7 @@ export default function Header() {
       >
         <span className="word inline-block">Welcome</span>
         <span className="word inline-block">back,</span>
-        <span className="word inline-block">{userName || "User"}!</span>
+        <span className="word inline-block text-green-500">{userName || "User"}!</span>
         <span
           ref={emojiRef}
           className="inline-block animate-wave cursor-pointer"
