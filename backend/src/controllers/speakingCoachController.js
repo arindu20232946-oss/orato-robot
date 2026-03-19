@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 
 const COACH_SYSTEM_PROMPT =
   "You are a friendly English speaking coach. Correct grammar briefly, explain simply, and ask one short follow-up question. Keep replies short and clear for learners.";
@@ -16,28 +16,26 @@ export const chatWithSpeakingCoach = async (req, res) => {
     }
 
     // Check API key at request time so the server can still start without it
-    if (!process.env.GEMINI_API_KEY) {
+    if (!process.env.GROQ_API_KEY) {
       return res.status(500).json({
         success: false,
-        message: "Gemini API key is not configured on the server.",
+        message: "Groq API key is not configured on the server.",
       });
     }
 
-    // Initialize Gemini client lazily
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    // Initialize Groq client lazily
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-    // Provide the system prompt and the user's message
-    const result = await model.generateContent({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: `${COACH_SYSTEM_PROMPT}\n\nUser: ${message}` }],
-        },
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: COACH_SYSTEM_PROMPT },
+        { role: "user", content: message },
       ],
+      max_tokens: 300,
     });
 
-    const responseText = result.response.text();
+    const responseText = completion.choices[0]?.message?.content || "";
 
     // Send response to frontend
     return res.status(200).json({
@@ -49,7 +47,7 @@ export const chatWithSpeakingCoach = async (req, res) => {
     console.error(`[${new Date().toISOString()}] Speaking coach AI error:`, error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get AI coach reply from Gemini.",
+      message: "Failed to get AI coach reply from Groq.",
     });
   }
 };
