@@ -74,25 +74,25 @@ const Dashboard: React.FC = () => {
 
           <div className="space-y-6">
             {/* Middle Row Grid: Daily Challenges & Progress */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Left Column */}
-              <div className="lg:col-span-2">
+              <div className="md:col-span-2 lg:col-span-2">
                 <DailyChallenges />
               </div>
 
               {/* Right Column */}
-              <div className="space-y-6">
+              <div className="md:col-span-2 lg:col-span-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
                 <SkillProgress />
                 <RecentAchievements />
               </div>
             </div>
 
             {/* Speaking Coach & Vocabulary Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="md:col-span-2 lg:col-span-2">
                 <SpeakingCoach />
               </div>
-              <div className="lg:col-span-1">
+              <div className="md:col-span-2 lg:col-span-1">
                 <VisualVocabularyBanner />
               </div>
             </div>

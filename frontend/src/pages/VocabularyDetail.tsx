@@ -203,14 +203,23 @@ export default function VocabularyDetail() {
       <Navbar />
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-10">
 
-        {/* Back Button */}
-        <button
-          onClick={() => navigate("/vocabulary")}
-          className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 text-sm transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Tasks
-        </button>
+        {/* Back Buttons */}
+        <div className="flex flex-col gap-2 mb-6">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-xs font-medium">Back to Dashboard</span>
+          </button>
+          <button
+            onClick={() => navigate("/vocabulary")}
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-900 text-sm transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Tasks
+          </button>
+        </div>
 
         {/* Header */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-5">

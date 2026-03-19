@@ -191,7 +191,7 @@ export default function ContinueLearning({
   }
 
   return (
-    <div ref={containerRef} className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80">
+    <div ref={containerRef} className="bg-white rounded-[2rem] p-4 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h3 className="text-2xl font-black text-slate-800 font-heading tracking-tight">
@@ -213,7 +213,7 @@ export default function ContinueLearning({
               ref={(el) => {
                 itemsRef.current[index] = el;
               }}
-              className={`group relative p-6 rounded-[1.5rem] transition-all duration-500 cursor-pointer border ${
+              className={`group relative p-4 sm:p-6 rounded-[1.5rem] transition-all duration-500 cursor-pointer border ${
                 isHovered
                   ? "bg-white border-emerald-200 shadow-[0_20px_40px_rgba(16,185,129,0.1)] transform -translate-y-2"
                   : "bg-slate-50/50 border-transparent hover:bg-white hover:border-emerald-100"
@@ -226,7 +226,7 @@ export default function ContinueLearning({
               <div className={`absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full -mr-16 -mt-16 transition-opacity duration-500 blur-3xl opacity-0 ${isHovered ? 'opacity-100' : ''}`} />
 
               <div className="relative flex flex-col gap-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div
                       className={`w-14 h-14 rounded-2xl ${lesson.iconBg} flex items-center justify-center text-3xl flex-shrink-0 transition-all duration-500 shadow-sm ${isHovered ? "rotate-[10deg] scale-110 shadow-lg shadow-emerald-200" : ""}`}
@@ -251,7 +251,7 @@ export default function ContinueLearning({
                       e.stopPropagation();
                       handleLessonClick(lesson);
                     }}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all duration-500 ${
+                    className={`flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl text-[10px] sm:text-xs font-black transition-all duration-500 w-full sm:w-auto ${
                       isHovered
                         ? "bg-emerald-600 text-white shadow-xl scale-105"
                         : "bg-white text-slate-700 shadow-sm border border-slate-100 hover:border-emerald-200"
