@@ -74,7 +74,7 @@ export const updateSettings = async (req, res) => {
         const settings = await Settings.findOneAndUpdate(
             { userId },
             { $set: updates },
-            { new: true, runValidators: true, upsert: true }
+            { returnDocument: 'after', runValidators: true, upsert: true }
         );
 
         // Send email if ranked up AND notifications are enabled

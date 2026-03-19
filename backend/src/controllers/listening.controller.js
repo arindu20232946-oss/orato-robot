@@ -203,7 +203,7 @@ export const submitListeningAnswers = async (req, res) => {
         },
         $inc: { attempts: 1 }
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
 
     // Increment global lessons count if newly completed
