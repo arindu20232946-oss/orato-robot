@@ -122,7 +122,7 @@ export default function VisualVocabularyBanner() {
           <button
             className={`group/btn w-full py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-3 transition-all duration-300 relative overflow-hidden ${isHovered
                 ? "bg-emerald-500 text-white shadow-xl shadow-emerald-200 -translate-y-1"
-                : "bg-slate-900 text-white"
+                : "bg-emerald-600 text-white"
               }`}
           >
             <span className="relative z-10">Start Exploring Now</span>
