@@ -142,7 +142,7 @@ const Account: React.FC = () => {
               <div className="h-px w-8 bg-emerald-500/50" />
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Workspace</p>
             </div>
-            <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight uppercase">
+            <h1 className="text-4xl font-extrabold text-emerald-950 tracking-tight">
               Profile <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">& Setting</span>
             </h1>
             <p className="mt-3 text-gray-400 font-medium text-lg max-w-2xl leading-relaxed">

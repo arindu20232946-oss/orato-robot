@@ -66,7 +66,9 @@ const AddGoalModal: React.FC<Props> = ({ onClose, onAdd, existingTypes }) => {
 
   useEffect(() => {
     setShow(true);
-    const handleEsc = (e: KeyboardEvent) => { if (e.key === "Escape") handleClose(); };
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
@@ -89,29 +91,41 @@ const AddGoalModal: React.FC<Props> = ({ onClose, onAdd, existingTypes }) => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center z-50 transition-all duration-200 ${show ? "bg-black/40 backdrop-blur-sm opacity-100" : "opacity-0"}`}
+      className={`fixed inset-0 flex items-center justify-center z-50 p-4 transition-all duration-200 ${
+        show ? "bg-black/40 backdrop-blur-sm opacity-100" : "opacity-0"
+      }`}
       onClick={handleClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transition-all duration-200 ${show ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"}`}
+        className={`bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-auto flex flex-col transition-all duration-200 ${
+          show
+            ? "scale-100 opacity-100 translate-y-0"
+            : "scale-95 opacity-0 translate-y-4"
+        }`}
+        style={{ maxHeight: "90vh" }}
       >
-        {/* Header */}
-        <div className="px-8 pt-7 pb-5 border-b border-gray-100 flex items-center justify-between">
+        {/* Header - Fixed */}
+        <div className="px-6 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Choose a Learning Goal</h2>
-            <p className="text-sm text-gray-400 mt-0.5">Select one goal to track your progress</p>
+            <h2 className="text-xl font-bold text-gray-900">
+              Choose a Learning Goal
+            </h2>
+            <p className="text-sm text-gray-400 mt-0.5">
+              Select one goal to track your progress
+            </p>
           </div>
           <button
             onClick={handleClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 text-sm transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 text-sm transition-colors flex-shrink-0"
           >
             ✕
           </button>
         </div>
 
-        {/* Goal Cards Grid */}
-        <div className="px-8 pt-6 pb-4 grid grid-cols-1 gap-3">
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto flex-1 px-6 py-4 space-y-3">
+          {/* Goal Cards */}
           {PRESET_GOALS.map((g) => {
             const taken = existingTypes.includes(g.type);
             const selected = selectedType === g.type;
@@ -121,18 +135,24 @@ const AddGoalModal: React.FC<Props> = ({ onClose, onAdd, existingTypes }) => {
                 type="button"
                 disabled={taken}
                 onClick={() => !taken && setSelectedType(g.type)}
-                className={`relative flex items-center gap-4 w-full text-left px-5 py-4 rounded-2xl border-2 transition-all duration-150
-                  ${taken ? "opacity-50 cursor-not-allowed bg-gray-50 border-gray-200" : selected
+                className={`relative flex items-center gap-4 w-full text-left px-4 py-3 rounded-2xl border-2 transition-all duration-150 ${
+                  taken
+                    ? "opacity-50 cursor-not-allowed bg-gray-50 border-gray-200"
+                    : selected
                     ? `${g.bg} ${g.border} ring-2 ${g.ring} shadow-md`
-                    : `bg-white ${g.border} border-gray-200 hover:${g.bg} hover:border-opacity-60`
-                  }`}
+                    : `bg-white border-gray-200 hover:shadow-sm`
+                }`}
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${g.color} flex items-center justify-center text-2xl shadow-sm shrink-0`}>
+                <div
+                  className={`w-11 h-11 rounded-xl bg-gradient-to-br ${g.color} flex items-center justify-center text-xl shadow-sm shrink-0`}
+                >
                   {g.icon}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-gray-900 text-sm">{g.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5 truncate">{g.desc}</p>
+                  <p className="text-xs text-gray-400 mt-0.5 truncate">
+                    {g.desc}
+                  </p>
                 </div>
                 {taken && (
                   <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-full shrink-0">
@@ -147,24 +167,24 @@ const AddGoalModal: React.FC<Props> = ({ onClose, onAdd, existingTypes }) => {
               </button>
             );
           })}
+
+          {/* Deadline */}
+          <div className="pt-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">
+              Target Deadline
+            </label>
+            <input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              min={minDateStr}
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
+            />
+          </div>
         </div>
 
-        {/* Deadline */}
-        <div className="px-8 pb-4">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">
-            Target Deadline
-          </label>
-          <input
-            type="date"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            min={minDateStr}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
-          />
-        </div>
-
-        {/* Footer */}
-        <div className="px-8 pb-7 flex gap-3">
+        {/* Footer - Fixed */}
+        <div className="px-6 py-4 border-t border-gray-100 flex gap-3 flex-shrink-0">
           <button
             onClick={handleClose}
             className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all"
@@ -174,7 +194,7 @@ const AddGoalModal: React.FC<Props> = ({ onClose, onAdd, existingTypes }) => {
           <button
             onClick={handleSave}
             disabled={!selectedType || !deadline}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white shadow-md transition-all bg-emerald-500 hover:bg-emerald-600 hover:shadow-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-emerald-500 disabled:hover:shadow-md"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white shadow-md transition-all bg-emerald-500 hover:bg-emerald-600 hover:shadow-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Add Goal
           </button>
