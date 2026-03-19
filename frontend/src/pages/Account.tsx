@@ -15,7 +15,6 @@ import AchievementSection from "../components/account/AchievementSection";
 // Modals
 import EditProfileModal from "../components/EditProfileModal";
 import LanguageModal from "../components/account/LanguageModal";
-import EditGoalModal from "../components/account/EditGoalModal";
 import AddGoalController from "../components/account/AddGoalController";
 
 // Services & Utilities
@@ -30,17 +29,24 @@ const Account: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [goals, setGoals] = useState<any[]>([]);
-  const [editingGoal, setEditingGoal] = useState<any>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-
-      setGoals([]);
     }
+
+    // Load goals from backend
+    API.get("/users/goals")
+      .then((res) => {
+        if (res.data?.goals) setGoals(res.data.goals);
+      })
+      .catch(() => {
+        // silently fail — user may not be authenticated yet
+      });
   }, []);
+
 
   // Write user to localStorage AND notify same-tab listeners (e.g. Navbar)
   const setUserStorage = (updatedUser: any) => {
@@ -162,7 +168,7 @@ const Account: React.FC = () => {
           <GoalsSection
             goals={goals}
             onOpenAddGoal={() => setIsAddGoalOpen(true)}
-            onEditGoal={(goal) => setEditingGoal(goal)}
+            setGoals={setGoals}
           />
 
           {/* ACHIEVEMENT BADGES */}
@@ -193,13 +199,6 @@ const Account: React.FC = () => {
       <LanguageModal
         isOpen={isLanguageOpen}
         onClose={() => setIsLanguageOpen(false)}
-      />
-
-      <EditGoalModal
-        goal={editingGoal}
-        onClose={() => setEditingGoal(null)}
-        setGoals={setGoals}
-        setEditingGoal={setEditingGoal}
       />
 
     </div>
