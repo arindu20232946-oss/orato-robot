@@ -5,9 +5,9 @@ import {
     Trash2, 
     Edit3, 
     Target, 
-    Globe, 
-    Clock, 
-    Award,
+    Languages, 
+    Book, 
+    Trophy,
     Mail,
     Calendar,
     User as UserIcon
@@ -26,20 +26,20 @@ const StatPill = ({
     icon: Icon,
     label,
     value,
-    colorClass,
+    iconColor,
 }: {
     icon: any;
     label: string;
     value: string | number;
-    colorClass: string;
+    iconColor: string;
 }) => (
-    <div className="group flex items-center gap-3 px-4 py-3 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-default">
-        <div className={`p-2 rounded-xl ${colorClass} bg-opacity-10 transition-colors duration-300 group-hover:bg-opacity-20`}>
-            <Icon className={`w-4 h-4 ${colorClass.replace('bg-', 'text-')}`} />
+    <div className="group flex items-center gap-4 px-5 py-4 bg-white/40 backdrop-blur-md rounded-[2rem] border border-white/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 cursor-default">
+        <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-2xl bg-white/80 shadow-inner group-hover:scale-110 transition-transform duration-500">
+            <Icon className={`w-6 h-6 ${iconColor}`} />
         </div>
         <div className="min-w-0">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate">{label}</p>
-            <p className="text-sm font-bold text-gray-800 truncate">{value}</p>
+            <p className="text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em] mb-0.5">{label}</p>
+            <p className="text-base font-black text-gray-800 tracking-tight truncate">{value}</p>
         </div>
     </div>
 );
@@ -212,55 +212,57 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 {/* ── BIO ─────────────────────────────────────── */}
                 <div
                     onDoubleClick={onEditClick}
-                    className="group mt-8 flex gap-5 bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 border border-gray-100/80 hover:border-emerald-200 hover:bg-emerald-50/30 shadow-sm transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    className="group mt-8 flex gap-5 bg-white/40 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/60 hover:border-emerald-200 hover:bg-emerald-50/40 shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Edit3 className="w-4 h-4 text-emerald-400" />
+                    <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 group-hover:translate-x-0">
+                        <Edit3 className="w-5 h-5 text-emerald-500" />
                     </div>
                     
-                    <div className="w-1.5 shrink-0 rounded-full bg-gradient-to-b from-emerald-400 to-teal-500" />
+                    <div className="w-1.5 shrink-0 rounded-full bg-gradient-to-b from-emerald-400 via-teal-500 to-blue-500" />
                     
                     <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                                <UserIcon className="w-3.5 h-3.5 text-emerald-500" />
-                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Personal Mission</p>
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2.5">
+                                <div className="p-1.5 rounded-lg bg-emerald-100/50 text-emerald-600">
+                                    <UserIcon className="w-4 h-4" />
+                                </div>
+                                <p className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-gray-400">Personal Overview</p>
                             </div>
-                            <p className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                 Double-click to edit
                             </p>
                         </div>
-                        <p className="text-gray-700 text-sm leading-relaxed font-medium">
-                            {user.bio || "Add a short bio to tell others about yourself…"}
+                        <p className="text-gray-700 text-lg leading-relaxed font-semibold italic">
+                            "{user.bio || "Add a short bio to tell others about yourself…"}"
                         </p>
                     </div>
                 </div>
 
                 {/* ── STAT PILLS ──────────────────────────────── */}
-                <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <StatPill 
                         icon={Target} 
-                        label="Skill Level" 
+                        label="CURRENT LEVEL" 
                         value={user.skillLevel || "Beginner"} 
-                        colorClass="bg-blue-500"
+                        iconColor="text-rose-500"
                     />
                     <StatPill 
-                        icon={Globe} 
-                        label="Target" 
+                        icon={Languages} 
+                        label="TARGET LANGUAGE" 
                         value={user.targetLanguage || "English"} 
-                        colorClass="bg-emerald-500"
+                        iconColor="text-blue-500"
                     />
                     <StatPill 
-                        icon={Clock} 
-                        label="Daily Goal" 
-                        value={`${user.dailyGoalMinutes || 15}m`} 
-                        colorClass="bg-amber-500"
+                        icon={Book} 
+                        label="DAILY GOAL" 
+                        value={`${user.dailyGoalMinutes || 15} min/day`} 
+                        iconColor="text-sky-500"
                     />
                     <StatPill 
-                        icon={Award} 
-                        label="Score" 
+                        icon={Trophy} 
+                        label="ASSESSMENT SCORE" 
                         value={user.assessmentScore ?? 0} 
-                        colorClass="bg-purple-500"
+                        iconColor="text-amber-500"
                     />
                 </div>
             </div>
