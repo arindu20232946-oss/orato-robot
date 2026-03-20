@@ -97,16 +97,13 @@ const VisualCards: React.FC = () => {
         >
 
           {/* FRONT OF CARD: Image Only */}
-          <div className="absolute w-full h-full [backface-visibility:hidden] rounded-2xl shadow-lg flex flex-col justify-center items-center p-5 overflow-hidden bg-white">
+          <div className="absolute w-full h-full [backface-visibility:hidden] rounded-2xl shadow-lg flex flex-col justify-between items-center p-1 overflow-hidden bg-white">
             <img
               src={currentImageSrc}
               alt={currentCard.word}
-              className="w-full h-4/5 object-cover rounded-lg mb-2.5"
-              onError={() =>
-                setFailedImages((prev) => ({ ...prev, [currentCard._id]: true }))
-              }
+              className="w-full h-[90%] object-contain rounded-lg"
             />
-            <p className="text-gray-400 text-sm m-0 uppercase tracking-wide">
+            <p className="text-gray-400 text-xs m-0 uppercase tracking-wide">
               Click card to reveal meaning
             </p>
           </div>
