@@ -2,6 +2,13 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.js';
 
+/**
+ * ===== PASSPORT GOOGLE OAUTH CONFIGURATION =====
+ * 
+ * Google Sign-In for EXISTING USERS ONLY
+ * New users must go through email signup → personal info → assessment flow
+ */
+
 export const configurePassport = () => {
   
   passport.use(
@@ -12,6 +19,10 @@ export const configurePassport = () => {
         callbackURL: process.env.GOOGLE_CALLBACK_URL,
         scope: ['profile', 'email'],
       },
+      
+      /**
+       * Verify callback - Only allow existing users
+       */
       async (accessToken, refreshToken, profile, done) => {
         try {
           console.log('\n========================================');
@@ -25,8 +36,9 @@ export const configurePassport = () => {
           const googleId = profile.id;
           const profilePicture = profile.photos[0]?.value || '';
 
-// ===== CHECK 1: User with Google ID (Already linked) =====
+          // ===== CHECK 1: User with Google ID (Already linked) =====
           let user = await User.findOne({ googleId: googleId });
+
           if (user) {
             console.log('✅ Existing Google user found:', user.email);
             
