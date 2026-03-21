@@ -1,4 +1,4 @@
- Orato – Language Learning Platform
+ <h1>Orato – Language Learning Platform </h1>
 
 🌟 Overview
 

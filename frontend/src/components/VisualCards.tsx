@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 
-// 1. Define TypeScript Interface based on our MongoDB Schema
 interface CardData {
   _id: string;
   word: string;
@@ -11,18 +10,15 @@ interface CardData {
 }
 
 const VisualCards: React.FC = () => {
-  // State Management
   const [cards, setCards] = useState<CardData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   const getFallbackImageUrl = (word: string) =>
     `https://placehold.co/400x400/F3F4F6/111827?text=${encodeURIComponent(word)}`;
 
-  // 2. Fetch data from backend when the component loads
   useEffect(() => {
     fetchRandomCards();
   }, []);
@@ -41,10 +37,8 @@ const VisualCards: React.FC = () => {
     }
   };
 
-  // 3. Audio Pronunciation Feature (Using Browser Native Speech Synthesis)
   const playAudio = (e: React.MouseEvent, wordToSpeak: string) => {
     e.stopPropagation();
-
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(wordToSpeak);
       utterance.lang = 'en-US';
@@ -55,14 +49,12 @@ const VisualCards: React.FC = () => {
     }
   };
 
-  // 4. Navigation Handlers
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
 
   const handleNextCard = () => {
     setIsFlipped(false);
-
     setTimeout(() => {
       if (currentIndex < cards.length - 1) {
         setCurrentIndex(currentIndex + 1);
@@ -73,21 +65,17 @@ const VisualCards: React.FC = () => {
     }, 300);
   };
 
-  // 5. Render States
   if (loading) return <div className="text-center p-12 text-lg text-gray-500">Loading your vocabulary deck...</div>;
   if (error) return <div className="text-center p-12 text-lg text-red-500">{error}</div>;
   if (cards.length === 0) return <div className="text-center p-12 text-lg text-gray-500">No cards found in the database.</div>;
 
   const currentCard = cards[currentIndex];
-  const currentImageSrc = failedImages[currentCard._id]
-    ? getFallbackImageUrl(currentCard.word)
-    : currentCard.imageUrl;
+  const currentImageSrc = currentCard.imageUrl || getFallbackImageUrl(currentCard.word);
 
   return (
     <div className="flex flex-col items-center font-sans max-w-[600px] mx-auto mt-10 p-5 bg-gray-50 rounded-xl shadow-sm">
       <h2 className="text-2xl font-bold mb-2 text-gray-800">Visual Vocabulary</h2>
 
-      {/* The 3D Card Container */}
       <div
         className="w-full max-w-[400px] h-[400px] bg-transparent cursor-pointer mb-8 [perspective:1000px]"
         onClick={handleFlip}
@@ -95,20 +83,22 @@ const VisualCards: React.FC = () => {
         <div
           className={`relative w-full h-full text-center transition-transform duration-700 ease-[cubic-bezier(0.4,0.2,0.2,1)] [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
         >
-
-          {/* FRONT OF CARD: Image Only */}
+          {/* FRONT */}
           <div className="absolute w-full h-full [backface-visibility:hidden] rounded-2xl shadow-lg flex flex-col justify-between items-center p-1 overflow-hidden bg-white">
             <img
               src={currentImageSrc}
               alt={currentCard.word}
               className="w-full h-[90%] object-contain rounded-lg"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = getFallbackImageUrl(currentCard.word);
+              }}
             />
             <p className="text-gray-400 text-xs m-0 uppercase tracking-wide">
               Click card to reveal meaning
             </p>
           </div>
 
-          {/* BACK OF CARD: Word, Definition, and Audio */}
+          {/* BACK */}
           <div className="absolute w-full h-full [backface-visibility:hidden] rounded-2xl shadow-lg flex flex-col justify-center items-center p-5 overflow-hidden bg-green-600 text-white [transform:rotateY(180deg)]">
             <h3 className="text-5xl m-0 mb-2.5 capitalize">{currentCard.word}</h3>
             <p className="text-xl leading-relaxed mb-7 opacity-90">{currentCard.definition}</p>
@@ -124,17 +114,16 @@ const VisualCards: React.FC = () => {
               Listen
             </button>
           </div>
-
         </div>
       </div>
 
-      {/* Controls */}
       <div className="flex gap-4">
         <button
-          className={`py-3 px-6 text-base border-none rounded-lg cursor-pointer font-bold transition-colors ${currentIndex === cards.length - 1
-            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            : 'bg-blue-600 text-white hover:bg-blue-800'
-            }`}
+          className={`py-3 px-6 text-base border-none rounded-lg cursor-pointer font-bold transition-colors ${
+            currentIndex === cards.length - 1
+              ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              : 'bg-blue-600 text-white hover:bg-blue-800'
+          }`}
           onClick={handleNextCard}
         >
           {currentIndex === cards.length - 1 ? "Get New Random Deck" : "Next Word"}
