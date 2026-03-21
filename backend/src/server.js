@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config(); 
+dotenv.config();
 
 console.log("Cloud name:", process.env.CLOUDINARY_CLOUD_NAME); // profile picture 
 console.log("API key:", process.env.CLOUDINARY_API_KEY);
@@ -38,13 +38,7 @@ const app = express();
 // MIDDLEWARE 
 
 // CORS
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    process.env.FRONTEND_URL  //  Choreo frontend URL
-  ],
-  credentials: true
-}));
+app.use(cors());
 
 // Body parsers
 app.use(express.json());
