@@ -112,15 +112,15 @@ const Home = () => {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
               <div className="bg-white rounded-xl p-6 shadow-md">
-                <div className="text-4xl font-bold text-green-600">10K+</div>
+                <div className="text-4xl font-bold text-green-600">40+</div>
                 <div className="text-gray-600 mt-2">Active Learners</div>
               </div>
               <div className="bg-white rounded-xl p-6 shadow-md">
-                <div className="text-4xl font-bold text-green-600">10+</div>
+                <div className="text-4xl font-bold text-green-600">5+</div>
                 <div className="text-gray-600 mt-2">Languages</div>
               </div>
               <div className="bg-white rounded-xl p-6 shadow-md">
-                <div className="text-4xl font-bold text-green-600">4.9</div>
+                <div className="text-4xl font-bold text-green-600">8.9</div>
                 <div className="text-gray-600 mt-2">User Rating</div>
               </div>
             </div>
@@ -659,7 +659,7 @@ const Home = () => {
                   <div className="w-8 h-8 rounded-full bg-gray-500 border-2 border-gray-900"></div>
                 </div>
                 <div className="text-gray-400 text-xs">
-                  <span className="text-white font-bold">2,847 people</span> joined this week
+                  <span className="text-white font-bold">10+ people</span> joined this week
                 </div>
               </div>
 
