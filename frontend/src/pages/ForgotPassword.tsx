@@ -26,7 +26,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      // FIXED: changed from /auth/forgot-password-otp to /otp/forgot-password
+      // changed from /auth/forgot-password-otp to /otp/forgot-password
       const res = await API.post("/otp/forgot-password", { email });
 
       setMessage(res.data.message || "OTP sent to your email!");

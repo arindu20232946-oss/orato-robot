@@ -1,344 +1,304 @@
-import { useState, useMemo } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import logo from "../assets/logo.png";
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
-const PersonalInfo = () => {
+interface NavbarProps {
+  isLoggedIn?: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: propIsLoggedIn }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
+  const [userInitials, setUserInitials] = useState("U");
+
+  // Dropdown & logout confirmation state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const userData = location.state || {};
-
-  const [age, setAge] = useState("");
-  const [nativeLanguage, setNativeLanguage] = useState("");
-  const [targetLanguage, setTargetLanguage] = useState("English");
-  const [learningGoal, setLearningGoal] = useState("");
-  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(15);
-
-  // ===== DYNAMIC PROGRESS CALCULATION =====
-  // Step 2 progress: 33% to 66% (of total 3 steps)
-  const stepProgress = useMemo(() => {
-    let filledFields = 0;
-    if (age.trim().length > 0) filledFields++;
-    if (nativeLanguage.length > 0) filledFields++;
-    if (targetLanguage.length > 0) filledFields++; // Always has default
-    if (learningGoal.length > 0) filledFields++;
-    if (dailyGoalMinutes > 0) filledFields++; // Always has default
-    
-    const stepCompletion = (filledFields / 5) * 100; // 0-100% within this step
-    return 33 + (stepCompletion / 100) * 33; // 33% + (0-33%) = 33-66%
-  }, [age, nativeLanguage, targetLanguage, learningGoal, dailyGoalMinutes]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!age || parseInt(age) < 5 || parseInt(age) > 100) {
-      alert("Please enter a valid age (5-100)");
-      return;
+  const syncFromStorage = () => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    setIsLoggedIn(!!token || propIsLoggedIn || false);
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      const fullName = parsedUser.fullName || "";
+      const firstName = fullName.split(".").pop()?.trim().split(" ")[0] || "User";
+      const initials = fullName
+        ? fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+        : "U";
+      setUserName(firstName);
+      setUserAvatar((parsedUser.profilePicture && parsedUser.profilePicture.trim() !== "") ? parsedUser.profilePicture : "");
+      setUserInitials(initials);
     }
+  };
 
-    if (!nativeLanguage) {
-      alert("Please select your native language");
-      return;
-    }
+  useEffect(() => {
+    syncFromStorage();
+    window.addEventListener("storage", syncFromStorage);
+    return () => window.removeEventListener("storage", syncFromStorage);
+  }, [propIsLoggedIn]);
 
-    if (!learningGoal) {
-      alert("Please select your learning goal");
-      return;
-    }
-
-    const completeData = {
-      ...userData,
-      age: parseInt(age),
-      nativeLanguage,
-      targetLanguage,
-      learningGoal,
-      dailyGoalMinutes,
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+        setShowLogoutConfirm(false);
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    console.log("Personal info collected:", completeData);
-    navigate("/assessment", { state: completeData });
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const handleLogoutConfirmed = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("storage"));
+    setIsLoggedIn(false);
+    setIsDropdownOpen(false);
+    setShowLogoutConfirm(false);
+    closeMobileMenu();
+    navigate("/");
   };
 
-  const handleBack = () => {
-    navigate("/signup", { state: userData });
-  };
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `font-medium transition-all duration-200 py-2 px-4 block no-underline rounded-lg
+     hover:bg-green-100 hover:scale-105 hover:shadow-md
+     ${isActive ? 'text-green-600 font-semibold bg-green-50' : 'text-gray-700'}`;
+
+  // Reusable avatar element
+  const AvatarEl = ({ size = "w-9 h-9" }: { size?: string }) =>
+    userAvatar ? (
+      <img src={userAvatar} alt="profile" className={`${size} rounded-full object-cover border-2 border-green-500 flex-shrink-0`} />
+    ) : (
+      <div className={`${size} rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-semibold border-2 border-green-500 flex-shrink-0`}>
+        {userInitials}
+      </div>
+    );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 px-4 py-8">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
+    <nav className="sticky top-4 z-50 w-full px-4 sm:px-6 lg:px-8">
+      <div className="bg-white/60 backdrop-blur-md border border-green-100 shadow-lg rounded-2xl transition-all max-w-7xl mx-auto">
+        <div className="px-4 sm:px-8 py-4">
+          <div className="flex justify-between items-center">
 
-        {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <img src={logo} alt="Orato Logo" className="w-20 h-20 rounded-xl shadow-md" />
-        </div>
+            {/* Logo */}
+            <div className="flex items-center flex-shrink-0">
+              <Link to="/" className="flex items-center gap-3 no-underline" onClick={closeMobileMenu}>
+                <img src={logo} alt="Orato Logo" className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl shadow-md object-cover flex-shrink-0" />
+                <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600 whitespace-nowrap">Orato</span>
+              </Link>
+            </div>
 
-        {/* Progress Bar - DYNAMIC */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">Progress</span>
-            <span className="text-sm font-medium text-green-600">{Math.round(stepProgress)}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-green-600 h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${stepProgress}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between mt-2">
-            <span className="text-xs text-gray-500">Step 2 of 3</span>
-            <span className="text-xs text-green-600 font-semibold">Personal Information</span>
-          </div>
-        </div>
+            {/* Desktop Navigation */}
+            <ul className="hidden lg:flex lg:items-center lg:gap-4 xl:gap-6">
+              <li><NavLink to="/" className={navLinkClass} onClick={closeMobileMenu}>Home</NavLink></li>
+              <li><NavLink to="/dashboard" className={navLinkClass} onClick={closeMobileMenu}>Dashboard</NavLink></li>
+              <li><NavLink to="/progress" className={navLinkClass} onClick={closeMobileMenu}>Progress</NavLink></li>
+              <li><NavLink to="/setting" className={navLinkClass} onClick={closeMobileMenu}>Settings</NavLink></li>
+              <li><NavLink to="/about" className={navLinkClass} onClick={closeMobileMenu}>About Us</NavLink></li>
+            </ul>
 
-        {/* Title */}
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
-          Tell us about yourself
-        </h2>
-        <p className="text-center text-gray-500 mb-8">
-          Help us personalize your learning experience
-        </p>
+            {/* Right Section */}
+            <div className="flex items-center gap-3">
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+              {isLoggedIn ? (
+                /* ── Account Dropdown ── */
+                <div className="relative" ref={dropdownRef}>
 
-          {/* Age */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              What's your age? <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              placeholder="Enter your age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              min="5"
-              max="100"
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
-          </div>
+                  {/* Trigger button */}
+                  <button
+                    onClick={() => { setIsDropdownOpen((p) => !p); setShowLogoutConfirm(false); }}
+                    className="flex items-center gap-2 py-2 px-3 rounded-lg transition-all duration-200 hover:bg-green-100 hover:scale-105 hover:shadow-md focus:outline-none"
+                    aria-label="Account menu"
+                    aria-expanded={isDropdownOpen}
+                  >
+                    <AvatarEl />
+                    <span className="font-semibold hidden lg:inline whitespace-nowrap text-gray-700">{userName}</span>
+                    <svg
+                      className={`w-4 h-4 text-gray-500 hidden lg:block transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
 
-          {/* Native Language */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              What's your native language? <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={nativeLanguage}
-              onChange={(e) => setNativeLanguage(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              <option value="">Select your native language</option>
-              <option value="Sinhala">Sinhala (සිංහල)</option>
-              <option value="Tamil">Tamil (தமிழ்)</option>
-              <option value="English">English</option>
-              <option value="Hindi">Hindi (हिन्दी)</option>
-              <option value="Spanish">Spanish (Español)</option>
-              <option value="French">French (Français)</option>
-              <option value="German">German (Deutsch)</option>
-              <option value="Chinese">Chinese (中文)</option>
-              <option value="Japanese">Japanese (日本語)</option>
-              <option value="Korean">Korean (한국어)</option>
-              <option value="Arabic">Arabic (العربية)</option>
-              <option value="Portuguese">Portuguese (Português)</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+                  {/* Dropdown panel */}
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-60 bg-white/95 backdrop-blur-md border border-green-100 rounded-2xl shadow-2xl overflow-hidden z-50">
 
-          {/* Target Language */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Which language do you want to learn? <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={targetLanguage}
-              onChange={(e) => setTargetLanguage(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              <option value="English">English</option>
-              <option value="Spanish">Spanish (Español)</option>
-              <option value="French">French (Français)</option>
-              <option value="German">German (Deutsch)</option>
-              <option value="Japanese">Japanese (日本語)</option>
-            </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Currently, English is our primary course. More languages coming soon!
-            </p>
-          </div>
+                      {!showLogoutConfirm ? (
+                        <div className="py-1">
+                          {/* Visit Profile */}
+                          <Link
+                            to="/account"
+                            onClick={() => { setIsDropdownOpen(false); setShowLogoutConfirm(false); }}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 transition-colors no-underline"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                            <span className="font-semibold">Visit Profile</span>
+                          </Link>
 
-          {/* Learning Goal */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Why do you want to learn {targetLanguage}? <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setLearningGoal("travel")}
-                className={`p-4 border-2 rounded-xl transition-all ${learningGoal === "travel"
-                  ? "border-green-500 bg-green-50 text-green-700"
-                  : "border-gray-200 hover:border-green-300"
-                  }`}
+                          <div className="border-t border-gray-100 mx-4" />
+
+                          {/* Logout */}
+                          <button
+                            onClick={() => setShowLogoutConfirm(true)}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                              </svg>
+                            </div>
+                            <span className="font-semibold">Logout</span>
+                          </button>
+                        </div>
+                      ) : (
+                        /* Logout confirmation */
+                        <div className="px-4 py-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                            </svg>
+                            <p className="text-sm font-bold text-gray-800">Log out of Orato?</p>
+                          </div>
+                          <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+                            You'll need to sign in again to continue your learning journey.
+                          </p>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setShowLogoutConfirm(false)}
+                              className="flex-1 px-3 py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleLogoutConfirmed}
+                              className="flex-1 px-3 py-2 text-xs font-bold rounded-xl bg-red-500 hover:bg-red-600 text-white transition-all shadow-sm hover:shadow-md"
+                            >
+                              Yes, Logout
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to="/signin"
+                  className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm lg:text-base transition shadow-md hover:shadow-lg no-underline hidden lg:block whitespace-nowrap"
+                  onClick={closeMobileMenu}
+                >
+                  Login
+                </Link>
+              )}
+
+              {/* Hamburger */}
+              <div
+                className="lg:hidden flex flex-col gap-1.5 cursor-pointer z-50 p-1"
+                onClick={toggleMobileMenu}
+                aria-label="Toggle menu"
               >
-                <div className="text-3xl mb-2">✈️</div>
-                <div className="font-semibold">Travel</div>
-                <div className="text-xs text-gray-500">Explore the world</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setLearningGoal("career")}
-                className={`p-4 border-2 rounded-xl transition-all ${
-                  learningGoal === "career"
-                    ? "border-green-500 bg-green-50 text-green-700"
-                    : "border-gray-200 hover:border-green-300"
-                }`}
-              >
-                <div className="text-3xl mb-2">💼</div>
-                <div className="font-semibold">Career</div>
-                <div className="text-xs text-gray-500">Professional growth</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setLearningGoal("education")}
-                className={`p-4 border-2 rounded-xl transition-all ${
-                  learningGoal === "education"
-                    ? "border-green-500 bg-green-50 text-green-700"
-                    : "border-gray-200 hover:border-green-300"
-                }`}
-              >
-                <div className="text-3xl mb-2">📚</div>
-                <div className="font-semibold">Education</div>
-                <div className="text-xs text-gray-500">Studies & exams</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setLearningGoal("personal")}
-                className={`p-4 border-2 rounded-xl transition-all ${
-                  learningGoal === "personal"
-                    ? "border-green-500 bg-green-50 text-green-700"
-                    : "border-gray-200 hover:border-green-300"
-                }`}
-              >
-                <div className="text-3xl mb-2">🎯</div>
-                <div className="font-semibold">Personal</div>
-                <div className="text-xs text-gray-500">Self-improvement</div>
-              </button>
+                <span className={`w-6 h-0.5 bg-gray-700 transition-all duration-300 origin-center ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                <span className={`w-6 h-0.5 bg-gray-700 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0 scale-x-0' : ''}`}></span>
+                <span className={`w-6 h-0.5 bg-gray-700 transition-all duration-300 origin-center ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Daily Learning Goal */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              What's your daily learning goal? <span className="text-red-500">*</span>
-            </label>
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={() => setDailyGoalMinutes(5)}
-                className={`w-full p-4 border-2 rounded-xl flex items-center justify-between transition-all ${dailyGoalMinutes === 5
-                  ? "border-green-500 bg-green-50"
-                  : "border-gray-200 hover:border-green-300"
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">☕</div>
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-800">5-10 min/day</div>
-                    <div className="text-sm text-gray-500">Casual - Just the basics</div>
-                  </div>
-                </div>
-                {dailyGoalMinutes === 5 && (
-                  <div className="text-green-600">✓</div>
-                )}
-              </button>
+        {/* Mobile / Tablet Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden border-t border-green-100 flex flex-col gap-2 p-6 bg-white/95 backdrop-blur-md rounded-b-2xl animate-fade-in-down">
+            <NavLink to="/" className={navLinkClass} onClick={closeMobileMenu}>Home</NavLink>
+            <NavLink to="/dashboard" className={navLinkClass} onClick={closeMobileMenu}>Dashboard</NavLink>
+            <NavLink to="/progress" className={navLinkClass} onClick={closeMobileMenu}>Progress</NavLink>
+            <NavLink to="/setting" className={navLinkClass} onClick={closeMobileMenu}>Settings</NavLink>
+            <NavLink to="/about" className={navLinkClass} onClick={closeMobileMenu}>About Us</NavLink>
 
-              <button
-                type="button"
-                onClick={() => setDailyGoalMinutes(15)}
-                className={`w-full p-4 border-2 rounded-xl flex items-center justify-between transition-all ${dailyGoalMinutes === 15
-                  ? "border-green-500 bg-green-50"
-                  : "border-gray-200 hover:border-green-300"
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">🎯</div>
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-800">15-20 min/day</div>
-                    <div className="text-sm text-gray-500">Regular - Steady progress</div>
-                  </div>
-                </div>
-                {dailyGoalMinutes === 15 && (
-                  <div className="text-green-600">✓</div>
-                )}
-              </button>
+            {isLoggedIn ? (
+              <div className="mt-2 border-t border-green-100 pt-3 flex flex-col gap-1">
 
-              <button
-                type="button"
-                onClick={() => setDailyGoalMinutes(30)}
-                className={`w-full p-4 border-2 rounded-xl flex items-center justify-between transition-all ${dailyGoalMinutes === 30
-                  ? "border-green-500 bg-green-50"
-                  : "border-gray-200 hover:border-green-300"
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">🔥</div>
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-800">30+ min/day</div>
-                    <div className="text-sm text-gray-500">Serious - Fast track</div>
-                  </div>
-                </div>
-                {dailyGoalMinutes === 30 && (
-                  <div className="text-green-600">✓</div>
-                )}
-              </button>
+                {/* Visit Profile */}
+                <Link
+                  to="/account"
+                  onClick={closeMobileMenu}
+                  className="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-green-50 transition-colors no-underline"
+                >
+                  <AvatarEl />
+                  <span className="font-semibold">{userName}</span>
+                  <span className="ml-auto text-xs text-green-600 font-semibold bg-green-100 px-2 py-0.5 rounded-full">Profile</span>
+                </Link>
 
-              <button
-                type="button"
-                onClick={() => setDailyGoalMinutes(60)}
-                className={`w-full p-4 border-2 rounded-xl flex items-center justify-between transition-all ${dailyGoalMinutes === 60
-                  ? "border-green-500 bg-green-50"
-                  : "border-gray-200 hover:border-green-300"
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">⚡</div>
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-800">1+ hour/day</div>
-                    <div className="text-sm text-gray-500">Intense - Maximum results</div>
+                {/* Mobile logout */}
+                {!showLogoutConfirm ? (
+                  <button
+                    onClick={() => setShowLogoutConfirm(true)}
+                    className="flex items-center gap-3 py-2 px-4 rounded-lg text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                    </div>
+                    <span className="font-semibold">Logout</span>
+                  </button>
+                ) : (
+                  <div className="px-4 py-4 bg-red-50 rounded-2xl border border-red-100 mt-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                      </svg>
+                      <p className="text-sm font-bold text-gray-800">Log out of Orato?</p>
+                    </div>
+                    <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+                      You'll need to sign in again to continue learning.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowLogoutConfirm(false)}
+                        className="flex-1 px-3 py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 hover:bg-white transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleLogoutConfirmed}
+                        className="flex-1 px-3 py-2 text-xs font-bold rounded-xl bg-red-500 hover:bg-red-600 text-white transition-colors"
+                      >
+                        Yes, Logout
+                      </button>
+                    </div>
                   </div>
-                </div>
-                {dailyGoalMinutes === 60 && (
-                  <div className="text-green-600">✓</div>
                 )}
-              </button>
-            </div>
+              </div>
+            ) : (
+              <Link
+                to="/signin"
+                className="mt-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-base transition shadow-md text-center no-underline"
+                onClick={closeMobileMenu}
+              >
+                Login
+              </Link>
+            )}
           </div>
-
-          {/* Navigation Buttons */}
-          <div className="flex gap-4 pt-4">
-            <button
-              type="button"
-              onClick={handleBack}
-              className="flex-1 py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all"
-            >
-              ← Back
-            </button>
-            <button
-              type="submit"
-              className="flex-1 py-3 px-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg"
-            >
-              Next: Assessment →
-            </button>
-          </div>
-        </form>
+        )}
       </div>
-    </div>
+    </nav>
   );
 };
 
-export default PersonalInfo;
+export default Navbar;

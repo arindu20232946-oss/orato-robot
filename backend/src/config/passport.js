@@ -3,8 +3,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.js';
 
 /**
- * ===== PASSPORT GOOGLE OAUTH CONFIGURATION =====
- * 
+ * PASSPORT GOOGLE OAUTH CONFIGURATION 
  * Google Sign-In for EXISTING USERS ONLY
  * New users must go through email signup → personal info → assessment flow
  */

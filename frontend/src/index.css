@@ -24,16 +24,6 @@
 
 }
 
-/* @layer components {
-  .page-wrapper {
-    @apply flex flex-col min-h-screen;
-  }
-
-  .page-container {
-    @apply flex-1 w-full max-w-7xl mx-auto px-8 py-8;
-  }
-} */
-
 @layer utilities {
   .gradient-primary {
     background: linear-gradient(135deg, #24bd39, #3dd83d);

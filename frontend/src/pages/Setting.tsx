@@ -136,7 +136,7 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white">
+    <div className="relative min-h-screen overflow-hidden bg-green-50">
       <div ref={bgRef} className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] bg-emerald-100/60 rounded-full blur-[120px] blob"></div>
         <div className="absolute bottom-[5%] right-[-10%] w-[45%] h-[45%] bg-green-50/50 rounded-full blur-[140px] blob"></div>

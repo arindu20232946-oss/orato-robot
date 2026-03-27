@@ -367,8 +367,8 @@ export default function Progress() {
   }
 
   return (
-    <div className={`flex flex-col min-h-screen ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-      <div className={`flex-1 p-6 lg:p-10 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`flex flex-col min-h-screen ${darkMode ? 'text-white bg-gray-900' : 'text-gray-900 bg-green-50'}`}>
+      <div className={`flex-1 p-6 lg:p-10 ${darkMode ? 'bg-gray-900' : 'bg-green-50'}`}>
         <div className="max-w-7xl mx-auto">
 
           <Navbar />

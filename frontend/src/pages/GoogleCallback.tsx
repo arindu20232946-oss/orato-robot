@@ -18,7 +18,7 @@ export default function GoogleCallback() {
     const userStr = searchParams.get('user');
     const error = searchParams.get('error');
 
-    // ===== HANDLE ERRORS =====
+    // HANDLE ERRORS 
     if (error) {
       console.error('Google OAuth error:', error);
 
@@ -84,7 +84,7 @@ export default function GoogleCallback() {
     }
   }, [searchParams, navigate]);
 
-  // ===== LOADING UI =====
+  //  LOADING UI 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
       <div className="text-center p-8 bg-white rounded-2xl shadow-xl max-w-md">

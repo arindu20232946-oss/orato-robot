@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
       gsap.config({ nullTargetWarn: false });
       gsap.fromTo(
         mainRef.current,
-        { opacity: 0, y: 20 },
+        { opacity: 0, y: 10 }, // ✅ reduced from 20 → 10
         { opacity: 1, y: 0, duration: 0.6, delay: 0.1, ease: "power2.out" },
       );
     }
@@ -75,7 +75,10 @@ const Dashboard: React.FC = () => {
       <Navbar />
 
       <div className="flex flex-1">
-        <main ref={mainRef} className="page-container flex-1 p-6 lg:p-8">
+        <main 
+          ref={mainRef} 
+          className="page-container flex-1 p-6 lg:p-8 overflow-hidden" //  added
+        >
           <Header />
 
           <div className="mb-6">
@@ -113,8 +116,8 @@ const Dashboard: React.FC = () => {
       {/* Scroll to Top Button */}
       <button
         onClick={scrollToTop}
-        className={`fixed bottom-8 right-8 p-4 rounded-2xl bg-[#1a9e6b] text-white shadow-[0_10px_30px_rgba(26,158,107,0.3)] hover:bg-[#14c781] hover:scale-110 active:scale-95 transition-all duration-500 z-50 group ${
-          showScrollTop ? 'translate-y-0 opacity-100 visible' : 'translate-y-20 opacity-0 invisible'
+        className={`fixed bottom-6 right-4 p-4 rounded-2xl bg-[#1a9e6b] text-white shadow-[0_10px_30px_rgba(26,158,107,0.3)] hover:bg-[#14c781] hover:scale-110 active:scale-95 transition-all duration-500 z-50 group ${
+          showScrollTop ? 'translate-y-0 opacity-100' : 'hidden' //  fixed
         }`}
         aria-label="Scroll to top"
       >

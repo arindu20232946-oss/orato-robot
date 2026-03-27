@@ -409,7 +409,7 @@ export const sendWelcomeEmail = async (email, userName) => {
               
               <h3>🚀 Get Started:</h3>
               <div style="text-align: center;">
-                <a href="http://localhost:5173/dashboard" class="button">Go to Dashboard</a>
+                <a href="${process.env.FRONTEND_URL}/dashboard" class="button">Go to Dashboard</a>
               </div>
               
               <h3>✨ What You Can Do:</h3>
@@ -447,7 +447,7 @@ Hi ${userName}! 👋
 Thank you for joining Orato! We're excited to have you as part of our learning community.
 
 Get Started:
-Visit your dashboard: http://localhost:5173/dashboard
+Visit your dashboard: ${process.env.FRONTEND_URL}/dashboard
 
 What You Can Do:
 📚 Interactive Lessons - Learn through engaging, bite-sized lessons
@@ -587,7 +587,7 @@ export const sendDailyReminderEmail = async (email, userName) => {
               <h3>Get ready to English training.</h3>
               <p>It's time for your daily practice. Just a few minutes a day helps build lasting fluency.</p>
               
-              <a href="http://localhost:5173/dashboard" class="button">Start Learning</a>
+              <a href="${process.env.FRONTEND_URL}/dashboard" class="button">Start Learning</a>
               
               <p>We are waiting for you!</p>
               <br/>
@@ -607,7 +607,7 @@ Hi ${userName || 'Learner'},
 Get ready to English training.
 It's time for your daily practice! Just a few minutes a day helps build lasting fluency.
 
-Start learning now: http://localhost:5173/dashboard
+Start learning now: ${process.env.FRONTEND_URL}/dashboard
 
 The Orato Team
       `,
@@ -657,7 +657,7 @@ export const sendWeeklyProgressEmail = async (email, userName) => {
               <h3>The weekly summary report is ready.</h3>
               <p>Check out your stats and progress from the past 7 days. Consistency is key to mastery!</p>
               
-              <a href="http://localhost:5173/dashboard" class="button">View My Report</a>
+              <a href="${process.env.FRONTEND_URL}/dashboard" class="button">View My Report</a>
               
               <br/>
               <p><strong>The Orato Team</strong></p>
@@ -676,7 +676,7 @@ Hi ${userName || 'Learner'},
 The weekly summary report is ready. 
 Check out your stats and progress from the past 7 days to see how far you've come!
 
-View your report on the dashboard: http://localhost:5173/dashboard
+View your report on the dashboard: ${process.env.FRONTEND_URL}/dashboard
 
 The Orato Team
       `,

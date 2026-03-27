@@ -5,6 +5,9 @@ import Footer from "../components/Footer";
 import welcomeBg from "../assets/welcome-bg.jpg";
 import ctaImage from "../assets/cta-image.jpg";
 import { FaArrowUp } from 'react-icons/fa';
+import goalImg from "../assets/person_learning.jpg";
+import progressImg from "../assets/progress.jpg";
+import learnFastImg from "../assets/learn_fast.jpg";
 
 const Home = () => {
   const isLandingPageMode = window.config.isLandingPageMode;
@@ -126,11 +129,11 @@ const Home = () => {
             <div className="group relative">
               <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent group-hover:border-green-300">
                 <div className="mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                    <span className="text-4xl">🎯</span>
+                  <div className="w-20 h-20 rounded-2xl overflow-hidden transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                    <img src={goalImg} alt="Personalized Learning" className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">Personalized Learning</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-700 transition-colors">Personalized Learning</h3>
                 <p className="text-gray-600 leading-relaxed mb-4">AI adapts to your skill level and learning pace. Every lesson is tailored just for you.</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full">Adaptive AI</span>
@@ -141,26 +144,26 @@ const Home = () => {
             <div className="group relative">
               <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent group-hover:border-gray-300">
                 <div className="mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                    <span className="text-4xl">📊</span>
+                  <div className="w-20 h-20 rounded-2xl overflow-hidden transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                    <img src={progressImg} alt="Track Progress" className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-gray-700 transition-colors">Track Progress</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-700 transition-colors">Track Progress</h3>
                 <p className="text-gray-600 leading-relaxed mb-4">Visual dashboards show your improvement. Stay motivated with daily goals and streaks.</p>
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">Analytics</span>
-                  <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">Streak Tracking</span>
+                  <span className="px-3 py-1 bg-gray-100 text-green-700 text-xs font-semibold rounded-full">Analytics</span>
+                  <span className="px-3 py-1 bg-gray-100 text-green-700 text-xs font-semibold rounded-full">Streak Tracking</span>
                 </div>
               </div>
             </div>
             <div className="group relative">
               <div className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent group-hover:border-emerald-300">
                 <div className="mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                    <span className="text-4xl">⚡</span>
+                  <div className="w-20 h-20 rounded-2xl overflow-hidden transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                    <img src={learnFastImg} alt="Learn Faster" className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors">Learn Faster</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-800 transition-colors">Learn Faster</h3>
                 <p className="text-gray-600 leading-relaxed mb-4">Bite-sized lessons fit your schedule. Learn in just 5-15 minutes a day.</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full">Micro-lessons</span>
